@@ -44,7 +44,8 @@ public class havissIoTClient extends messageGenerator {
             //TODO: Handle exception
         }
     }
-    public void publishMessage(String topic, String message) { //Publish message to topic
+    //Publish a message to a given topic
+    public void publishMessage(String topic, String message) {
         try {
             MqttMessage pubMessage = new MqttMessage(message.getBytes());
             mclient.publish(topic, pubMessage);
@@ -52,9 +53,18 @@ public class havissIoTClient extends messageGenerator {
             //TODO: Handle exception
         }
     }
-    public void subscribeToTopic(String topic, int qos) {
+    //Subscripe to a topic
+    public void subscribeToTopic(String topic, int qos) { //Subrscripe to an MQTT topic
         try {
             mclient.subscribe(topic, qos);
+        } catch (MqttException me) {
+            //TODO: Handle exceptions
+        }
+    }
+    //Unsubscripe to a topic
+    public void unsubscribeToTopic(String topic) {
+        try {
+            mclient.unsubscribe(topic);
         } catch (MqttException me) {
             //TODO: Handle exceptions
         }
