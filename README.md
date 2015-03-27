@@ -27,5 +27,4 @@ Other information:
 - The clients will be written in the language most appropiate for the platform (C/C++, java, etc)
 - Maven will be used for java applications
 - The server will most likely run on Windows Azure
--
 
