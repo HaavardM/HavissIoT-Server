@@ -1,6 +1,7 @@
 # havissIoT
 
 This project is just for fun and for learning more about IoT. 
+This repository will in the beginning be used just for the purpose of having my code available on all my computers - most code wont work
 
 Plan:
 - Connect different devices (on different platforms) together using the internet and MQTT.
