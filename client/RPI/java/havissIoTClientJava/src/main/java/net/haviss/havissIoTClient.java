@@ -3,6 +3,7 @@ package net.haviss;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 /**
@@ -43,7 +44,12 @@ public class havissIoTClient {
             //TODO: Handle exception
         }
     }
-
-
-
+    public void publishMessage(String topic, String message) {
+        try {
+            MqttMessage pubMessage = new MqttMessage(message.getBytes());
+            mclient.publish(topic, pubMessage);
+        } catch (MqttException me) {
+            //TODO: Handle exception
+        }
+    }
 }
