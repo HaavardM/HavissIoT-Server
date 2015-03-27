@@ -13,8 +13,7 @@ Planned clients:
 - Arduino with WiFi shield
 - Raspberry PI 
 - Intel Galileo running Windows
-- Mabye
-- - Android phone
+- Computer
 
 MQTT:
 - http://mqtt.org/
