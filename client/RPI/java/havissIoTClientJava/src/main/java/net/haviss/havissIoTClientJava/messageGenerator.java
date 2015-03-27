@@ -1,7 +1,7 @@
 package net.haviss;
 
 /**
- * Created by Håvard on 3/27/2015.
+ * Created by HÃ¥vard on 3/27/2015.
  */
 public class messageGenerator {
     //Creates a message containing a temperature value in celsius (float)
