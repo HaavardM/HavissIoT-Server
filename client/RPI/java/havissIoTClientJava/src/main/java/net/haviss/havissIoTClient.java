@@ -37,7 +37,7 @@ public class havissIoTClient {
             mclient = new MqttClient(brokerAddress, clientID, persistence); //Setting up MQTT client and connect to broker
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
-            mclient.connect(connOpts);
+            mclient.connect(connOpts); //Connecting to broker
         } catch (MqttException me) {
             //TODO: Handle exception
         }
