@@ -8,15 +8,15 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
  */
 public class havissIoTClient extends messageGenerator {
     //Variables
-    private String brokerAddress = "tcp://";
-    private int brokerPort = 1883; //Default port is used if not else specified in connect
-    private String clientID;
-    private int qos = 2;
+    private static String brokerAddress = "tcp://";
+    private static int brokerPort = 1883; //Default port is used if not else specified in connect
+    private static String clientID;
+    private static int qos = 2;
     //Objects
-    private MqttClient mclient;
-    private MemoryPersistence persistence = new MemoryPersistence();
-    private MqttMessage recievedMessage; //Storing the recieved message
-    private MqttCallback callback = new MqttCallback() {
+    private static MqttClient mclient;
+    private static MemoryPersistence persistence = new MemoryPersistence();
+    private static MqttMessage recievedMessage; //Storing the recieved message
+    private static MqttCallback callback = new MqttCallback() {
         @Override
         public void connectionLost(Throwable throwable) {
             //TODO: Throw exception and reconnect
@@ -25,13 +25,14 @@ public class havissIoTClient extends messageGenerator {
         @Override
         public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
             recievedMessage = mqttMessage;
+            //TODO: Handle commands
         }
 
         @Override
         public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
             //TODO: Add resposne to complete delivery
         }
-    }; //Callback for MQTTclient
+    };
 
 
     //Class constructor
@@ -39,7 +40,7 @@ public class havissIoTClient extends messageGenerator {
         clientID = ID;
     }
     //Connect to broker
-    public void connect(String address) {
+    public static void connect(String address) {
         brokerAddress += (address + ":" + Integer.toString(brokerPort));
         try {
             mclient = new MqttClient(brokerAddress, clientID, persistence); //Setting up MQTT client and connect to broker
@@ -57,9 +58,21 @@ public class havissIoTClient extends messageGenerator {
         brokerAddress += (address + ":" + Integer.toString(brokerPort));
         try {
             mclient = new MqttClient(brokerAddress, clientID, persistence); //Setting up MQTT client and connect to broker
+            mclient.setCallback(callback); //Set callbackfunctions
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
             mclient.connect(connOpts); //Connecting to broker
+        } catch (MqttException me) {
+            //TODO: Handle exception
+        }
+    }
+
+    public void setCallback(MqttCallback callback) {
+            mclient.setCallback(callback);
+    }
+    public void disconnect() {
+        try {
+            mclient.disconnect();
         } catch (MqttException me) {
             //TODO: Handle exception
         }
