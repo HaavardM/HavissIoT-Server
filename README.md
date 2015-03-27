@@ -12,3 +12,5 @@ Plan:
 Other information:
 - Im not planning to create my own MQTT broker. The "server" side of the project is just an application for analyzing the data. 
 - I have very limited programming experience. So please dont be to harsh when my code is bad.. :)
+- The serverside application will be written in java
+- The clients will be written in the language most appropiate for the platform (C/C++, java, etc)
