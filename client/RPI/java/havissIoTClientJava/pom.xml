@@ -59,7 +59,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-havissIoTserver-with-dependencies</id>
+                        <id>make-havissIoTClient-with-dependencies</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
