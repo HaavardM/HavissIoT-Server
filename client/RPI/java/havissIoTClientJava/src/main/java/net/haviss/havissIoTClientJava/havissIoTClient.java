@@ -1,4 +1,4 @@
-package net.haviss;
+package net.haviss.havissIoTClientJava;
 
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;

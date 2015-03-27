@@ -1,4 +1,4 @@
-package net.haviss;
+package net.haviss.havissIoTClientJava;
 
 /**
  * Created by Håvard on 3/27/2015.
