@@ -52,5 +52,12 @@ public class havissIoTClient extends messageGenerator {
             //TODO: Handle exception
         }
     }
+    public void subscribeToTopic(String topic, int qos) {
+        try {
+            mclient.subscribe(topic, qos);
+        } catch (MqttException me) {
+            //TODO: Handle exceptions
+        }
+    }
 
 }
