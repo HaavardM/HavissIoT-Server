@@ -4,7 +4,7 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 /**
- * Created by Håvard on 3/27/2015.
+ * Created by HÃ¥vard on 3/27/2015.
  */
 public class havissIoTClient extends messageGenerator {
     //Variables
