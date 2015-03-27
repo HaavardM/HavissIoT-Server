@@ -14,6 +14,7 @@ public class havissIoTClient {
     private int brokerPort = 1883; //Default port is used if not else specified in connect
     private String clientID;
     private MemoryPersistence persistence = new MemoryPersistence();
+    private int qos = 2;
 
     public havissIoTClient(String ID) { //Class constructor
         clientID = ID;
