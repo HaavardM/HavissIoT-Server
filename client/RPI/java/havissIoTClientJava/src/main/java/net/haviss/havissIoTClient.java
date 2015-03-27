@@ -9,7 +9,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 /**
  * Created by Håvard on 3/27/2015.
  */
-public class havissIoTClient {
+public class havissIoTClient extends messageGenerator {
     private MqttClient mclient;
     private String brokerAddress = "tcp://";
     private int brokerPort = 1883; //Default port is used if not else specified in connect
@@ -44,7 +44,7 @@ public class havissIoTClient {
             //TODO: Handle exception
         }
     }
-    public void publishMessage(String topic, String message) {
+    public void publishMessage(String topic, String message) { //Publish message to topic
         try {
             MqttMessage pubMessage = new MqttMessage(message.getBytes());
             mclient.publish(topic, pubMessage);
@@ -52,4 +52,5 @@ public class havissIoTClient {
             //TODO: Handle exception
         }
     }
+
 }

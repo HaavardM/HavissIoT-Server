@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <name>havissIoT javaClient</name>
 
-    <groupId>net.haviss.havissiotclient</groupId>
+    <groupId>net.haviss</groupId>
     <artifactId>havissIoTClientJava</artifactId>
     <description>havissIoT javaclient for RPI</description>
     <version>1.0-SNAPSHOT</version>
