@@ -9,6 +9,16 @@ Plan:
 - Store the most valuable data in a database
 - Access the data from other devices and/or a web page.
 
+Planned clients:
+- Arduino with WiFi shield
+- Raspberry PI 
+- Intel Galileo running Windows
+- Computer
+
+MQTT:
+- http://mqtt.org/
+- I use the Eclipse Paho libraries - https://eclipse.org/paho/
+- I use the mosquitto server/broker - http://mosquitto.org/
 
 Other information:
 - Im not planning to create my own MQTT broker. The "server" side of the project is just an application for analyzing the data. 
@@ -16,3 +26,5 @@ Other information:
 - The serverside application will be written in java
 - The clients will be written in the language most appropiate for the platform (C/C++, java, etc)
 - Maven will be used for java applications
+- The server will most likely run on Microsoft Azure
+
