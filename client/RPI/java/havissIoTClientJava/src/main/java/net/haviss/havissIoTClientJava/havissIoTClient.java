@@ -19,32 +19,31 @@ public class havissIoTClient extends messageGenerator {
     private static MqttCallback callback = new MqttCallback() {
         @Override
         public void connectionLost(Throwable throwable) {
-            //TODO: Throw exception and reconnect
+            //DO SOMETHING
         }
 
         @Override
         public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-            recievedMessage = mqttMessage;
-            //TODO: Handle commands
+            //DO SOMETHING
         }
 
         @Override
         public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-            //TODO: Add resposne to complete delivery
+            //DO SOMETHING
         }
     };
 
-
     //Class constructor
     public havissIoTClient(String ID) {
+
         clientID = ID;
     }
-    //Connect to broker
+        //Connect to broker
     public static void connect(String address) {
         brokerAddress += (address + ":" + Integer.toString(brokerPort));
         try {
             mclient = new MqttClient(brokerAddress, clientID, persistence); //Setting up MQTT client and connect to broker
-            mclient.setCallback(callback); //Set callbackfunctions
+            mclient.setCallback(callback);
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
             mclient.connect(connOpts);
@@ -58,7 +57,7 @@ public class havissIoTClient extends messageGenerator {
         brokerAddress += (address + ":" + Integer.toString(brokerPort));
         try {
             mclient = new MqttClient(brokerAddress, clientID, persistence); //Setting up MQTT client and connect to broker
-            mclient.setCallback(callback); //Set callbackfunctions
+            mclient.setCallback(callback);
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
             mclient.connect(connOpts); //Connecting to broker
@@ -66,10 +65,12 @@ public class havissIoTClient extends messageGenerator {
             //TODO: Handle exception
         }
     }
-
-    public void setCallback(MqttCallback callback) {
-            mclient.setCallback(callback);
+    //Set new callback for MQTT-Client
+    public void setCallback(MqttCallback tempCallBack) {
+            callback = tempCallBack;
+            mclient.setCallback(tempCallBack);
     }
+    //Disconnect from the server
     public void disconnect() {
         try {
             mclient.disconnect();
