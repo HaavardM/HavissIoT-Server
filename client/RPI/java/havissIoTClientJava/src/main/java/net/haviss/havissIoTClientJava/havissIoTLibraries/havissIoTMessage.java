@@ -1,9 +1,9 @@
-package net.haviss.havissIoTClientJava;
+package net.haviss.havissIoTClientJava.havissIoTClient;
 
 /**
  * Created by Håvard on 3/27/2015.
  */
-public class messageGenerator {
+public class havissIoTMessage {
     //Creates a message containing a temperature value in celsius (float)
     public String tempCString(String clientID, float tempC) {
         String message = "@" + clientID + "-TC" + Float.toString(tempC);
