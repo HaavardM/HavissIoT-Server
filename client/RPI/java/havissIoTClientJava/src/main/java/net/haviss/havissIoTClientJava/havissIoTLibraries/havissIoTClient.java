@@ -1,4 +1,4 @@
-package net.haviss.havissIoTClientJava;
+package net.haviss.havissIoTClientJava.havissIoTLibraries;
 
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
@@ -6,7 +6,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 /**
  * Created by Håvard on 3/27/2015.
  */
-public class havissIoTClient extends messageGenerator {
+public class havissIoTClient extends havissIoTMessage {
     //Variables
     private static String brokerAddress = "tcp://";
     private static int brokerPort = 1883; //Default port is used if not else specified in connect

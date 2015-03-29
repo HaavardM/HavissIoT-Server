@@ -1,4 +1,4 @@
-package net.haviss.havissIoTClientJava;
+package net.haviss.havissIoTClientJava.havissIoTLibraries;
 
 /**
  * Created by Håvard on 3/29/2015.
@@ -8,7 +8,7 @@ interface CommandCallback {
     void performCommand();
 }
 //Command class containing the neccesary information about the command
-public class Command {
+public class havissIoTCommand {
     //Variables
     private String commandName = "";
     private String commandFlag = "";
@@ -20,7 +20,7 @@ public class Command {
         }
     };
     //Class constructor
-    public Command (String name, String flag, CommandCallback userCallback) {
+    public havissIoTCommand (String name, String flag, CommandCallback userCallback) {
         //Assigning values to class variables
         commandName = name;
         commandFlag = flag;
