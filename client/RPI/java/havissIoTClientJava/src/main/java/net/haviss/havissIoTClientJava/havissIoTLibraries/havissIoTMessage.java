@@ -2,6 +2,7 @@ package net.haviss.havissIoTClientJava.havissIoTLibraries;
 
 /**
  * Created by Håvard on 3/27/2015.
+ * This library generates messages to publish.
  */
 public class havissIoTMessage {
     //Creates a message containing a temperature value in celsius (float)

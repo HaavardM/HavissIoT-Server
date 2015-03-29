@@ -4,7 +4,9 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 /**
- * Created by Håvard on 3/27/2015.
+ * Created by Håvard Skåra Mellbye on 3/27/2015.
+ * This library connects to an MQTT broker (using Paho MQTT libraries) and handles communication between the broker and client.
+ *
  */
 public class havissIoTClient extends havissIoTMessage {
     //Variables
@@ -15,21 +17,21 @@ public class havissIoTClient extends havissIoTMessage {
     //Objects
     private static MqttClient mclient;
     private static MemoryPersistence persistence = new MemoryPersistence();
-    private static MqttMessage recievedMessage; //Storing the recieved message
+    private static MqttMessage recievedMessage; //Storing the last recieved message from subscribed topic
     private static MqttCallback callback = new MqttCallback() {
         @Override
         public void connectionLost(Throwable throwable) {
-            //DO SOMETHING
+            //TODO: Handle loss of connection to broker
         }
 
         @Override
         public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-            //DO SOMETHING
+            //TODO: Handle response to message arriving on topic
         }
 
         @Override
         public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-            //DO SOMETHING
+            //TODO: Handle response to delivery of published message completed
         }
     };
 

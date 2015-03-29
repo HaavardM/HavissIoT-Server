@@ -2,6 +2,7 @@ package net.haviss.havissIoTClientJava.havissIoTLibraries;
 
 /**
  * Created by Håvard on 3/29/2015.
+ * This library is for creating commands for the client.
  */
 //Callback function for the command. Use this to implement your own function to a command.
 interface CommandCallback {
