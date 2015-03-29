@@ -5,6 +5,6 @@ package net.haviss.havissIoTClientJava;
  */
 public class Main {
     public static void main(String[] args) {
-
+        //TODO: Add code
     }
 }
