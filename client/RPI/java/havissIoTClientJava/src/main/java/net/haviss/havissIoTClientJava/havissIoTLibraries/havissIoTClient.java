@@ -8,7 +8,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
  * This library connects to an MQTT broker (using Paho MQTT libraries) and handles communication between the broker and client.
  *
  */
-public class havissIoTClient extends havissIoTMessage {
+public class havissIoTClient {
     //Variables
     private static String brokerAddress = "tcp://";
     private static int brokerPort = 1883; //Default port is used if not else specified in connect
@@ -37,7 +37,6 @@ public class havissIoTClient extends havissIoTMessage {
 
     //Class constructor
     public havissIoTClient(String ID) {
-
         clientID = ID;
     }
         //Connect to broker
@@ -81,9 +80,9 @@ public class havissIoTClient extends havissIoTMessage {
         }
     }
     //Publish a message to a given topic
-    public void publishMessage(String topic, String message) {
+    public void publishMessage(String topic, havissIoTMessage msg) {
         try {
-            MqttMessage pubMessage = new MqttMessage(message.getBytes());
+            MqttMessage pubMessage = new MqttMessage(msg.getMessageByte());
             mclient.publish(topic, pubMessage);
         } catch (MqttException me) {
             //TODO: Handle exception
