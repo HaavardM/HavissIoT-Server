@@ -1,28 +1,23 @@
 package net.haviss.havissIoTClientJava.havissIoTLibraries;
 
+import java.util.Objects;
+
 /**
  * Created by Håvard on 3/27/2015.
  * This library generates messages to publish.
  */
 public class havissIoTMessage {
-    //Creates a message containing a temperature value in celsius (float)
-    public String tempCString(String clientID, float tempC) {
-        String message = "@" + clientID + "-TC" + Float.toString(tempC);
-        return message;
+    private String messageString = "";
+    //Add clientID to beginning message string
+    public void addClientID(String clientID) {
+        messageString = "@" +"\"" + clientID + "\"" + messageString;
     }
-    //Creates a message containing a temperature value in celsius (int)
-    public String tempCString(String clientID, int tempC) {
-        String message = "@" + clientID + "-TC" + Integer.toString(tempC);
-        return message;
+    //Add command to message string
+    public void addCommand(havissIoTCommand command, String messageData) {
+        messageString += command.getCommandFlag() + "\"" + messageData + "\"";
     }
-    //Creates a message containing a temperature value in fahrenheit (float)
-    public String tempFString(String clientID, float tempF) {
-        String message = "@" + clientID + "-TF" + Float.toString(tempF);
-        return message;
-    }
-    //Creates a message containing a temperature value in fahrenheit (float)
-    public String tempFString(String clientID, int tempF) {
-        String message = "@" + clientID + "-TF" + Integer.toString(tempF);
-        return message;
+    //Add a custom flag to message
+    public void addCustomFlag(String flag, String messageData) {
+        messageString += flag + "\"" + messageData + "\"";
     }
 }

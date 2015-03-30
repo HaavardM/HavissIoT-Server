@@ -13,7 +13,7 @@ public class havissIoTCommand {
     //Variables
     private String commandName = "";
     private String commandFlag = "";
-    //Command callback - user defined functions run when
+    //Command callback - user defined functions - runs when read from the server
     CommandCallback callback = new CommandCallback() {
         @Override
         public void performCommand() {
@@ -26,6 +26,20 @@ public class havissIoTCommand {
         commandName = name;
         commandFlag = flag;
         callback = userCallback;
+    }
+    //Class constructor if the user doesent need any function
+    public havissIoTCommand (String name, String flag) {
+        //Assigning values to class variables
+        commandName = name;
+        commandFlag = flag;
+    }
+    //Gets name of the command
+    public String getCommandName() {
+        return commandName;
+    }
+    //gets the flag for the command
+    public String getCommandFlag() {
+        return commandFlag;
     }
 
 
