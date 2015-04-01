@@ -3,6 +3,8 @@ package net.haviss.havissIoTClientJava.havissIoTLibraries;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * Created by Håvard Skåra Mellbye on 3/27/2015.
  * This library connects to an MQTT broker (using Paho MQTT libraries) and handles communication between the broker and client.
@@ -80,9 +82,9 @@ public class havissIoTClient {
         }
     }
     //Publish a message to a given topic
-    public void publishMessage(String topic, havissIoTMessage msg) {
+    public void publishMessage(String topic, String msg) {
         try {
-            MqttMessage pubMessage = new MqttMessage(msg.getMessageByte());
+            MqttMessage pubMessage = new MqttMessage(msg.getBytes(StandardCharsets.UTF_8));
             mclient.publish(topic, pubMessage);
         } catch (MqttException me) {
             //TODO: Handle exception
