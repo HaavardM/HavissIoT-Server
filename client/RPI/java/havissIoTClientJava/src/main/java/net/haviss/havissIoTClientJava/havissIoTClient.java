@@ -1,4 +1,4 @@
-package net.haviss.havissIoTClientJava.havissIoTLibraries;
+package net.haviss.havissIoTClientJava;
 
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
@@ -36,7 +36,6 @@ public class havissIoTClient {
             //TODO: Handle response to delivery of published message completed
         }
     };
-
     //Class constructor
     public havissIoTClient(String ID) {
         clientID = ID;
@@ -105,6 +104,10 @@ public class havissIoTClient {
         } catch (MqttException me) {
             //TODO: Handle exceptions
         }
+    }
+    //Get clientID
+    public String getClientID() {
+        return clientID;
     }
 
 }
