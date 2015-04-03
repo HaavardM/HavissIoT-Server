@@ -13,17 +13,20 @@ import java.util.Arrays;
  */
 public class havissIoTStorage {
 
-    //Variables
+
 /*-------------------------------------------------------------------------------------------------------------*/
+    //Variables
     private String serverAddress = "";
     private int serverPort = 27017;
-    //Objects
+
 /*-------------------------------------------------------------------------------------------------------------*/
+    //Objects
     private MongoClient mongoClient;
     public DBCollection dbCollection;
-    //Functions:
+
 /*-------------------------------------------------------------------------------------------------------------*/
-    //Connects to server
+    //Functions:
+    // Connects to server
     public void connect(String address, int port) {
         serverAddress = address;
         serverPort = port;
