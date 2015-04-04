@@ -11,9 +11,18 @@ import java.util.List;
  * Class gets commands and arguments from string and processes it.
  */
 public class havissIoTCommand {
-    private HashMap<String, String> commands = new HashMap<>();
+    private List<command> commandsBuffer = new ArrayList<command>();
     private char argumentIdentifier = ':';
     private char flagIdentifier = '-';
+    //Class for storing command info
+    public static class command {
+        public String flag = "";
+        public String argument = "";
+        public command(String flagString, String argumentString) {
+            flag = flagString;
+            argument = argumentString;
+        }
+    }
     public void getCommands(String fullstring) {
 
         List<String> commandStrings = new ArrayList<String>(); //List for storing seperated commandstrings
@@ -48,7 +57,14 @@ public class havissIoTCommand {
                     }
                 }
             }
-            commands.put(flag, argument);
+            commandsBuffer.add(new command(flag, argument)); //Add the command to the commands list
         }
     }
+    //Gets first command in commandbuffer and returns it. Also deletes the command from list
+    public command getNextCommand() {
+        command temp = commandsBuffer.get(0);
+        commandsBuffer.remove(0);
+        return temp;
+    }
 }
+
