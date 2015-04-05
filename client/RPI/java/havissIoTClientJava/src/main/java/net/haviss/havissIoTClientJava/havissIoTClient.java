@@ -14,10 +14,11 @@ public class havissIoTClient {
     //Variables
     private static String brokerAddress = "tcp://";
     private static int brokerPort = 1883; //Default port is used if not else specified in connect
-    private static String clientID;
+    private static String clientID = "";
     private static int qos = 2;
     //Objects
     private static MqttClient mclient;
+    private configHandler config = new configHandler("config.properties");
     private static MemoryPersistence persistence = new MemoryPersistence();
     private static MqttMessage recievedMessage; //Storing the last recieved message from subscribed topic
     private static MqttCallback callback = new MqttCallback() {
@@ -37,8 +38,8 @@ public class havissIoTClient {
         }
     };
     //Class constructor
-    public havissIoTClient(String ID) {
-        clientID = ID;
+    public havissIoTClient(String cID) {
+        clientID = cID;
     }
         //Connect to broker
     public static void connect(String address) {
