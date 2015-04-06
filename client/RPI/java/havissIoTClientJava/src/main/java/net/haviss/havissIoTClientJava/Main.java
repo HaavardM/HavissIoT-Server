@@ -1,10 +1,7 @@
 package net.haviss.havissIoTClientJava;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Properties;
 import java.util.Random;
 
@@ -16,8 +13,7 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         Properties config = new Properties();
         try {
-            FileInputStream file = new FileInputStream(new File("D:\\Development\\havissIoT\\client\\RPI\\java\\havissIoTClientJava\\src\\main\\java\\net\\haviss\\havissIoTClientJava\\config.properties"));
-            config.load(file);
+            config.load(new BufferedReader(new InputStreamReader(Main.class.getResourceAsStream("/config.properties"))));
         } catch (Exception e) {
             //TODO:Handle exception
             e.printStackTrace();
@@ -32,7 +28,7 @@ public class Main {
         try {
             brokerPort = Integer.parseInt(config.getProperty("brokerPort"));
             qos = Integer.parseInt(config.getProperty("mqttqos"));
-            delayInterval = Integer.parseInt(config.getProperty("intervall"));
+            delayInterval = Integer.parseInt(config.getProperty("delayInterval"));
         } catch(NumberFormatException e) {
             //TODO: Handle exception
             e.printStackTrace();
