@@ -86,7 +86,7 @@ public class havissIoTClient {
     //Publish a message to a given topic
     public void publishMessage(String topic, String msg) {
         try {
-            MqttMessage pubMessage = new MqttMessage(msg.getBytes(StandardCharsets.UTF_8));
+            MqttMessage pubMessage = new MqttMessage(msg.getBytes());
             mclient.publish(topic, pubMessage);
         } catch (MqttException me) {
             //TODO: Handle exception
