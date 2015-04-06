@@ -18,7 +18,6 @@ public class havissIoTClient {
     private static int qos = 2;
     //Objects
     private static MqttClient mclient;
-    private configHandler config = new configHandler("config.properties");
     private static MemoryPersistence persistence = new MemoryPersistence();
     private static MqttMessage recievedMessage; //Storing the last recieved message from subscribed topic
     private static MqttCallback callback = new MqttCallback() {
@@ -52,6 +51,7 @@ public class havissIoTClient {
             mclient.connect(connOpts);
         } catch (MqttException me) {
             //TODO: Handle exception
+            me.printStackTrace();
         }
     }
     //Overloaded function for connect - use with other ports than default
@@ -66,6 +66,7 @@ public class havissIoTClient {
             mclient.connect(connOpts); //Connecting to broker
         } catch (MqttException me) {
             //TODO: Handle exception
+            me.printStackTrace();
         }
     }
     //Set new callback for MQTT-Client
@@ -79,6 +80,7 @@ public class havissIoTClient {
             mclient.disconnect();
         } catch (MqttException me) {
             //TODO: Handle exception
+            me.printStackTrace();
         }
     }
     //Publish a message to a given topic
@@ -88,6 +90,7 @@ public class havissIoTClient {
             mclient.publish(topic, pubMessage);
         } catch (MqttException me) {
             //TODO: Handle exception
+            me.printStackTrace();
         }
     }
     //Subscripe to topic
@@ -96,6 +99,7 @@ public class havissIoTClient {
             mclient.subscribe(topic, qos);
         } catch (MqttException me) {
             //TODO: Handle exceptions
+            me.printStackTrace();
         }
     }
     //Unsubscribe to topic
@@ -104,6 +108,7 @@ public class havissIoTClient {
             mclient.unsubscribe(topic);
         } catch (MqttException me) {
             //TODO: Handle exceptions
+            me.printStackTrace();
         }
     }
     //Get clientID
