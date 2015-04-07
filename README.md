@@ -11,7 +11,7 @@ Plan:
 
 Planned clients:
 - Arduino with WiFi shield
-- Raspberry PI 
+- Raspberry PI - https://github.com/HaavardM/havissIoT-RPI
 - Intel Galileo running Windows
 - Computer
 
