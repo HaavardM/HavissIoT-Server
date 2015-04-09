@@ -2,6 +2,7 @@ package net.haviss.havissIoTServer;
 
 import com.mongodb.*;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -16,13 +17,10 @@ public class havissIoTStorage implements Runnable {
     private boolean stopThread = false;
     private String threadName = "storageThread";
     private boolean threadPaused = false;
-
-
     //Objects
     public Thread t;
     private MongoClient mongoClient;
     public DBCollection dbCollection;
-
     //Functions:
     @Override
     public void run() {
@@ -35,7 +33,11 @@ public class havissIoTStorage implements Runnable {
                 if(toStore.size() > 0) {
                     try {
                         for (String[] s : toStore) {
-                            BasicDBObject doc = new BasicDBObject("Topic", s[0]);
+                            getCollection(s[0]);
+                            String date = new Date().toString();
+                            BasicDBObject doc = new BasicDBObject("Topic", s[0])
+                                    .append("Value", s[1])
+                                    .append("Date", date);
                             dbCollection.insert(doc);
                         }
                         toStore.clear(); //All data has been stored, clear toStore list
@@ -90,6 +92,7 @@ public class havissIoTStorage implements Runnable {
     public void getCollection(String collection) {
         this.dbCollection = dbCollection.getCollection(collection);
     }
+    //Adding values for thread to store in Db
     public void addValues(String topic, String value) {
         String tempValues[] = {topic, value};
         toStore.add(tempValues);
