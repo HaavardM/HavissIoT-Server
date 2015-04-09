@@ -1,13 +1,8 @@
 package net.haviss.havissIoTServer;
 
-import com.mongodb.DBCollection;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
+import com.mongodb.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Håvard on 4/3/2015.
@@ -17,47 +12,88 @@ public class havissIoTStorage implements Runnable {
     //Variables
     private String serverAddress = "";
     private int serverPort = 27017;
-    private List<String> valuesToAdd = new ArrayList<String>();
-    private boolean threadIsRunning = true;
+    private ArrayList<String[]> toStore = new ArrayList<>();
+    private boolean stopThread = false;
+    private String threadName = "storageThread";
+    private boolean threadPaused = false;
+
 
     //Objects
+    public Thread t;
     private MongoClient mongoClient;
     public DBCollection dbCollection;
 
     //Functions:
     @Override
     public void run() {
-        while(threadIsRunning) {
-            //TODO: Handle code to be excecuted in new thread
+        try {
+            while (!stopThread) {
+                //TODO: Handle code to be excecuted in new thread
+                while (threadPaused) {
+                    wait();
+                }
+                if(toStore.size() > 0) {
+                    try {
+                        for (String[] s : toStore) {
+                            BasicDBObject doc = new BasicDBObject("Topic", s[0]);
+                            dbCollection.insert(doc);
+                        }
+                        toStore.clear(); //All data has been stored, clear toStore list
+                    } catch (MongoException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    wait();
+                }
+            }
+        } catch (InterruptedException e) {
+            //TODO: Handle exception
+            e.printStackTrace();
         }
+    }
+    public void start() {
+        if(t == null) {
+            t = new Thread(this, threadName);
+            t.start();
+        }
+    }
+    public void pauseThread() {
+        this.threadPaused = true; //Tell thread to pause
+    }
+    public void resumeThread() {
+        this.threadPaused = false;
     }
     //Constructor - stores new values and connects to server
     public havissIoTStorage(String serverAddress, int serverPort) {
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
-        connect(this.serverAddress, this.serverPort);
+        this.connect(this.serverAddress, this.serverPort);
     }
     //Overloaded constructor - with authentication
     public havissIoTStorage(String serverAddress, int serverPort, String username, String password, String db) {
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
-        connect(this.serverAddress, this.serverPort, username, password, db);
+        this.connect(this.serverAddress, this.serverPort, username, password, db);
     }
     // Connects to server
-    public void connect(String address, int port) {
-        serverAddress = address;
-        serverPort = port;
-        mongoClient = new MongoClient(serverAddress, serverPort);
+    private void connect(String address, int port) {
+        this.serverAddress = address;
+        this.serverPort = port;
+        this.mongoClient = new MongoClient(serverAddress, serverPort);
     }
     //Overloaded connect funtion to enable autentication
-    public void connect(String address, int port, String username, String password, String db) {
+    private void connect(String address, int port, String username, String password, String db) {
         MongoCredential credential = MongoCredential.createCredential(username, db, password.toCharArray());
-        mongoClient = new MongoClient(new ServerAddress(serverAddress), Arrays.asList(credential));
+        this.mongoClient = new MongoClient(new ServerAddress(serverAddress), Arrays.asList(credential));
     }
+    //Get collection from database
     public void getCollection(String collection) {
-        dbCollection = dbCollection.getCollection(collection);
+        this.dbCollection = dbCollection.getCollection(collection);
     }
-    public void addValue(String value) {
-        valuesToAdd.add(value); //Adding values to list so the thread can process it.
+    public void addValues(String topic, String value) {
+        String tempValues[] = {topic, value};
+        toStore.add(tempValues);
     }
+
+
 }
