@@ -18,6 +18,7 @@ public class havissIoTStorage implements Runnable {
     private String serverAddress = "";
     private int serverPort = 27017;
     private List<String> valuesToAdd = new ArrayList<String>();
+    private boolean threadIsRunning = true;
 
     //Objects
     private MongoClient mongoClient;
@@ -26,8 +27,9 @@ public class havissIoTStorage implements Runnable {
     //Functions:
     @Override
     public void run() {
-        connect(serverAddress, serverPort);
-        //TODO: Handle code to be excecuted in new thread
+        while(threadIsRunning) {
+            //TODO: Handle code to be excecuted in new thread
+        }
     }
     //Constructor - stores new values and connects to server
     public havissIoTStorage(String serverAddress, int serverPort) {
