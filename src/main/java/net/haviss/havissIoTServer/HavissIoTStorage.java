@@ -25,6 +25,8 @@ public class HavissIoTStorage implements Runnable {
     @Override
     public void run() {
         try {
+            System.out.println("Storage thread started");
+            System.out.println("Thread name:\t" + t.getName());
             while (!stopThread) {
                 //TODO: Handle code to be excecuted in new thread
                 while (threadPaused) {
@@ -66,13 +68,13 @@ public class HavissIoTStorage implements Runnable {
         this.threadPaused = false;
     }
     //Constructor - stores new values and connects to server
-    public havissIoTStorage(String serverAddress, int serverPort) {
+    public HavissIoTStorage(String serverAddress, int serverPort) {
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
         this.connect(this.serverAddress, this.serverPort);
     }
     //Overloaded constructor - with authentication
-    public havissIoTStorage(String serverAddress, int serverPort, String username, String password, String db) {
+    public HavissIoTStorage(String serverAddress, int serverPort, String username, String password, String db) {
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
         this.connect(this.serverAddress, this.serverPort, username, password, db);

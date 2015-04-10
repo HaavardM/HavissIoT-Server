@@ -1,4 +1,4 @@
-package net.haviss.havissIoTClientJava;
+package net.haviss.havissIoTServer;
 
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
@@ -37,7 +37,7 @@ public class HavissIoTClient {
         }
     };
     //Class constructor
-    public havissIoTClient(String cID) {
+    public HavissIoTClient(String cID) {
         clientID = cID;
     }
         //Connect to broker
