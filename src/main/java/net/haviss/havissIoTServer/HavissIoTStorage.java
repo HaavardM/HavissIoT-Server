@@ -6,10 +6,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Created by Håvard on 4/3/2015.
+ * Created by HÃ¥vard on 4/3/2015.
  * This class connects to a mongodb database and handles all storage.
  */
-public class havissIoTStorage implements Runnable {
+public class HavissIoTStorage implements Runnable {
     //Variables
     private String serverAddress = "";
     private int serverPort = 27017;
