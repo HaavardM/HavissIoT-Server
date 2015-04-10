@@ -64,12 +64,14 @@ public class IoTStorage implements Runnable {
             e.printStackTrace();
         }
     }
+    //To start thread
     public void start() {
         if(t == null) {
             t = new Thread(this, threadName);
             t.start();
         }
     }
+    //Pause thread if needed
     public void pauseThread() {
         this.threadPaused = true; //Tell thread to pause
     }
