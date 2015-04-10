@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Scanner;
 
 /**
  * Created by Håvard on 3/27/2015.
@@ -31,6 +32,7 @@ public class Main {
         IoTClient client;
         Properties prop = new Properties();
         IoTStorage storage;
+        Scanner scanner = new Scanner(System.in);
         try {
             prop.load(new BufferedReader(new InputStreamReader(Main.class.getResourceAsStream("/config.properties"))));
             brokerAddress = prop.getProperty("brokerAddress");
@@ -74,7 +76,7 @@ public class Main {
 
             @Override
             public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-                storage.addValues(s, mqttMessage.toString());
+                storage.addValues(s, mqttMessage.toString()); //Add values to storage handler
             }
 
             @Override
@@ -82,6 +84,14 @@ public class Main {
 
             }
         };
+        //Set new callback functions
+        client.setCallback(callback);
+        while(true) {
+            System.out.print("Enter new topic: ");
+            String topic = scanner.nextLine();
+            client.subscribeToTopic(topic, qos);
+            System.out.println("Subscribed!");
+        }
 
     }
 
