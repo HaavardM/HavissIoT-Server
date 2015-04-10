@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
  * This library connects to an MQTT broker (using Paho MQTT libraries) and handles communication between the broker and client.
  *
  */
-public class havissIoTClient {
+public class HavissIoTClient {
     //Variables
     private String brokerAddress = "tcp://";
     private int brokerPort = 1883; //Default port is used if not else specified in connect
