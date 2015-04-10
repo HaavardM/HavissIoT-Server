@@ -28,9 +28,9 @@ public class Main {
         String databaseAddress = "";
         int databasePort = 27017;
         //Objects
-        HavissIoTClient client;
+        IoTClient client;
         Properties prop = new Properties();
-        HavissIoTStorage storage;
+        IoTStorage storage;
         try {
             prop.load(new BufferedReader(new InputStreamReader(Main.class.getResourceAsStream("/config.properties"))));
             brokerAddress = prop.getProperty("brokerAddress");
@@ -44,7 +44,7 @@ public class Main {
             e.printStackTrace();
         }
 
-        client = new HavissIoTClient(clientID);
+        client = new IoTClient(clientID);
 
         //Print settings
         System.out.println("MQTT broker settings:");
@@ -62,7 +62,7 @@ public class Main {
 
         //Connecting to database
         System.out.println("\nConnecting to database");
-        storage = new HavissIoTStorage(databaseAddress, databasePort);
+        storage = new IoTStorage(databaseAddress, databasePort);
         System.out.println("Connected to " + databaseAddress);
         //Starting storage thread
         storage.start();

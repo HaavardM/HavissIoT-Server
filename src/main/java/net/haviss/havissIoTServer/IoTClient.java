@@ -19,7 +19,6 @@ public class IoTClient {
     //Objects
     private MqttClient mclient;
     private MemoryPersistence persistence = new MemoryPersistence();
-    private MqttMessage recievedMessage; //Storing the last recieved message from subscribed topic
     private MqttCallback callback = new MqttCallback() {
         @Override
         public void connectionLost(Throwable throwable) {
