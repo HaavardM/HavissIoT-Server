@@ -20,7 +20,7 @@ public class havissIoTStorage implements Runnable {
     //Objects
     public Thread t;
     private MongoClient mongoClient;
-    public DBCollection dbCollection;
+    private DBCollection dbCollection;
     //Functions:
     @Override
     public void run() {
@@ -30,9 +30,9 @@ public class havissIoTStorage implements Runnable {
                 while (threadPaused) {
                     wait();
                 }
-                if(toStore.size() > 0) {
+                if(getToStore().size() > 0) {
                     try {
-                        for (String[] s : toStore) {
+                        for (String[] s : getToStore()) {
                             getCollection(s[0]);
                             String date = new Date().toString();
                             BasicDBObject doc = new BasicDBObject("Topic", s[0])
@@ -93,9 +93,13 @@ public class havissIoTStorage implements Runnable {
         this.dbCollection = dbCollection.getCollection(collection);
     }
     //Adding values for thread to store in Db
-    public void addValues(String topic, String value) {
+    public synchronized void addValues(String topic, String value) {
         String tempValues[] = {topic, value};
         toStore.add(tempValues);
+    }
+    //Gets the toStore list - synchronized
+    public synchronized ArrayList<String[]> getToStore() {
+        return toStore;
     }
 
 
