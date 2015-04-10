@@ -28,6 +28,7 @@ public class Main {
         //Database settings
         String databaseAddress = "";
         int databasePort = 27017;
+        String database = "";
         //Objects
         IoTClient client;
         Properties prop = new Properties();
@@ -41,13 +42,13 @@ public class Main {
             clientID = prop.getProperty("clientID");
             databaseAddress = prop.getProperty("databaseAddress");
             databasePort = Integer.parseInt(prop.getProperty("databasePort"));
+            database = prop.getProperty("database");
         } catch (IOException e) {
             //TODO: Handle exception
             e.printStackTrace();
         }
-
+        //New IoTClient with correct settings
         client = new IoTClient(clientID);
-
         //Print settings
         System.out.println("MQTT broker settings:");
         System.out.println("Broker address:\t " + brokerAddress);
@@ -61,27 +62,31 @@ public class Main {
         System.out.println("\nConnecting to broker");
         client.connect(brokerAddress, brokerPort);
         System.out.println("Connected to " + brokerAddress);
-
         //Connecting to database
         System.out.println("\nConnecting to database");
-        storage = new IoTStorage(databaseAddress, databasePort);
+        storage = new IoTStorage(databaseAddress, databasePort, database);
         System.out.println("Connected to " + databaseAddress);
         //Starting storage thread
         storage.start();
+        //New callback methods for MQTT client
         MqttCallback callback = new MqttCallback() {
             @Override
             public void connectionLost(Throwable throwable) {
-
+                //TODO: Handle connection lost
             }
+
 
             @Override
             public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
                 storage.addValues(s, mqttMessage.toString()); //Add values to storage handler
+                synchronized (storage.lock) {
+                    storage.lock.notify(); //Resumes thread after wait
+                }
             }
 
             @Override
             public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-
+                //No messages is delivered - should never be called
             }
         };
         //Set new callback functions

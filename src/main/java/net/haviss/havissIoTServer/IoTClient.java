@@ -114,5 +114,4 @@ public class IoTClient {
     public String getClientID() {
         return clientID;
     }
-
 }

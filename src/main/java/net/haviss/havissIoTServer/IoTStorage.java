@@ -1,9 +1,11 @@
 package net.haviss.havissIoTServer;
 
 import com.mongodb.*;
+import com.mongodb.client.MongoDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.ObjDoubleConsumer;
 
 /**
  * Created by Håvard on 4/3/2015.
@@ -13,24 +15,28 @@ public class IoTStorage implements Runnable {
     //Variables
     private String serverAddress = "";
     private int serverPort = 27017;
-    private ArrayList<String[]> toStore = new ArrayList<>();
+    private List<String[]> toStore = Collections.synchronizedList(new ArrayList<>());
     private boolean stopThread = false;
     private String threadName = "storageThread";
     private boolean threadPaused = false;
     //Objects
     public Thread t;
     private MongoClient mongoClient;
+    private DB db;
     private DBCollection dbCollection;
+    public final Object lock = new Object();
     //Functions:
     @Override
     public void run() {
         try {
             System.out.println("Storage thread started");
             System.out.println("Thread name:\t" + t.getName());
-            while (!stopThread) {
+            while (!Thread.interrupted()) {
                 //TODO: Handle code to be excecuted in new thread
                 while (threadPaused) {
-                    wait();
+                    synchronized (lock) {
+                        lock.wait();
+                    }
                 }
                 if(getToStore().size() > 0) {
                     try {
@@ -47,7 +53,10 @@ public class IoTStorage implements Runnable {
                         e.printStackTrace();
                     }
                 } else {
-                    wait();
+                    //If no data to store - wait for notification
+                    synchronized (lock) {
+                        lock.wait();
+                    }
                 }
             }
         } catch (InterruptedException e) {
@@ -66,18 +75,23 @@ public class IoTStorage implements Runnable {
     }
     public void resumeThread() {
         this.threadPaused = false;
+        synchronized (lock) {
+            lock.notify(); //Notify thread - resumes thread after wait
+        }
     }
     //Constructor - stores new values and connects to server
-    public IoTStorage(String serverAddress, int serverPort) {
+    public IoTStorage(String serverAddress, int serverPort, String db) {
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
         this.connect(this.serverAddress, this.serverPort);
+        this.db = mongoClient.getDB(db);
     }
     //Overloaded constructor - with authentication
     public IoTStorage(String serverAddress, int serverPort, String username, String password, String db) {
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
         this.connect(this.serverAddress, this.serverPort, username, password, db);
+        this.db = mongoClient.getDB(db);
     }
     // Connects to server
     private void connect(String address, int port) {
@@ -92,7 +106,7 @@ public class IoTStorage implements Runnable {
     }
     //Get collection from database
     public void getCollection(String collection) {
-        this.dbCollection = dbCollection.getCollection(collection);
+        this.dbCollection = db.getCollection(collection);
     }
     //Adding values for thread to store in Db
     public synchronized void addValues(String topic, String value) {
@@ -100,9 +114,7 @@ public class IoTStorage implements Runnable {
         toStore.add(tempValues);
     }
     //Gets the toStore list - synchronized
-    public synchronized ArrayList<String[]> getToStore() {
+    public synchronized List<String[]> getToStore() {
         return toStore;
     }
-
-
 }
