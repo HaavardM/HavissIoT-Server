@@ -12,15 +12,15 @@ import java.nio.charset.StandardCharsets;
  */
 public class havissIoTClient {
     //Variables
-    private static String brokerAddress = "tcp://";
-    private static int brokerPort = 1883; //Default port is used if not else specified in connect
-    private static String clientID = "";
-    private static int qos = 2;
+    private String brokerAddress = "tcp://";
+    private int brokerPort = 1883; //Default port is used if not else specified in connect
+    private String clientID = "";
+    private int qos = 2;
     //Objects
-    private static MqttClient mclient;
-    private static MemoryPersistence persistence = new MemoryPersistence();
-    private static MqttMessage recievedMessage; //Storing the last recieved message from subscribed topic
-    private static MqttCallback callback = new MqttCallback() {
+    private MqttClient mclient;
+    private MemoryPersistence persistence = new MemoryPersistence();
+    private MqttMessage recievedMessage; //Storing the last recieved message from subscribed topic
+    private MqttCallback callback = new MqttCallback() {
         @Override
         public void connectionLost(Throwable throwable) {
             //TODO: Handle loss of connection to broker
@@ -41,7 +41,7 @@ public class havissIoTClient {
         clientID = cID;
     }
         //Connect to broker
-    public static void connect(String address) {
+    public void connect(String address) {
         brokerAddress += (address + ":" + Integer.toString(brokerPort));
         try {
             mclient = new MqttClient(brokerAddress, clientID, persistence); //Setting up MQTT client and connect to broker
