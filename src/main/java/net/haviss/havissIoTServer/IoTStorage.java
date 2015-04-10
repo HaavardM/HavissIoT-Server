@@ -9,7 +9,7 @@ import java.util.*;
  * Created by Håvard on 4/3/2015.
  * This class connects to a mongodb database and handles all storage.
  */
-public class HavissIoTStorage implements Runnable {
+public class IoTStorage implements Runnable {
     //Variables
     private String serverAddress = "";
     private int serverPort = 27017;
@@ -68,13 +68,13 @@ public class HavissIoTStorage implements Runnable {
         this.threadPaused = false;
     }
     //Constructor - stores new values and connects to server
-    public HavissIoTStorage(String serverAddress, int serverPort) {
+    public IoTStorage(String serverAddress, int serverPort) {
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
         this.connect(this.serverAddress, this.serverPort);
     }
     //Overloaded constructor - with authentication
-    public HavissIoTStorage(String serverAddress, int serverPort, String username, String password, String db) {
+    public IoTStorage(String serverAddress, int serverPort, String username, String password, String db) {
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
         this.connect(this.serverAddress, this.serverPort, username, password, db);
