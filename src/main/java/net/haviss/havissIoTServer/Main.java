@@ -32,7 +32,7 @@ public class Main {
         //Objects
         IoTClient client;
         Properties prop = new Properties();
-        IoTStorage storage;
+        final IoTStorage storage;
         Scanner scanner = new Scanner(System.in);
         try {
             prop.load(new BufferedReader(new InputStreamReader(Main.class.getResourceAsStream("/config.properties"))));

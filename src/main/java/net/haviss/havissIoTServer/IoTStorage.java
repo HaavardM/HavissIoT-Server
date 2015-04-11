@@ -5,7 +5,6 @@ import com.mongodb.client.MongoDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.function.ObjDoubleConsumer;
 
 /**
  * Created by Håvard on 4/3/2015.
@@ -119,4 +118,4 @@ public synchronized void addValues(String topic, String value) {
 public synchronized List<String[]> getToStore() {
         return toStore;
         }
-        }
+}
