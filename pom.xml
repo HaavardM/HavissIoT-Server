@@ -45,7 +45,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <encoding>UTF-8</encoding>
+                    <encoding>cp1252</encoding>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
                 </configuration>
