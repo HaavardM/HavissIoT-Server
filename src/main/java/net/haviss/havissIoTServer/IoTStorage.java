@@ -14,7 +14,7 @@ public class IoTStorage implements Runnable {
     //Variables
     private String serverAddress = "";
     private int serverPort = 27017;
-    private List<String[]> toStore = Collections.synchronizedList(new ArrayList<>());
+    private List<String[]> toStore = new ArrayList<>();
     private boolean stopThread = false;
     private String threadName = "storageThread";
     private boolean threadPaused = false;
