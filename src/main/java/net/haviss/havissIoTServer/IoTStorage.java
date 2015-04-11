@@ -18,6 +18,7 @@ public class IoTStorage implements Runnable {
     private boolean stopThread = false;
     private String threadName = "storageThread";
     private boolean threadPaused = false;
+    private boolean threadIsBusy = true;
     //Objects
     public Thread t;
     private MongoClient mongoClient;
@@ -30,6 +31,7 @@ public class IoTStorage implements Runnable {
         try {
             System.out.println("Storage thread started");
             System.out.println("Thread name:\t" + t.getName());
+            threadIsBusy = false;
             while (!Thread.interrupted()) {
                 //TODO: Handle code to be excecuted in new thread
                 while (threadPaused) {
@@ -99,23 +101,30 @@ public class IoTStorage implements Runnable {
         this.serverAddress = address;
         this.serverPort = port;
         this.mongoClient = new MongoClient(serverAddress, serverPort);
-        }
+    }
 //Overloaded connect funtion to enable autentication
-private void connect(String address, int port, String username, String password, String db) {
+    private void connect(String address, int port, String username, String password, String db) {
         MongoCredential credential = MongoCredential.createCredential(username, db, password.toCharArray());
         this.mongoClient = new MongoClient(new ServerAddress(serverAddress), Arrays.asList(credential));
-        }
-//Get collection from database
-public void getCollection(String collection) {
+    }
+        //Get collection from database
+    public void getCollection(String collection) {
         this.dbCollection = db.getCollection(collection);
-        }
-//Adding values for thread to store in Db
-public synchronized void addValues(String topic, String value) {
+    }
+        //Adding values for thread to store in Db
+    public synchronized void addValues(String topic, String value) {
         String tempValues[] = {topic, value};
         toStore.add(tempValues);
-        }
-//Gets the toStore list - synchronized
-public synchronized List<String[]> getToStore() {
+    }
+        //Gets the toStore list - synchronized
+    public synchronized List<String[]> getToStore() {
         return toStore;
-        }
+    }
+    public synchronized boolean isThreadBusy() {
+        return this.threadIsBusy;
+    }
+    public synchronized void setThreadState  (boolean state) {
+        this.threadIsBusy = state;
+    }
+
 }

@@ -50,7 +50,6 @@ public class IoTClient {
             mclient.connect(connOpts);
         } catch (MqttException me) {
             //TODO: Handle exception
-            me.printStackTrace();
         }
     }
     //Overloaded function for connect - use with other ports than default
@@ -65,7 +64,6 @@ public class IoTClient {
             mclient.connect(connOpts); //Connecting to broker
         } catch (MqttException me) {
             //TODO: Handle exception
-            me.printStackTrace();
         }
     }
     //Set new callback for MQTT-Client
@@ -89,7 +87,6 @@ public class IoTClient {
             mclient.publish(topic, pubMessage);
         } catch (MqttException me) {
             //TODO: Handle exception
-            me.printStackTrace();
         }
     }
     //Subscripe to topic
@@ -98,7 +95,6 @@ public class IoTClient {
             mclient.subscribe(topic, qos);
         } catch (MqttException me) {
             //TODO: Handle exceptions
-            me.printStackTrace();
         }
     }
     //Unsubscribe to topic
@@ -107,7 +103,6 @@ public class IoTClient {
             mclient.unsubscribe(topic);
         } catch (MqttException me) {
             //TODO: Handle exceptions
-            me.printStackTrace();
         }
     }
     //Get clientID

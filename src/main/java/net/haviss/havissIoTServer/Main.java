@@ -92,12 +92,15 @@ public class Main {
         //Set new callback functions
         client.setCallback(callback);
         //Check for new topics - subscribing to topics
+        while(storage.isThreadBusy());
         while(true) {
             System.out.print("Enter new topic: ");
             String topic = scanner.nextLine();
-            client.subscribeToTopic(topic, qos);
-            System.out.println("Subscribed!");
-            topics.add(topic);
+            if(topic.length() > 0) {
+                client.subscribeToTopic(topic, qos);
+                System.out.println("Subscribed!");
+                topics.add(topic);
+            }
         }
 
     }
