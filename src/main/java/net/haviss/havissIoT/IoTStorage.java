@@ -1,4 +1,4 @@
-package net.haviss.havissIoTServer;
+package net.haviss.havissIoT;
 
 import com.mongodb.*;
 import com.mongodb.client.MongoDatabase;
@@ -33,7 +33,6 @@ public class IoTStorage implements Runnable {
             System.out.println("Thread name:\t" + t.getName());
             threadIsBusy = false;
             while (!Thread.interrupted()) {
-                //TODO: Handle code to be excecuted in new thread
                 while (threadPaused) {
                     synchronized (lock) {
                         lock.wait();

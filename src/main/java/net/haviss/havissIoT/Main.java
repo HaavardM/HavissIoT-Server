@@ -1,4 +1,4 @@
-package net.haviss.havissIoTServer;
+package net.haviss.havissIoT;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
