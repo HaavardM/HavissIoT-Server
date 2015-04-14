@@ -1,5 +1,7 @@
 package net.haviss.havissIoT;
 
+import com.mongodb.Mongo;
+import com.mongodb.MongoException;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -17,7 +19,6 @@ import java.util.Scanner;
  */
 public class Main {
     public static void main(String args[]) {
-
         //Topics
         List<String> topics = new ArrayList<>();
         //MQTT settings
