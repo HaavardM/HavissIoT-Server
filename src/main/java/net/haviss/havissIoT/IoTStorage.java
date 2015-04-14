@@ -1,7 +1,9 @@
 package net.haviss.havissIoT;
 
 import com.mongodb.*;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -22,8 +24,8 @@ public class IoTStorage implements Runnable {
     //Objects
     public Thread t;
     private MongoClient mongoClient;
-    private DB db;
-    private DBCollection dbCollection;
+    private MongoDatabase db;
+    private MongoCollection<Document> dbCollection;
     public final Object lock = new Object();
     //Functions:
     @Override
@@ -43,10 +45,10 @@ public class IoTStorage implements Runnable {
                         for (String[] s : getToStore()) {
                             getCollection(s[0]);
                             String date = new Date().toString();
-                            BasicDBObject doc = new BasicDBObject("Topic", s[0])
+                            Document document = new Document("Topic", s[0])
                                     .append("Value", s[1])
                                     .append("Date", date);
-                            dbCollection.insert(doc);
+                            dbCollection.insertOne(document);
                         }
                         toStore.clear(); //All data has been stored, clear toStore list
                     } catch (MongoException e) {
@@ -86,14 +88,14 @@ public class IoTStorage implements Runnable {
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
         this.connect(this.serverAddress, this.serverPort);
-        this.db = mongoClient.getDB(db);
+        this.db = mongoClient.getDatabase(db);
     }
     //Overloaded constructor - with authentication
     public IoTStorage(String serverAddress, int serverPort, String username, String password, String db) {
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
         this.connect(this.serverAddress, this.serverPort, username, password, db);
-        this.db = mongoClient.getDB(db);
+        this.db = mongoClient.getDatabase(db);
     }
     // Connects to server
     private void connect(String address, int port) {
@@ -125,6 +127,5 @@ public class IoTStorage implements Runnable {
     public synchronized void setThreadState  (boolean state) {
         this.threadIsBusy = state;
     }
-
 
 }
