@@ -14,9 +14,6 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Created by H�vard on 3/27/2015.
- */
 public class Main {
 
     public static void main(String args[]) {
@@ -108,15 +105,15 @@ public class Main {
         client.setCallback(callback);
 
         //Check for new topics - subscribing to topics
-        while(storage.isThreadBusy());
+        while (storage.isThreadBusy()) ;
         System.out.println("\n\n");
 
-        while(true) {
+        while (true) {
             System.out.print("Enter new topic or \"exit\": ");
             String topic = scanner.nextLine();
             topic.toLowerCase();
-            if(topic.length() > 0) {
-                if(topic.compareTo("exit") == 0) {
+            if (topic.length() > 0) {
+                if (topic.compareTo("exit") == 0) {
                     System.exit(0);
                 }
                 client.subscribeToTopic(topic, qos);

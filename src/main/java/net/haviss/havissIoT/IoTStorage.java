@@ -43,7 +43,7 @@ public class IoTStorage implements Runnable {
                         lock.wait();
                     }
                 }
-                if(getToStore().size() > 0) {
+                if (getToStore().size() > 0) {
                     try {
                         for (String[] s : getToStore()) {
                             getCollection(s[0]);
@@ -69,23 +69,27 @@ public class IoTStorage implements Runnable {
             e.printStackTrace();
         }
     }
+
     //To start thread
     public void start() {
-        if(t == null) {
+        if (t == null) {
             t = new Thread(this, threadName);
             t.start();
         }
     }
+
     //Pause thread if needed
     public void pauseThread() {
         this.threadPaused = true; //Tell thread to pause
     }
+
     public void resumeThread() {
         this.threadPaused = false;
         synchronized (lock) {
             lock.notify(); //Notify thread - resumes thread after wait
         }
     }
+
     //Constructor - stores new values and connects to server
     public IoTStorage(String serverAddress, int serverPort, String db) {
         this.serverAddress = serverAddress;
@@ -93,6 +97,7 @@ public class IoTStorage implements Runnable {
         this.connect(this.serverAddress, this.serverPort);
         this.db = mongoClient.getDatabase(db);
     }
+
     //Overloaded constructor - with authentication
     public IoTStorage(String serverAddress, int serverPort, String username, String password, String db) {
         this.serverAddress = serverAddress;
@@ -100,37 +105,45 @@ public class IoTStorage implements Runnable {
         this.connect(this.serverAddress, this.serverPort, username, password, db);
         this.db = mongoClient.getDatabase(db);
     }
+
     // Connects to server
     private void connect(String address, int port) {
         this.serverAddress = address;
         this.serverPort = port;
         this.mongoClient = new MongoClient(serverAddress, serverPort);
     }
+
     //Overloaded connect funtion to enable autentication
     private void connect(String address, int port, String username, String password, String db) {
         MongoCredential credential = MongoCredential.createCredential(username, db, password.toCharArray());
         this.mongoClient = new MongoClient(new ServerAddress(serverAddress), Arrays.asList(credential));
     }
+
     //Get collection from database
     public void getCollection(String collection) {
         this.dbCollection = db.getCollection(collection);
     }
+
     //Adding values for thread to store in Db
     public synchronized void addValues(String topic, String value) {
         String tempValues[] = {topic, value};
         toStore.add(tempValues);
     }
+
     //Gets the toStore list - synchronized
     public CopyOnWriteArrayList<String[]> getToStore() {
         return toStore;
     }
+
     public boolean isThreadBusy() {
         return this.threadIsBusy;
     }
-    public void setThreadState  (boolean state) {
+
+    public void setThreadState(boolean state) {
         this.threadIsBusy = state;
     }
+
     public void stop() {
-       //TODO: Stop thread
+        //TODO: Stop thread
     }
 }
