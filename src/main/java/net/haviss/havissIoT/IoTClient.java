@@ -46,17 +46,7 @@ public class IoTClient {
 
     //Connect to broker
     public void connect(String address) {
-        brokerAddress += (address + ":" + Integer.toString(brokerPort));
-        try {
-            mclient = new MqttClient(brokerAddress, clientID, persistence); //Setting up MQTT client and connect to broker
-            mclient.setCallback(callback);
-            MqttConnectOptions connOpts = new MqttConnectOptions();
-            connOpts.setCleanSession(true);
-            mclient.connect(connOpts);
-        } catch (MqttException me) {
-            me.printStackTrace();
-            //TODO: Handle exception
-        }
+        this.connect(address, brokerPort);
     }
 
     //Overloaded function for connect - use with other ports than default
