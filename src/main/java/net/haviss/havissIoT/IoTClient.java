@@ -11,15 +11,19 @@ import java.nio.charset.StandardCharsets;
  *
  */
 public class IoTClient {
+
     //Variables
     private String brokerAddress = "tcp://";
     private int brokerPort = 1883; //Default port is used if not else specified in connect
     private String clientID = "";
     private int qos = 2;
+
     //Objects
     private MqttClient mclient;
     private MemoryPersistence persistence = new MemoryPersistence();
+
     private MqttCallback callback = new MqttCallback() {
+
         @Override
         public void connectionLost(Throwable throwable) {
             //TODO: Handle loss of connection to broker
@@ -39,7 +43,8 @@ public class IoTClient {
     public IoTClient(String cID) {
         clientID = cID;
     }
-        //Connect to broker
+
+    //Connect to broker
     public void connect(String address) {
         brokerAddress += (address + ":" + Integer.toString(brokerPort));
         try {
@@ -49,6 +54,7 @@ public class IoTClient {
             connOpts.setCleanSession(true);
             mclient.connect(connOpts);
         } catch (MqttException me) {
+            me.printStackTrace();
             //TODO: Handle exception
         }
     }

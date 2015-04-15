@@ -5,8 +5,8 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -14,6 +14,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * This class connects to a mongodb database and handles all storage.
  */
 public class IoTStorage implements Runnable {
+
     //Variables
     private String serverAddress = "";
     private int serverPort = 27017;
@@ -22,13 +23,14 @@ public class IoTStorage implements Runnable {
     private String threadName = "storageThread";
     private boolean threadPaused = false;
     private boolean threadIsBusy = true;
+
     //Objects
     public Thread t;
     private MongoClient mongoClient;
     private MongoDatabase db;
     private MongoCollection<Document> dbCollection;
     public final Object lock = new Object();
-    //Functions:
+
     @Override
     public void run() {
         try {
@@ -104,28 +106,28 @@ public class IoTStorage implements Runnable {
         this.serverPort = port;
         this.mongoClient = new MongoClient(serverAddress, serverPort);
     }
-//Overloaded connect funtion to enable autentication
+    //Overloaded connect funtion to enable autentication
     private void connect(String address, int port, String username, String password, String db) {
         MongoCredential credential = MongoCredential.createCredential(username, db, password.toCharArray());
         this.mongoClient = new MongoClient(new ServerAddress(serverAddress), Arrays.asList(credential));
     }
-        //Get collection from database
+    //Get collection from database
     public void getCollection(String collection) {
         this.dbCollection = db.getCollection(collection);
     }
-        //Adding values for thread to store in Db
+    //Adding values for thread to store in Db
     public synchronized void addValues(String topic, String value) {
         String tempValues[] = {topic, value};
         toStore.add(tempValues);
     }
-        //Gets the toStore list - synchronized
-    public  CopyOnWriteArrayList<String[]> getToStore() {
+    //Gets the toStore list - synchronized
+    public CopyOnWriteArrayList<String[]> getToStore() {
         return toStore;
     }
-    public  boolean isThreadBusy() {
+    public boolean isThreadBusy() {
         return this.threadIsBusy;
     }
-    public  void setThreadState  (boolean state) {
+    public void setThreadState  (boolean state) {
         this.threadIsBusy = state;
     }
     public void stop() {
