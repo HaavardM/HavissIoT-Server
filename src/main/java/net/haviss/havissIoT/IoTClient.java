@@ -8,18 +8,21 @@ import java.nio.charset.StandardCharsets;
 /**
  * Created by Håvard Skåra Mellbye on 3/27/2015.
  * This library connects to an MQTT broker (using Paho MQTT libraries) and handles communication between the broker and client.
- *
  */
 public class IoTClient {
+
     //Variables
     private String brokerAddress = "tcp://";
     private int brokerPort = 1883; //Default port is used if not else specified in connect
     private String clientID = "";
     private int qos = 2;
+
     //Objects
     private MqttClient mclient;
     private MemoryPersistence persistence = new MemoryPersistence();
+
     private MqttCallback callback = new MqttCallback() {
+
         @Override
         public void connectionLost(Throwable throwable) {
             //TODO: Handle loss of connection to broker
@@ -35,11 +38,13 @@ public class IoTClient {
             //TODO: Handle response to delivery of published message completed
         }
     };
+
     //Class constructor
     public IoTClient(String cID) {
         clientID = cID;
     }
-        //Connect to broker
+
+    //Connect to broker
     public void connect(String address) {
         brokerAddress += (address + ":" + Integer.toString(brokerPort));
         try {
@@ -49,9 +54,11 @@ public class IoTClient {
             connOpts.setCleanSession(true);
             mclient.connect(connOpts);
         } catch (MqttException me) {
+            me.printStackTrace();
             //TODO: Handle exception
         }
     }
+
     //Overloaded function for connect - use with other ports than default
     public void connect(String address, int port) {
         brokerPort = port;
@@ -66,11 +73,13 @@ public class IoTClient {
             //TODO: Handle exception
         }
     }
+
     //Set new callback for MQTT-Client
     public void setCallback(MqttCallback tempCallBack) {
-            callback = tempCallBack;
-            mclient.setCallback(tempCallBack);
+        callback = tempCallBack;
+        mclient.setCallback(tempCallBack);
     }
+
     //Disconnect from the server
     public void disconnect() {
         try {
@@ -80,6 +89,7 @@ public class IoTClient {
             me.printStackTrace();
         }
     }
+
     //Publish a message to a given topic
     public void publishMessage(String topic, String msg) {
         try {
@@ -89,6 +99,7 @@ public class IoTClient {
             //TODO: Handle exception
         }
     }
+
     //Subscripe to topic
     public void subscribeToTopic(String topic, int qos) { //Subscribe to an MQTT topic
         try {
@@ -97,6 +108,7 @@ public class IoTClient {
             //TODO: Handle exceptions
         }
     }
+
     //Unsubscribe to topic
     public void unsubscribeToTopic(String topic) {
         try {
@@ -105,6 +117,7 @@ public class IoTClient {
             //TODO: Handle exceptions
         }
     }
+
     //Get clientID
     public String getClientID() {
         return clientID;
