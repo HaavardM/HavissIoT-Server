@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Håvard on 3/27/2015.
@@ -28,6 +30,8 @@ public class Main {
         int qos = 2;
         //Database settings
         String databaseAddress = "";
+        Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
+        mongoLogger.setLevel(Level.SEVERE);
         int databasePort = 27017;
         String database = "";
         //Objects
@@ -59,6 +63,7 @@ public class Main {
         System.out.println("\nDatabase settings:");
         System.out.println("Database address:\t" + databaseAddress);
         System.out.println("Database port:\t" + Integer.toString(databasePort));
+        System.out.println("Database:\t" + database);
         //Connecting to broker
         System.out.println("\nConnecting to broker");
         client.connect(brokerAddress, brokerPort);
@@ -67,8 +72,11 @@ public class Main {
         System.out.println("\nConnecting to database");
         storage = new IoTStorage(databaseAddress, databasePort, database);
         System.out.println("Connected to " + databaseAddress);
+        System.out.println("Using database " + database + "\n");
         //Starting storage thread
         storage.start();
+
+
         //New callback methods for MQTT client
         MqttCallback callback = new MqttCallback() {
             @Override
@@ -90,14 +98,20 @@ public class Main {
                 //No messages is delivered - should never be called
             }
         };
+
         //Set new callback functions
         client.setCallback(callback);
         //Check for new topics - subscribing to topics
         while(storage.isThreadBusy());
+        System.out.println("\n\n");
         while(true) {
-            System.out.print("Enter new topic: ");
+            System.out.print("Enter new topic or \"exit\": ");
             String topic = scanner.nextLine();
+            topic.toLowerCase();
             if(topic.length() > 0) {
+                if(topic.compareTo("exit") == 0) {
+                    System.exit(0);
+                }
                 client.subscribeToTopic(topic, qos);
                 System.out.println("Subscribed!");
                 topics.add(topic);

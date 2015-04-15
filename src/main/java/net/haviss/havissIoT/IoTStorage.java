@@ -7,6 +7,7 @@ import org.bson.Document;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by Håvard on 4/3/2015.
@@ -16,7 +17,7 @@ public class IoTStorage implements Runnable {
     //Variables
     private String serverAddress = "";
     private int serverPort = 27017;
-    private List<String[]> toStore = new ArrayList<>();
+    private CopyOnWriteArrayList<String[]> toStore = new CopyOnWriteArrayList<>();
     private boolean stopThread = false;
     private String threadName = "storageThread";
     private boolean threadPaused = false;
@@ -118,14 +119,16 @@ public class IoTStorage implements Runnable {
         toStore.add(tempValues);
     }
         //Gets the toStore list - synchronized
-    public synchronized List<String[]> getToStore() {
+    public  CopyOnWriteArrayList<String[]> getToStore() {
         return toStore;
     }
-    public synchronized boolean isThreadBusy() {
+    public  boolean isThreadBusy() {
         return this.threadIsBusy;
     }
-    public synchronized void setThreadState  (boolean state) {
+    public  void setThreadState  (boolean state) {
         this.threadIsBusy = state;
     }
-
+    public void stop() {
+       //TODO: Stop thread
+    }
 }
