@@ -7,88 +7,101 @@ import org.bson.Document;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by Håvard on 4/3/2015.
  * This class connects to a mongodb database and handles all storage.
  */
-public class IoTStorage implements Runnable {
+public class IoTStorage  {
 
-    //Variables
-    private String serverAddress = "";
-    private int serverPort = 27017;
-    private CopyOnWriteArrayList<String[]> toStore = new CopyOnWriteArrayList<>();
-    private boolean stopThread = false;
-    private String threadName = "storageThread";
-    private boolean threadPaused = false;
-    private boolean threadIsBusy = true;
+    /*Variables*/
 
-    //Objects
-    public Thread t;
+    private String serverAddress = ""; //Database address
+    private int serverPort = 27017; //Database port
+    private CopyOnWriteArrayList<String[]> toStore = new CopyOnWriteArrayList<>(); //Values to store when ready
+    private boolean stopThread = false; //Stop thread
+    private String storThreadName = "storageThread"; //Storage thread name
+    private boolean storagePaused = false;
+    private boolean sTConsole = true; //A storage thread writes to the console
+
+    /*Anonymous classes*/
+    //Using anonymous classes to enable use of multiple threads in one class
+    //Runnable for storage thread
+    private final Runnable storageHandler = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                System.out.println("Storage thread started");
+                System.out.println("Thread name:\t" + storageThread.getName() + "\n");
+                sTConsole = false;
+                while (!Thread.interrupted()) {
+                    while (storagePaused) {
+                        synchronized (storageLock) {
+                            storageLock.wait();
+                        }
+                    }
+                    if (getToStore().size() > 0) {
+                        try {
+                            for (String[] s : getToStore()) {
+                                getCollection(s[0]);
+                                String date = new Date().toString();
+                                Document document = new Document("Topic", s[0])
+                                        .append("Value", s[1])
+                                        .append("Date", date);
+                                //Insert document to database
+                                dbCollection.insertOne(document);
+                            }
+                            toStore.clear(); //All data has been stored, clear toStore list
+                        } catch (MongoException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        //If no data to store - wait for notification
+                        synchronized (storageLock) {
+                            storageLock.wait();
+                        }
+                    }
+                }
+            } catch (InterruptedException e) {
+                //TODO: Handle exception
+                e.printStackTrace();
+            }
+        }
+    };
+
+    /*Objects*/
+
+    private Thread storageThread;
     private MongoClient mongoClient;
     private MongoDatabase db;
     private MongoCollection<Document> dbCollection;
-    public final Object lock = new Object();
+    public final Object storageLock = new Object();;
 
-    @Override
-    public void run() {
-        try {
-            System.out.println("Storage thread started");
-            System.out.println("Thread name:\t" + t.getName());
-            threadIsBusy = false;
-            while (!Thread.interrupted()) {
-                while (threadPaused) {
-                    synchronized (lock) {
-                        lock.wait();
-                    }
-                }
-                if (getToStore().size() > 0) {
-                    try {
-                        for (String[] s : getToStore()) {
-                            getCollection(s[0]);
-                            String date = new Date().toString();
-                            Document document = new Document("Topic", s[0])
-                                    .append("Value", s[1])
-                                    .append("Date", date);
-                            dbCollection.insertOne(document);
-                        }
-                        toStore.clear(); //All data has been stored, clear toStore list
-                    } catch (MongoException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    //If no data to store - wait for notification
-                    synchronized (lock) {
-                        lock.wait();
-                    }
-                }
-            }
-        } catch (InterruptedException e) {
-            //TODO: Handle exception
-            e.printStackTrace();
-        }
-    }
+    /*Functions*/
 
-    //To start thread
+    //Start threads
     public void start() {
-        if (t == null) {
-            t = new Thread(this, threadName);
-            t.start();
+        if (storageThread == null) {
+            storageThread = new Thread(this.storageHandler, storThreadName);
+            storageThread.start();
         }
     }
 
-    //Pause thread if needed
-    public void pauseThread() {
-        this.threadPaused = true; //Tell thread to pause
+    //Pause storage thread if needed
+    public void pauseStorage() {
+        this.storagePaused = true; //Tell thread to pause
     }
 
-    public void resumeThread() {
-        this.threadPaused = false;
-        synchronized (lock) {
-            lock.notify(); //Notify thread - resumes thread after wait
+    //Resumes storage thread
+    public void resumeStorage() {
+        this.storagePaused = false;
+        synchronized (storageLock) {
+            storageLock.notify(); //Notify thread - resumes thread after wait
         }
     }
+
 
     //Constructor - stores new values and connects to server
     public IoTStorage(String serverAddress, int serverPort, String db) {
@@ -135,12 +148,8 @@ public class IoTStorage implements Runnable {
         return toStore;
     }
 
-    public boolean isThreadBusy() {
-        return this.threadIsBusy;
-    }
-
-    public void setThreadState(boolean state) {
-        this.threadIsBusy = state;
+    public boolean getThreadConsole() {
+        return (sTConsole);
     }
 
     public void stop() {

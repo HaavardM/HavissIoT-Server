@@ -28,8 +28,8 @@ public class Main {
 
         //Database settings
         String databaseAddress = "";
-        Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
-        mongoLogger.setLevel(Level.SEVERE);
+        Logger mongoLogger = Logger.getLogger("org.mongodb.driver"); //Do not disturb console with unnecessary information
+        mongoLogger.setLevel(Level.WARNING);
         int databasePort = 27017;
         String database = "";
 
@@ -90,8 +90,8 @@ public class Main {
             @Override
             public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
                 storage.addValues(s, mqttMessage.toString()); //Add values to storage handler
-                synchronized (storage.lock) {
-                    storage.lock.notify(); //Resumes thread after wait
+                synchronized (storage.storageLock) {
+                    storage.storageLock.notify(); //Resumes thread after wait
                 }
             }
 
@@ -105,13 +105,13 @@ public class Main {
         client.setCallback(callback);
 
         //Check for new topics - subscribing to topics
-        while (storage.isThreadBusy()) ;
+        while (storage.getThreadConsole()) ;
         System.out.println("\n\n");
 
         while (true) {
             System.out.print("Enter new topic or \"exit\": ");
             String topic = scanner.nextLine();
-            topic.toLowerCase();
+            topic = topic.toLowerCase();
             if (topic.length() > 0) {
                 if (topic.compareTo("exit") == 0) {
                     System.exit(0);
