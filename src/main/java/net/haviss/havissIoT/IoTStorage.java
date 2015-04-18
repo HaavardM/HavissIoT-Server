@@ -141,6 +141,10 @@ public class IoTStorage  {
     public synchronized void addValues(String topic, String value) {
         String tempValues[] = {topic, value};
         toStore.add(tempValues);
+        synchronized (storageLock) {
+            storageLock.notify(); //Resumes thread after wait
+        }
+
     }
 
     //Gets the toStore list - synchronized

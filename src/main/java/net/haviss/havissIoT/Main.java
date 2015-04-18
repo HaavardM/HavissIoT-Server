@@ -38,21 +38,22 @@ public class Main {
         Properties prop = new Properties();
         final IoTStorage storage;
         Scanner scanner = new Scanner(System.in);
+        Config config = new Config("/config.properties");
+        client = new IoTClient(clientID);
+
+        //Load properties strings from file
         try {
-            prop.load(new BufferedReader(new InputStreamReader(Main.class.getResourceAsStream("/config.properties"))));
-            brokerAddress = prop.getProperty("brokerAddress");
-            brokerPort = Integer.parseInt(prop.getProperty("brokerPort"));
-            qos = Integer.parseInt(prop.getProperty("mqttqos"));
-            clientID = prop.getProperty("clientID");
-            databaseAddress = prop.getProperty("databaseAddress");
-            databasePort = Integer.parseInt(prop.getProperty("databasePort"));
-            database = prop.getProperty("database");
-        } catch (IOException e) {
-            //TODO: Handle exception
+            brokerAddress = config.getProperty("broker_address");
+            clientID = config.getProperty("client_id");
+            databaseAddress = config.getProperty("database_address");
+            database = config.getProperty("database");
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        //New IoTClient with correct settings
-        client = new IoTClient(clientID);
+        //Load properties values from file
+        brokerPort = Integer.parseInt(config.getProperty("broker_port"));
+        qos = Integer.parseInt(config.getProperty("mqtt_qos"));
+        databasePort = Integer.parseInt(config.getProperty("database_port"));
 
         //Print settings
         System.out.println("MQTT broker settings:");
@@ -66,7 +67,7 @@ public class Main {
         System.out.println("Database:\t" + database);
 
         //Connecting to broker
-        System.out.println("\nConnecting to broker");
+        System.out.println("\nConnecting to broker...");
         client.connect(brokerAddress, brokerPort);
         System.out.println("Connected to " + brokerAddress);
 
@@ -90,9 +91,7 @@ public class Main {
             @Override
             public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
                 storage.addValues(s, mqttMessage.toString()); //Add values to storage handler
-                synchronized (storage.storageLock) {
-                    storage.storageLock.notify(); //Resumes thread after wait
-                }
+
             }
 
             @Override
