@@ -4,6 +4,7 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -108,16 +109,25 @@ public class Main {
         System.out.println("\n\n");
 
         while (true) {
-            System.out.print("Enter new topic or \"exit\": ");
-            String topic = scanner.nextLine();
-            topic = topic.toLowerCase();
-            if (topic.length() > 0) {
-                if (topic.compareTo("exit") == 0) {
-                    System.exit(0);
+            System.out.print("Enter command: ");
+            String text = scanner.nextLine();
+            text = text.toLowerCase();
+            if (text.length() > 0) {
+                String[] commands = text.split("\\s+");
+                if(commands[0].compareTo("help") == 0) ConsoleCommands.printHelp();
+                else if (commands[0].compareTo("exit") == 0) System.exit(0);
+                else if(commands[0].compareTo("add") == 0) {
+                    for(int i = 1; i < commands.length; i++) {
+                        client.subscribeToTopic(commands[i], qos);
+                        topics.add(commands[i]);
+                    }
+                    System.out.println("Subscribed to " + Integer.toString(commands.length - 1) + " topics");
+                } else if(commands[0].compareTo("topics") == 0) {
+                    System.out.println("Subscribed to these topics:");
+                    for (String s : topics ) {
+                        System.out.println(s);
+                    }
                 }
-                client.subscribeToTopic(topic, qos);
-                System.out.println("Subscribed!");
-                topics.add(topic);
             }
         }
     }
