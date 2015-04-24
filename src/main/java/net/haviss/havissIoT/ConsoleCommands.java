@@ -8,6 +8,9 @@ public class ConsoleCommands {
         System.out.println("Available commands:\n" +
                 "Exit\tClose the program\n" +
                 "Add\tAdds new topic\n" +
-                "Topics\tPrints all subscribed topics");
+                "Topics\tPrints all subscribed topics\n" +
+                "Settings\tPrints current settings\n" +
+                "Set {Setting} {value}\n");
     }
+
 }

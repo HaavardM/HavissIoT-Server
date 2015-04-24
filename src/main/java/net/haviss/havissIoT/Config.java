@@ -29,7 +29,7 @@ public class Config {
     }
 
     //Set new property
-    public void writeProperty(String prop, String value) {
+    public void setProperty(String prop, String value) {
         properties.setProperty(prop, value);
     }
 }

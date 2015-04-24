@@ -24,6 +24,7 @@ public class Main {
         //MQTT settings
         String brokerAddress = "";
         String clientID = "";
+        String cmd_topic = "";
         int brokerPort = 1883;
         int qos = 2;
 
@@ -43,18 +44,17 @@ public class Main {
         client = new IoTClient(clientID);
 
         //Load properties strings from file
-        try {
-            brokerAddress = config.getProperty("broker_address");
-            clientID = config.getProperty("client_id");
-            databaseAddress = config.getProperty("database_address");
-            database = config.getProperty("database");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        brokerAddress = config.getProperty("broker_address");
+        clientID = config.getProperty("client_id");
+        cmd_topic = config.getProperty("cmd_topic");
+        databaseAddress = config.getProperty("database_address");
+        database = config.getProperty("database");
         //Load properties values from file
         brokerPort = Integer.parseInt(config.getProperty("broker_port"));
         qos = Integer.parseInt(config.getProperty("mqtt_qos"));
         databasePort = Integer.parseInt(config.getProperty("database_port"));
+
 
         //Print settings
         System.out.println("MQTT broker settings:");
@@ -104,6 +104,9 @@ public class Main {
         //Set new callback functions
         client.setCallback(callback);
 
+        //Subscribes to the device command topic
+        client.subscribeToTopic(cmd_topic, qos);
+
         //Check for new topics - subscribing to topics
         while (storage.getThreadConsole()) ;
         System.out.println("\n\n");
@@ -123,9 +126,18 @@ public class Main {
                     }
                     System.out.println("Subscribed to " + Integer.toString(commands.length - 1) + " topics");
                 } else if(commands[0].compareTo("topics") == 0) {
-                    System.out.println("Subscribed to these topics:");
+                    System.out.println("\nAvailable topics (" + topics.size() + ")top:");
                     for (String s : topics ) {
                         System.out.println(s);
+                    }
+                } else if(commands[0].compareTo("set") == 0) {
+                    if(commands.length  > 3) {
+                        System.out.println("Too many arguments");
+                    } else if(commands.length < 3) {
+                        System.out.println("Too few arguments");
+                    } else if(commands.length == 3) {
+                        config.setProperty(commands[1], commands[2]);
+                        System.out.println("Properties set, restart to enable changes");
                     }
                 }
             }
