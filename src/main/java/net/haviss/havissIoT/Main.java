@@ -126,7 +126,7 @@ public class Main {
                     }
                     System.out.println("Subscribed to " + Integer.toString(commands.length - 1) + " topics");
                 } else if(commands[0].compareTo("topics") == 0) {
-                    System.out.println("\nAvailable topics (" + topics.size() + ")top:");
+                    System.out.println("\nAvailable topics (" + topics.size() + "):");
                     for (String s : topics ) {
                         System.out.println(s);
                     }
