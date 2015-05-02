@@ -17,7 +17,8 @@ public class CommandSubscribe implements CommandCallback {
     @Override
     public String getHelp() {
         //TODO: Return help string
-        return null;
+        return "subscribe\tSubsribes to topic(s)\n" +
+                "USAGE: subscribe {topic1} {topic2} {topic3} ....{topic n}";
     }
 
     @Override

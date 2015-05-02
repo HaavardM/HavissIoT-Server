@@ -24,12 +24,6 @@ public class IoTClient {
     private static MqttClient mclient;
     private static MemoryPersistence persistence = new MemoryPersistence();
 
-
-    //Class constructor
-    public IoTClient(String cID) {
-        clientID = cID;
-    }
-
     //Connect to broker
     public static void connect(String address, String cID) {
         connect(address, brokerPort, cID);
