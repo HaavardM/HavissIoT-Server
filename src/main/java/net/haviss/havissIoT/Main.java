@@ -21,39 +21,34 @@ public class Main {
         //Topics
         List<String> topics = new ArrayList<>();
 
-        //MQTT settings
-        String brokerAddress = "";
-        String clientID = "";
-        String cmd_topic = "";
-        int brokerPort = 1883;
-        int qos = 2;
-
         //Database settings
-        String databaseAddress = "";
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver"); //Do not disturb console with unnecessary information
         mongoLogger.setLevel(Level.WARNING);
-        int databasePort = 27017;
-        String database = "";
+
+
+        //Load properties strings from file
+        Config config = new Config("/config.properties");
+        final String brokerAddress = config.getProperty("broker_address");
+        final String clientID = config.getProperty("client_id");
+        final String cmd_topic = config.getProperty("cmd_topic");
+        final String status_topic = config.getProperty("status_topic");
+        final String databaseAddress = config.getProperty("database_address");
+        final String database = config.getProperty("database");
+
+        //Load properties values from file
+        final int brokerPort = Integer.parseInt(config.getProperty("broker_port"));
+        final int qos = Integer.parseInt(config.getProperty("mqtt_qos"));
+        final int databasePort = Integer.parseInt(config.getProperty("database_port"));
 
         //Objects
         IoTClient client;
         Properties prop = new Properties();
         final IoTStorage storage;
         Scanner scanner = new Scanner(System.in);
-        Config config = new Config("/config.properties");
+
         client = new IoTClient(clientID);
 
-        //Load properties strings from file
 
-        brokerAddress = config.getProperty("broker_address");
-        clientID = config.getProperty("client_id");
-        cmd_topic = config.getProperty("cmd_topic");
-        databaseAddress = config.getProperty("database_address");
-        database = config.getProperty("database");
-        //Load properties values from file
-        brokerPort = Integer.parseInt(config.getProperty("broker_port"));
-        qos = Integer.parseInt(config.getProperty("mqtt_qos"));
-        databasePort = Integer.parseInt(config.getProperty("database_port"));
 
 
         //Print settings
@@ -91,8 +86,11 @@ public class Main {
 
             @Override
             public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-                storage.addValues(s, mqttMessage.toString()); //Add values to storage handler
-
+                if(s.compareTo(cmd_topic) == 0) {
+                    //TODO: Handle command
+                } else {
+                    storage.addValues(s, mqttMessage.toString()); //Add values to storage handler
+                }
             }
 
             @Override
@@ -104,7 +102,7 @@ public class Main {
         //Set new callback functions
         client.setCallback(callback);
 
-        //Subscribes to the device command topic
+        //Subscribes to the command topic
         client.subscribeToTopic(cmd_topic, qos);
 
         //Check for new topics - subscribing to topics

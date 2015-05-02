@@ -21,23 +21,6 @@ public class IoTClient {
     private MqttClient mclient;
     private MemoryPersistence persistence = new MemoryPersistence();
 
-    private MqttCallback callback = new MqttCallback() {
-
-        @Override
-        public void connectionLost(Throwable throwable) {
-            //TODO: Handle loss of connection to broker
-        }
-
-        @Override
-        public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-            //TODO: Handle response to message arriving on topic
-        }
-
-        @Override
-        public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-            //TODO: Handle response to delivery of published message completed
-        }
-    };
 
     //Class constructor
     public IoTClient(String cID) {
@@ -55,7 +38,6 @@ public class IoTClient {
         brokerAddress += (address + ":" + Integer.toString(brokerPort));
         try {
             mclient = new MqttClient(brokerAddress, clientID, persistence); //Setting up MQTT client and connect to broker
-            mclient.setCallback(callback);
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
             mclient.connect(connOpts); //Connecting to broker
@@ -66,7 +48,6 @@ public class IoTClient {
 
     //Set new callback for MQTT-Client
     public void setCallback(MqttCallback tempCallBack) {
-        callback = tempCallBack;
         mclient.setCallback(tempCallBack);
     }
 
