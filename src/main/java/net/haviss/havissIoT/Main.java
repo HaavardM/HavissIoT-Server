@@ -19,7 +19,7 @@ public class Main {
 
     public static void main(String args[]) {
         //Topics
-        List<String> topics = new ArrayList<>();
+
 
         //Database settings
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver"); //Do not disturb console with unnecessary information
@@ -41,15 +41,9 @@ public class Main {
         final int databasePort = Integer.parseInt(config.getProperty("database_port"));
 
         //Objects
-        IoTClient client;
         Properties prop = new Properties();
         final IoTStorage storage;
         Scanner scanner = new Scanner(System.in);
-
-        client = new IoTClient(clientID);
-
-
-
 
         //Print settings
         System.out.println("MQTT broker settings:");
@@ -64,7 +58,7 @@ public class Main {
 
         //Connecting to broker
         System.out.println("\nConnecting to broker...");
-        client.connect(brokerAddress, brokerPort);
+        IoTClient.connect(brokerAddress, brokerPort, clientID);
         System.out.println("Connected to " + brokerAddress);
 
         //Connecting to database
@@ -100,13 +94,12 @@ public class Main {
         };
 
         //Set new callback functions
-        client.setCallback(callback);
+        IoTClient.setCallback(callback);
 
-        //Subscribes to the command topic
-        client.subscribeToTopic(cmd_topic, qos);
-
+        //Subscribes to the command and status topic
+        IoTClient.subscribeToTopic(cmd_topic, qos);
         //Check for new topics - subscribing to topics
-        while (storage.getThreadConsole()) ;
+        while (storage.getThreadConsole());
         System.out.println("\n\n");
 
         while (true) {
@@ -119,13 +112,13 @@ public class Main {
                 else if (commands[0].compareTo("exit") == 0) System.exit(0);
                 else if(commands[0].compareTo("add") == 0) {
                     for(int i = 1; i < commands.length; i++) {
-                        client.subscribeToTopic(commands[i], qos);
-                        topics.add(commands[i]);
+                        IoTClient.subscribeToTopic(commands[i], qos);
+                        IoTClient.topics.add(commands[i]);
                     }
                     System.out.println("Subscribed to " + Integer.toString(commands.length - 1) + " topics");
                 } else if(commands[0].compareTo("topics") == 0) {
-                    System.out.println("\nAvailable topics (" + topics.size() + "):");
-                    for (String s : topics ) {
+                    System.out.println("\nAvailable topics (" + IoTClient.topics.size() + "):");
+                    for (String s : IoTClient.topics ) {
                         System.out.println(s);
                     }
                 } else if(commands[0].compareTo("set") == 0) {
