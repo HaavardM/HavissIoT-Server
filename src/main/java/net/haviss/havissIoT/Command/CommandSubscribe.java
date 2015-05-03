@@ -1,6 +1,6 @@
 package net.haviss.havissIoT.Command;
 
-import net.haviss.havissIoT.IoTClient;
+import net.haviss.havissIoT.HavissIoT;
 
 /**
  * Created by Håvard on 5/2/2015.
@@ -9,8 +9,8 @@ public class CommandSubscribe implements CommandCallback {
     @Override
     public void run(String[] parameters) {
         for(String s : parameters) {
-            IoTClient.subscribeToTopic(s, IoTClient.getQOS());
-            IoTClient.topics.add(s);
+            HavissIoT.client.subscribeToTopic(s, HavissIoT.client.getQOS());
+            HavissIoT.client.topics.add(s);
         }
     }
 

@@ -3,22 +3,19 @@ package net.haviss.havissIoT;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-
-import java.util.HashMap;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * Created by Håvard on 5/3/2015.
+ * Using this class for easier access to different objects from other classes.
+ * Also makes Main cleaner
  */
 public class HavissIoT {
     /*Objects*/
-    private static Logger mongoLogger;
     public static Config config;
     public static IoTClient client;
     public static IoTStorage storage;
-    private static MqttCallback callback;
 
     /*Variables*/
     public static String brokerAddress;
@@ -31,9 +28,9 @@ public class HavissIoT {
     public static int qos;
     public static int databasePort;
 
-    static {
+    public static void start() {
         //Load logger and config
-        mongoLogger = Logger.getLogger("or.mongodb.org");
+        Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
         mongoLogger.setLevel(Level.WARNING);
         config = new Config("/config.properties");
 
@@ -47,11 +44,14 @@ public class HavissIoT {
         brokerPort = Integer.parseInt(config.getProperty("broker_port"));
         qos = Integer.parseInt(config.getProperty("mqtt_qos"));
         databasePort = Integer.parseInt(config.getProperty("database_port"));
-
+        System.out.println("Settings:\n");
+        printSettings();
         //Initialize IoT client
         client = new IoTClient(clientID);
         client.connect(brokerAddress, brokerPort);
-        callback = new MqttCallback() {
+
+        //Setting up new callback for client
+        MqttCallback callback = new MqttCallback() {
             @Override
             public void connectionLost(Throwable throwable) {
                 //TODO: Handle connection lost
@@ -59,10 +59,10 @@ public class HavissIoT {
 
             @Override
             public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-                if(s.compareTo(cmdTopic) == 0) {
+                if (s.compareTo(cmdTopic) == 0) {
                     //TODO: Handle commands
                 } else {
-                    havissIoT.storage.addValues(s, mqttMessage.toString());
+                    HavissIoT.storage.addValues(s, mqttMessage.toString());
                 }
             }
 
@@ -77,13 +77,13 @@ public class HavissIoT {
         storage = new IoTStorage(databaseAddress, databasePort, database);
         storage.start();
     }
-    public void printSettings() {
-        System.out.println("MQTT broker settings:");
+    public static void printSettings() {
+        System.out.println("MQTT broker settings:\n");
         System.out.println("Broker address:\t " + brokerAddress);
         System.out.println("Broker port:\t" + Integer.toString(brokerPort));
         System.out.println("Client id:\t" + clientID);
         System.out.println("QOS:\t" + Integer.toString(qos));
-        System.out.println("\nDatabase settings:");
+        System.out.println("\nDatabase settings:\n");
         System.out.println("Database address:\t" + databaseAddress);
         System.out.println("Database port:\t" + Integer.toString(databasePort));
         System.out.println("Database:\t" + database);

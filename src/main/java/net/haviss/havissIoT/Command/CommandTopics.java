@@ -1,5 +1,6 @@
 package net.haviss.havissIoT.Command;
 
+import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.IoTClient;
 
 /**
@@ -9,7 +10,7 @@ public class CommandTopics implements CommandCallback {
     @Override
     public void run(String[] parameters) {
         String topics = "";
-        for(String s : .topics) {
+        for(String s : HavissIoT.client.topics) {
             topics += s;
             topics += '\n';
         }
