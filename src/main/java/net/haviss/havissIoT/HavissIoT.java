@@ -10,9 +10,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by Håvard on 5/3/2015.
+ * Created by HÃ¥vard on 5/3/2015.
  */
-public class havissIoT {
+public class HavissIoT {
     /*Objects*/
     private static Logger mongoLogger;
     public static Config config;
