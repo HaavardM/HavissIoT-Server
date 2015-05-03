@@ -4,6 +4,7 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,15 +21,15 @@ public class havissIoT {
     private static MqttCallback callback;
 
     /*Variables*/
-    private static String brokerAddress;
-    private static String clientID;
-    private static String cmdTopic;
-    private static String statusTopic;
-    private static String databaseAddress;
-    private static String database;
-    private static int brokerPort;
-    private static int qos;
-    private static int databasePort;
+    public static String brokerAddress;
+    public static String clientID;
+    public static String cmdTopic;
+    public static String statusTopic;
+    public static String databaseAddress;
+    public static String database;
+    public static int brokerPort;
+    public static int qos;
+    public static int databasePort;
 
     static {
         //Load logger and config
@@ -58,7 +59,11 @@ public class havissIoT {
 
             @Override
             public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-
+                if(s.compareTo(cmdTopic) == 0) {
+                    //TODO: Handle commands
+                } else {
+                    havissIoT.storage.addValues(s, mqttMessage.toString());
+                }
             }
 
             @Override
@@ -71,10 +76,17 @@ public class havissIoT {
         //Initialize storage client
         storage = new IoTStorage(databaseAddress, databasePort, database);
         storage.start();
-
-
-
-
+    }
+    public void printSettings() {
+        System.out.println("MQTT broker settings:");
+        System.out.println("Broker address:\t " + brokerAddress);
+        System.out.println("Broker port:\t" + Integer.toString(brokerPort));
+        System.out.println("Client id:\t" + clientID);
+        System.out.println("QOS:\t" + Integer.toString(qos));
+        System.out.println("\nDatabase settings:");
+        System.out.println("Database address:\t" + databaseAddress);
+        System.out.println("Database port:\t" + Integer.toString(databasePort));
+        System.out.println("Database:\t" + database);
     }
 
 

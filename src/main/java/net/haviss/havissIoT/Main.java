@@ -25,65 +25,9 @@ public class Main {
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver"); //Do not disturb console with unnecessary information
         mongoLogger.setLevel(Level.WARNING);
 
-
-        //Load properties strings from file
-        Config config = new Config("/config.properties");
-        final String brokerAddress = config.getProperty("broker_address");
-        final String clientID = config.getProperty("client_id");
-        final String cmd_topic = config.getProperty("cmd_topic");
-        final String status_topic = config.getProperty("status_topic");
-        final String databaseAddress = config.getProperty("database_address");
-        final String database = config.getProperty("database");
-
-        //Load properties values from file
-        final int brokerPort = Integer.parseInt(config.getProperty("broker_port"));
-        final int qos = Integer.parseInt(config.getProperty("mqtt_qos"));
-        final int databasePort = Integer.parseInt(config.getProperty("database_port"));
-
         //Objects
         Properties prop = new Properties();
-        final IoTStorage storage;
         Scanner scanner = new Scanner(System.in);
-
-        //Print settings
-        System.out.println("MQTT broker settings:");
-        System.out.println("Broker address:\t " + brokerAddress);
-        System.out.println("Broker port:\t" + Integer.toString(brokerPort));
-        System.out.println("Client id:\t" + clientID);
-        System.out.println("QOS:\t" + Integer.toString(qos));
-        System.out.println("\nDatabase settings:");
-        System.out.println("Database address:\t" + databaseAddress);
-        System.out.println("Database port:\t" + Integer.toString(databasePort));
-        System.out.println("Database:\t" + database);
-
-        //Connecting to broker
-        System.out.println("\nConnecting to broker...");
-        IoTClient.connect(brokerAddress, brokerPort, clientID);
-        System.out.println("Connected to " + brokerAddress);
-
-        //Connecting to database
-        System.out.println("\nConnecting to database");
-        storage = new IoTStorage(databaseAddress, databasePort, database);
-        System.out.println("Connected to " + databaseAddress);
-        System.out.println("Using database " + database + "\n");
-
-        //Starting storage thread
-        storage.start();
-
-        //New callback methods for MQTT client
-        MqttCallback callback = new MqttCallback() {
-
-
-        };
-
-        //Set new callback functions
-        IoTClient.setCallback(callback);
-
-        //Subscribes to the command and status topic
-        IoTClient.subscribeToTopic(cmd_topic, qos);
-        //Check for new topics - subscribing to topics
-        while (storage.getThreadConsole());
-        System.out.println("\n\n");
 
         while (true) {
             System.out.print("Enter command: ");
@@ -95,13 +39,13 @@ public class Main {
                 else if (commands[0].compareTo("exit") == 0) System.exit(0);
                 else if(commands[0].compareTo("add") == 0) {
                     for(int i = 1; i < commands.length; i++) {
-                        IoTClient.subscribeToTopic(commands[i], qos);
-                        IoTClient.topics.add(commands[i]);
+                        havissIoT.client.subscribeToTopic(commands[i], havissIoT.qos);
+                        havissIoT.client.topics.add(commands[i]);
                     }
                     System.out.println("Subscribed to " + Integer.toString(commands.length - 1) + " topics");
                 } else if(commands[0].compareTo("topics") == 0) {
-                    System.out.println("\nAvailable topics (" + IoTClient.topics.size() + "):");
-                    for (String s : IoTClient.topics ) {
+                    System.out.println("\nAvailable topics (" + havissIoT.client.topics.size() + "):");
+                    for (String s : havissIoT.client.topics ) {
                         System.out.println(s);
                     }
                 } else if(commands[0].compareTo("set") == 0) {
@@ -110,7 +54,7 @@ public class Main {
                     } else if(commands.length < 3) {
                         System.out.println("Too few arguments");
                     } else if(commands.length == 3) {
-                        config.setProperty(commands[1], commands[2]);
+                        havissIoT.config.setProperty(commands[1], commands[2]);
                         System.out.println("Properties set, restart to enable changes");
                     }
                 }
