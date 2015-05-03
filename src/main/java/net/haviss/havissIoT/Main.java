@@ -73,24 +73,7 @@ public class Main {
         //New callback methods for MQTT client
         MqttCallback callback = new MqttCallback() {
 
-            @Override
-            public void connectionLost(Throwable throwable) {
-                //TODO: Handle connection lost
-            }
 
-            @Override
-            public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-                if(s.compareTo(cmd_topic) == 0) {
-                    //TODO: Handle command
-                } else {
-                    storage.addValues(s, mqttMessage.toString()); //Add values to storage handler
-                }
-            }
-
-            @Override
-            public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-                //No messages is delivered - should never be called
-            }
         };
 
         //Set new callback functions

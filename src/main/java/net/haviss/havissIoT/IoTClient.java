@@ -14,23 +14,27 @@ import java.util.List;
 public class IoTClient {
 
     //Variables
-    public static List<String> topics = new ArrayList<>();
-    private static String brokerAddress = "tcp://";
-    private static int brokerPort = 1883; //Default port is used if not else specified in connect
-    private static String clientID = "";
-    private static int qos = 2;
+    public List<String> topics = new ArrayList<>();
+    private String brokerAddress = "tcp://";
+    private int brokerPort = 1883; //Default port is used if not else specified in connect
+    private String clientID = "";
+    private int qos = 2;
 
     //Objects
     private static MqttClient mclient;
     private static MemoryPersistence persistence = new MemoryPersistence();
 
+    public IoTClient(String clientID) {
+        this.clientID = clientID;
+    }
+
     //Connect to broker
-    public static void connect(String address, String cID) {
-        connect(address, brokerPort, cID);
+    public void connect(String address) {
+        connect(address, brokerPort);
     }
 
     //Overloaded function for connect - use with other ports than default
-    public static void connect(String address, int port, String cID) {
+    public void connect(String address, int port) {
         brokerPort = port;
         brokerAddress += (address + ":" + Integer.toString(brokerPort));
         try {
@@ -44,12 +48,12 @@ public class IoTClient {
     }
 
     //Set new callback for MQTT-Client
-    public static void setCallback(MqttCallback tempCallBack) {
+    public void setCallback(MqttCallback tempCallBack) {
         mclient.setCallback(tempCallBack);
     }
 
     //Disconnect from the server
-    public static void disconnect() {
+    public void disconnect() {
         try {
             mclient.disconnect();
         } catch (MqttException me) {
@@ -59,7 +63,7 @@ public class IoTClient {
     }
 
     //Publish a message to a given topic
-    public static void publishMessage(String topic, String msg) {
+    public void publishMessage(String topic, String msg) {
         try {
             MqttMessage pubMessage = new MqttMessage(msg.getBytes());
             mclient.publish(topic, pubMessage);
@@ -69,7 +73,7 @@ public class IoTClient {
     }
 
     //Subscripe to topic
-    public static void subscribeToTopic(String topic, int qos) { //Subscribe to an MQTT topic
+    public void subscribeToTopic(String topic, int qos) { //Subscribe to an MQTT topic
         try {
             mclient.subscribe(topic, qos);
         } catch (MqttException me) {
@@ -78,7 +82,7 @@ public class IoTClient {
     }
 
     //Unsubscribe to topic
-    public static void unsubscribeToTopic(String topic) {
+    public void unsubscribeToTopic(String topic) {
         try {
             mclient.unsubscribe(topic);
         } catch (MqttException me) {
@@ -87,12 +91,12 @@ public class IoTClient {
     }
 
     //Get clientID
-    public static String getClientID() {
+    public String getClientID() {
         return clientID;
     }
 
     //Get qos
-    public static int getQOS() {
+    public int getQOS() {
         return qos;
     }
 }

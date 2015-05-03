@@ -1,6 +1,5 @@
 package net.haviss.havissIoT.Command;
 
-import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.IoTClient;
 
 /**
