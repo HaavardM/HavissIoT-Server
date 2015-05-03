@@ -18,9 +18,6 @@ import java.util.logging.Logger;
 public class Main {
 
     public static void main(String args[]) {
-        //Topics
-
-
         //Database settings
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver"); //Do not disturb console with unnecessary information
         mongoLogger.setLevel(Level.WARNING);

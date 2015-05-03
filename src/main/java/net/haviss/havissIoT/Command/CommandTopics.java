@@ -9,7 +9,7 @@ public class CommandTopics implements CommandCallback {
     @Override
     public void run(String[] parameters) {
         String topics = "";
-        for(String s : IoTClient.topics) {
+        for(String s : .topics) {
             topics += s;
             topics += '\n';
         }
