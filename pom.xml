@@ -12,7 +12,7 @@
     <packaging>jar</packaging>
     <properties>
         <jdk.version>1.7</jdk.version>
-        <path.mainClass>net.haviss.havissIoT.Main</path.mainClass>
+        <path.mainClass>net.haviss.havissIoT.HavissIoT</path.mainClass>
     </properties>
     <repositories>
         <repository>

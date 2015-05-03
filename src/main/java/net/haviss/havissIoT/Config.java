@@ -11,25 +11,45 @@ import java.util.Properties;
  */
 public class Config {
 
-    //Properties object
-    private Properties properties = new Properties();
+    /*Variables*/
+    public static String brokerAddress;
+    public static String clientID;
+    public static String cmdTopic;
+    public static String statusTopic;
+    public static String databaseAddress;
+    public static String database;
+    public static int brokerPort;
+    public static int qos;
+    public static int databasePort;
 
-    //Constructor
-    public Config(String configName) {
+    //Properties object
+    private static Properties properties = new Properties();
+
+    //Load new config
+    public static void loadConfig(String configName) {
         try {
             properties.load(new BufferedReader(new InputStreamReader(Config.class.getClass().getResourceAsStream(configName))));
         } catch (IOException e) {
             e.printStackTrace();
         }
+        brokerAddress = getProperty("broker_address");
+        clientID = getProperty("client_id");
+        cmdTopic = getProperty("cmd_topic");
+        statusTopic = getProperty("status_topic");
+        databaseAddress = getProperty("database_address");
+        database = getProperty("database");
+        brokerPort = Integer.parseInt(getProperty("broker_port"));
+        qos = Integer.parseInt(getProperty("mqtt_qos"));
+        databasePort = Integer.parseInt(getProperty("database_port"));
     }
 
     //Get property value
-    public String getProperty(String prop) {
+    public static String getProperty(String prop) {
         return properties.getProperty(prop);
     }
 
     //Set new property
-    public void setProperty(String prop, String value) {
+    public static void setProperty(String prop, String value) {
         properties.setProperty(prop, value);
     }
 }
