@@ -11,7 +11,7 @@ import java.util.Properties;
  */
 public class Config {
 
-    /*Variables*/
+    /*Config values*/
     public static String brokerAddress;
     public static String clientID;
     public static String cmdTopic;
@@ -22,7 +22,7 @@ public class Config {
     public static int qos;
     public static int databasePort;
 
-    //Properties object
+    //Properties object to load from file
     private static Properties properties = new Properties();
 
     //Load new config
