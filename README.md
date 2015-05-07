@@ -25,7 +25,6 @@ MongoDB:
 - I use the standard mongodb driver for java
 
 Other information:
-- The code will be synchronous (aka blocking) in the beginning, but it might change when I become more experienced
 - Im not planning to create my own MQTT broker. The "server" side of the project is just an application for analyzing the data. 
 - I have very limited programming experience. So please dont be to harsh when my code is bad.. :)
 - The server-side application will be written in java
