@@ -13,6 +13,7 @@ public class CommandHelp implements CommandCallback {
         for(CommandCallback cb : HavissIoT.commandHandler.getAvailableCommands()) {
             helpString += (cb.getHelp() + "\n");
         }
+        System.out.println(helpString);
     }
 
     @Override
