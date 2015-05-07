@@ -10,7 +10,6 @@ public class CommandSubscribe implements CommandCallback {
     public void run(String[] parameters) {
         for(String s : parameters) {
             HavissIoT.client.subscribeToTopic(s, HavissIoT.client.getQOS());
-            HavissIoT.client.topics.add(s);
         }
     }
 
@@ -23,6 +22,6 @@ public class CommandSubscribe implements CommandCallback {
 
     @Override
     public String getName() {
-        return "subscribe";
+        return "-subscribe";
     }
 }

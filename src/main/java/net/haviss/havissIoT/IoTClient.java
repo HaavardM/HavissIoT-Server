@@ -76,6 +76,7 @@ public class IoTClient {
     public void subscribeToTopic(String topic, int qos) { //Subscribe to an MQTT topic
         try {
             mclient.subscribe(topic, qos);
+            topics.add(topic);
         } catch (MqttException me) {
             //TODO: Handle exceptions
         }
@@ -85,6 +86,7 @@ public class IoTClient {
     public void unsubscribeToTopic(String topic) {
         try {
             mclient.unsubscribe(topic);
+            topics.remove(topic);
         } catch (MqttException me) {
             //TODO: Handle exceptions
         }

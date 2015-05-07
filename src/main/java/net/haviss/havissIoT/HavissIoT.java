@@ -17,6 +17,8 @@ public class HavissIoT {
     /*Objects*/
     public static IoTClient client;
     public static IoTStorage storage;
+    public static Scanner scanner;
+    public static CommandHandler commandHandler;
 
     public static void main(String args[]) {
         //Load logger and config
@@ -59,13 +61,20 @@ public class HavissIoT {
         storage = new IoTStorage(Config.databaseAddress, Config.databasePort, Config.database);
         storage.start();
 
-        //Scanner for taking inputs
-        //TODO: Set up scanner
+        //Objects for command handling
+        scanner = new Scanner(System.in);
+        commandHandler = new CommandHandler();
 
         while(storage.getThreadConsole());
         while(true) {
             System.out.print("Please enter command: ");
-            //TODO: Handle commands
+            String commandString;
+            commandString = scanner.nextLine();
+            try {
+                commandHandler.processCommand(commandString);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
     public static void printSettings() {

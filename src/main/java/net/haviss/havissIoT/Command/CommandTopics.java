@@ -26,6 +26,6 @@ public class CommandTopics implements CommandCallback {
 
     @Override
     public String getName() {
-        return "topics";
+        return "-topics";
     }
 }
