@@ -72,8 +72,11 @@ public class HavissIoT {
         //Initialize toPrint list.
         toPrint = new CopyOnWriteArrayList<>();
 
-        while(storage.getThreadConsole()); //Waits for storage thread to be done with console
-        printMessage("Application is running"); //Everything is started
+        //Waits for storage thread to be done with console
+        while(storage.getThreadConsole());
+
+        //Everything is started
+        printMessage("Application is ready");
 
         //Application must run forever
         while(true) {

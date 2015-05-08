@@ -4,6 +4,7 @@ import net.haviss.havissIoT.HavissIoT;
 
 /**
  * Created by Håvard on 5/7/2015.
+ * Command to unsubscribe to topic(s)
  */
 public class CommandUnsubscribe implements CommandCallback {
 

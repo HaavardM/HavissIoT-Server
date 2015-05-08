@@ -7,13 +7,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by Håvard on 5/2/2015.
+ * Command to return topics to user
  */
 public class CommandTopics implements CommandCallback {
     @Override
     public String run(String[] parameters) {
         StringBuilder topicsString = new StringBuilder();
         for(String s : HavissIoT.client.getTopics()) {
-            System.out.println(s);
             topicsString.append(s).append(" ");
         }
         HavissIoT.printMessage("Sending topics " + topicsString.toString());
