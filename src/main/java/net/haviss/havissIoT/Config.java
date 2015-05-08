@@ -21,6 +21,7 @@ public class Config {
     public static int brokerPort;
     public static int qos;
     public static int databasePort;
+    public static int serverPort;
 
     //Properties object to load from file
     private static Properties properties = new Properties();
@@ -41,6 +42,7 @@ public class Config {
         brokerPort = Integer.parseInt(getProperty("broker_port"));
         qos = Integer.parseInt(getProperty("mqtt_qos"));
         databasePort = Integer.parseInt(getProperty("database_port"));
+        serverPort = Integer.parseInt(getProperty("server_port"));
     }
 
     //Get property value

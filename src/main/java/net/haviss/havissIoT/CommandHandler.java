@@ -4,10 +4,12 @@ import net.haviss.havissIoT.Command.CommandCallback;
 import net.haviss.havissIoT.Command.CommandSubscribe;
 import net.haviss.havissIoT.Command.CommandTopics;
 import net.haviss.havissIoT.Command.CommandUnsubscribe;
+import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Håvard on 5/7/2015.
@@ -18,9 +20,18 @@ public class CommandHandler {
 
     //Constructor - adds all available commands to string
     public CommandHandler() {
-
+        Reflections r = new Reflections("");
+        Set<Class<? extends CommandCallback>> classes = r.getSubTypesOf(CommandCallback.class);
+        for(Class<? extends CommandCallback> c : classes) {
+            try {
+                CommandCallback cmd = c.newInstance();
+                availableCommands.add(cmd);
+                System.out.println("Loaded command: " + c.getName());
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
-
     //Processes commandstring and perform corresponding command.
     public void processCommand(String commandString) throws Exception {
         String[] cmd = commandString.toLowerCase().split("\\s+"); //Splits string into seperate arguments
