@@ -107,7 +107,6 @@ public class HavissIoT {
         System.out.println("Database:\t" + Config.database);
         System.out.println("Server port:\t" + Integer.toString(Config.serverPort));
         System.out.println("Number of clients:\t" + Integer.toString(Config.numbOfClients));
-        System.out.println("Keep alive intervall:\t" + Integer.toString(Config.keepAliveIntervall));
     }
 
     //Add new message and notify thread
