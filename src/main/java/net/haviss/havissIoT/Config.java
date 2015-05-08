@@ -22,6 +22,7 @@ public class Config {
     public static int qos;
     public static int databasePort;
     public static int serverPort;
+    public static int numbOfClients;
 
     //Properties object to load from file
     private static Properties properties = new Properties();
@@ -43,6 +44,7 @@ public class Config {
         qos = Integer.parseInt(getProperty("mqtt_qos"));
         databasePort = Integer.parseInt(getProperty("database_port"));
         serverPort = Integer.parseInt(getProperty("server_port"));
+        numbOfClients = Integer.parseInt(getProperty("number_of_client"));
     }
 
     //Get property value
