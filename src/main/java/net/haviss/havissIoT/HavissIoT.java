@@ -107,6 +107,8 @@ public class HavissIoT {
         System.out.println("Database address:\t" + Config.databaseAddress);
         System.out.println("Database port:\t" + Integer.toString(Config.databasePort));
         System.out.println("Database:\t" + Config.database);
+        System.out.println("Server port:\t" + Integer.toString(Config.serverPort));
+        System.out.println("Number of clients:\t" + Integer.toString(Config.numbOfClients));
     }
 
     //Add new message and notify thread

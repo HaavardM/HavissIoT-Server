@@ -9,14 +9,19 @@ import java.net.Socket;
 public class ClientThread implements Runnable {
 
     private Socket socket; //Socket connection to client
-    private SocketCommunication socketCommunication; //To access
-    private Thread clientThread;
-    private String threadName = "ClientThread";
+    private SocketCommunication socketCommunication; //For terminating connection
+    private Thread clientThread; //New thread for client connection
+    private String threadName = "ClientThread"; //
+    private boolean connectionClosed = false;
+    private int keepAliveIntervall;
 
-    public ClientThread(Socket socket, SocketCommunication socketCommunication, int clientNum) {
+    //Constructor - loading objects and values
+    public ClientThread(Socket socket, SocketCommunication socketCommunication, int clientNum, int keepAlive) {
         this.socket = socket;
         this.socketCommunication = socketCommunication;
-        threadName += Integer.toString(clientNum);
+        this.keepAliveIntervall = keepAlive;
+        threadName += Integer.toString(clientNum); //Giving the thread an unique name
+        //Starting thread
         if(clientThread == null) {
              clientThread = new Thread(this, threadName);
             clientThread.start();
@@ -31,8 +36,9 @@ public class ClientThread implements Runnable {
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintStream output = new PrintStream(socket.getOutputStream());
             String commandString = "";
+            long timeSinceTransfer = System.currentTimeMillis();
             while (!Thread.currentThread().isInterrupted()) {
-                if (output.checkError()) { //TODO: properly check if connection is terminated
+                if (connectionClosed) { //TODO: properly check if connection is terminated
                     input.close(); //Close I/O streams
                     output.close();
                     HavissIoT.printMessage("Client disconnected");
@@ -44,10 +50,20 @@ public class ClientThread implements Runnable {
                 while(input.ready()) {
                     commandString = input.readLine();
                     HavissIoT.printMessage(this.threadName + ": " + commandString);
+                    if(commandString.compareTo("-exit") == 0) {
+                        connectionClosed = true;
+                        break;
+                    }
+                    if(commandString.compareTo("k") == 0) {
+                        timeSinceTransfer = System.currentTimeMillis();
+                    }
                     String result = commandHandler.processCommand(commandString);
                     result += '\n';
                     output.write(result.getBytes());
                     output.flush();
+                }
+                if((System.currentTimeMillis() - timeSinceTransfer) > this.keepAliveIntervall) {
+                    connectionClosed = true;
                 }
             }
 
