@@ -43,14 +43,13 @@
         <finalName>${project.artifactId}-${project.version}</finalName>
         <testOutputDirectory>target/test-classes</testOutputDirectory>
         <sourceDirectory>src/main/java</sourceDirectory>
-        <testSourceDirectory>src/test/java</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <encoding>cp1252</encoding>
+                    <encoding>UTF-8</encoding>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
                 </configuration>
