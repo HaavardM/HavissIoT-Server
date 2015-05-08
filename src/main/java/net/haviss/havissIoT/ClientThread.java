@@ -13,13 +13,11 @@ public class ClientThread implements Runnable {
     private Thread clientThread; //New thread for client connection
     private String threadName = "ClientThread"; //
     private boolean connectionClosed = false;
-    private int keepAliveIntervall;
 
     //Constructor - loading objects and values
-    public ClientThread(Socket socket, SocketCommunication socketCommunication, int clientNum, int keepAlive) {
+    public ClientThread(Socket socket, SocketCommunication socketCommunication, int clientNum) {
         this.socket = socket;
         this.socketCommunication = socketCommunication;
-        this.keepAliveIntervall = keepAlive;
         threadName += Integer.toString(clientNum); //Giving the thread an unique name
         //Starting thread
         if(clientThread == null) {
@@ -36,7 +34,6 @@ public class ClientThread implements Runnable {
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintStream output = new PrintStream(socket.getOutputStream());
             String commandString = "";
-            long lastTransferTime = System.currentTimeMillis();
             while (!Thread.currentThread().isInterrupted()) {
                 if (connectionClosed) { //TODO: properly check if connection is terminated
                     input.close(); //Close I/O streams
@@ -54,17 +51,10 @@ public class ClientThread implements Runnable {
                         connectionClosed = true;
                         break;
                     }
-                    if(commandString.compareTo("k") == 0) {
-                        lastTransferTime = System.currentTimeMillis();
-                    }
                     String result = commandHandler.processCommand(commandString);
                     result += '\n';
                     output.write(result.getBytes());
                     output.flush();
-                    lastTransferTime = System.currentTimeMillis();
-                }
-                if(this.keepAliveIntervall < (System.currentTimeMillis() - lastTransferTime)) {
-                    connectionClosed = true;
                 }
             }
 

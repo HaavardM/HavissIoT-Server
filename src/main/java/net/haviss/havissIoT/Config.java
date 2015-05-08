@@ -23,7 +23,6 @@ public class Config {
     public static int databasePort;
     public static int serverPort;
     public static int numbOfClients;
-    public static int keepAliveIntervall;
 
     //Properties object to load from file
     private static Properties properties = new Properties();
@@ -46,7 +45,6 @@ public class Config {
         databasePort = Integer.parseInt(getProperty("database_port"));
         serverPort = Integer.parseInt(getProperty("server_port"));
         numbOfClients = Integer.parseInt(getProperty("number_of_clients"));
-        keepAliveIntervall = Integer.parseInt(getProperty("keep_alive_intervall"));
     }
 
     //Get property value

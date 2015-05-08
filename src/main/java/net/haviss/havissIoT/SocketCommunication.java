@@ -36,19 +36,23 @@ public class SocketCommunication implements Runnable  {
     @Override
     public void run() {
         try {
-            Socket socket = null; //Socket connection between server and client
+
+            //Socket connection between server and client
+            Socket socket = null;
             ServerSocket serverSocket = new ServerSocket(serverPort); //Serversocket
 
             //Run as long thread isn't interrupted
             while (!Thread.interrupted()) {
+
                 //Only accept new connection as long there are available connections
                 while (connectedClients.get() < maxClients) {
                     socket = serverSocket.accept();
                     //Start new thread for new client
-                    new ClientThread(socket, this, connectedClients.incrementAndGet(), Config.numbOfClients);
+                    new ClientThread(socket, this, connectedClients.incrementAndGet());
                     HavissIoT.printMessage("New client connected");
                     HavissIoT.printMessage("Number of clients: " + Integer.toString(connectedClients.get()));
                 }
+
                 //Wait while all clients are used - saves cycles
                 synchronized (serverLock) {
                     serverLock.wait();
