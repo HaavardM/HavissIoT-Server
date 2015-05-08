@@ -5,7 +5,6 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.Date;
-import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,11 +18,10 @@ public class HavissIoT {
     /*Objects*/
     public static IoTClient client;
     public static IoTStorage storage;
-    public static Scanner scanner;
-    public static CommandHandler commandHandler;
     public static final Object threadLock = new Object();
     private static CopyOnWriteArrayList<String> toPrint;
 
+    //Main method
     public static void main(String args[]) {
         //Load logger and config
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver");

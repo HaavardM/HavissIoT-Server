@@ -47,7 +47,7 @@ public class ClientThread implements Runnable {
                     Thread.currentThread().interrupt();
                     break;
                 }
-                while(input.ready()) {
+                if (input.ready()) {
                     commandString = input.readLine();
                     HavissIoT.printMessage(this.threadName + ": " + commandString);
                     if(commandString.compareTo("-exit") == 0) {
@@ -61,8 +61,9 @@ public class ClientThread implements Runnable {
                     result += '\n';
                     output.write(result.getBytes());
                     output.flush();
+                    lastTransferTime = System.currentTimeMillis();
                 }
-                if((System.currentTimeMillis() - lastTransferTime) > this.keepAliveIntervall) {
+                if(this.keepAliveIntervall < (System.currentTimeMillis() - lastTransferTime)) {
                     connectionClosed = true;
                 }
             }
