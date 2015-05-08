@@ -79,7 +79,6 @@ public class IoTClient {
         try {
             mclient.subscribe(topic, qos);
             topics.add(topic);
-
         } catch (MqttException me) {
             //TODO: Handle exceptions
         }
@@ -97,9 +96,6 @@ public class IoTClient {
 
     //Get all available topics
     public synchronized String[] getTopics() {
-        for(String s : topics) {
-            System.out.println(s);
-        }
         return topics.toArray(new String[topics.size()]);
     }
 

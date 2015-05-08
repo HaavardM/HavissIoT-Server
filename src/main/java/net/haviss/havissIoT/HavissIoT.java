@@ -71,8 +71,6 @@ public class HavissIoT {
 
         //Initialize toPrint list.
         toPrint = new CopyOnWriteArrayList<>();
-        client.subscribeToTopic("test", 0);
-        client.getTopics();
 
         while(storage.getThreadConsole()); //Waits for storage thread to be done with console
         printMessage("Application is running"); //Everything is started
