@@ -4,7 +4,9 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.util.Date;
 import java.util.Scanner;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,6 +21,8 @@ public class HavissIoT {
     public static IoTStorage storage;
     public static Scanner scanner;
     public static CommandHandler commandHandler;
+    public static final Object threadLock = new Object();
+    private static CopyOnWriteArrayList<String> toPrint;
 
     public static void main(String args[]) {
         //Load logger and config
@@ -33,6 +37,7 @@ public class HavissIoT {
         //Initialize IoT client
         client = new IoTClient(Config.clientID);
         client.connect(Config.brokerAddress, Config.brokerPort);
+
 
         //Setting up new callback for client
         MqttCallback callback = new MqttCallback() {
@@ -62,18 +67,32 @@ public class HavissIoT {
         storage.start();
 
         //Objects for command handling
-        scanner = new Scanner(System.in);
-        commandHandler = new CommandHandler();
+        SocketCommunication socketCommunication = new SocketCommunication(Config.serverPort, Config.numbOfClients);
 
-        while(storage.getThreadConsole());
+        //Initialize toPrint list.
+        toPrint = new CopyOnWriteArrayList<>();
+        client.subscribeToTopic("test", 0);
+        client.getTopics();
+
+        while(storage.getThreadConsole()); //Waits for storage thread to be done with console
+        printMessage("Application is running"); //Everything is started
+
+        //Application must run forever
         while(true) {
-            System.out.print("Please enter command: ");
-            String commandString;
-            commandString = scanner.nextLine();
-            try {
-                commandHandler.processCommand(commandString);
-            } catch (Exception e) {
-                e.printStackTrace();
+            //If there is something to print
+            if(toPrint.size() > 0) {
+                for(int i = 0; i < toPrint.size(); i++) {
+                    System.out.println(new Date().toString() + " " + toPrint.get(i)); //Printing to console with date
+                    toPrint.remove(i); //Remove from list
+                }
+            } else {
+                try {
+                    synchronized (threadLock) {
+                        threadLock.wait(); //no need to steal cycles
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -88,6 +107,15 @@ public class HavissIoT {
         System.out.println("Database port:\t" + Integer.toString(Config.databasePort));
         System.out.println("Database:\t" + Config.database);
     }
+
+    //Add new message and notify thread
+    public static synchronized void printMessage(String message) {
+        toPrint.add(message);
+        synchronized (threadLock) {
+            threadLock.notify();
+        }
+    }
+
 
 
 }

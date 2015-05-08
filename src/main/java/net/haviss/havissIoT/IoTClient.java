@@ -6,6 +6,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by Håvard Skåra Mellbye on 3/27/2015.
@@ -14,15 +15,16 @@ import java.util.List;
 public class IoTClient {
 
     //Variables
-    public List<String> topics = new ArrayList<>();
+    private CopyOnWriteArrayList<String> topics = new CopyOnWriteArrayList<>();
     private String brokerAddress = "tcp://";
     private int brokerPort = 1883; //Default port is used if not else specified in connect
     private String clientID = "";
     private int qos = 2;
 
     //Objects
-    private static MqttClient mclient;
-    private static MemoryPersistence persistence = new MemoryPersistence();
+    private MqttClient mclient;
+    private MemoryPersistence persistence = new MemoryPersistence();
+    private final Object threadLock = new Object();
 
     public IoTClient(String clientID) {
         this.clientID = clientID;
@@ -63,7 +65,7 @@ public class IoTClient {
     }
 
     //Publish a message to a given topic
-    public void publishMessage(String topic, String msg) {
+    public synchronized void publishMessage(String topic, String msg) {
         try {
             MqttMessage pubMessage = new MqttMessage(msg.getBytes());
             mclient.publish(topic, pubMessage);
@@ -73,23 +75,32 @@ public class IoTClient {
     }
 
     //Subscripe to topic
-    public void subscribeToTopic(String topic, int qos) { //Subscribe to an MQTT topic
+    public synchronized void subscribeToTopic(String topic, int qos) { //Subscribe to an MQTT topic
         try {
             mclient.subscribe(topic, qos);
             topics.add(topic);
+
         } catch (MqttException me) {
             //TODO: Handle exceptions
         }
     }
 
     //Unsubscribe to topic
-    public void unsubscribeToTopic(String topic) {
+    public synchronized void unsubscribeToTopic(String topic) {
         try {
             mclient.unsubscribe(topic);
             topics.remove(topic);
         } catch (MqttException me) {
             //TODO: Handle exceptions
         }
+    }
+
+    //Get all available topics
+    public synchronized String[] getTopics() {
+        for(String s : topics) {
+            System.out.println(s);
+        }
+        return topics.toArray(new String[topics.size()]);
     }
 
     //Get clientID

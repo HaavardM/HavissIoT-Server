@@ -44,7 +44,7 @@ public class Config {
         qos = Integer.parseInt(getProperty("mqtt_qos"));
         databasePort = Integer.parseInt(getProperty("database_port"));
         serverPort = Integer.parseInt(getProperty("server_port"));
-        numbOfClients = Integer.parseInt(getProperty("number_of_client"));
+        numbOfClients = Integer.parseInt(getProperty("number_of_clients"));
     }
 
     //Get property value

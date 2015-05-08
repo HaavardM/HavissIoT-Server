@@ -8,16 +8,14 @@ import net.haviss.havissIoT.HavissIoT;
 public class CommandUnsubscribe implements CommandCallback {
 
     @Override
-    public void run(String[] parameters) {
+    public String run(String[] parameters) {
+        StringBuilder builder = new StringBuilder();
         for(String s : parameters) {
             HavissIoT.client.unsubscribeToTopic(s);
+            builder.append(" " + s);
         }
-    }
-
-    @Override
-    public String getHelp() {
-        return "unsubscribe\tUnsubscribes to topic\n" +
-                "USAGE: unsubsrine {topic1} {topic2} {topic n}";
+        HavissIoT.printMessage("Unsubscribing to" + builder.toString());
+        return "success";
     }
 
     @Override

@@ -36,14 +36,15 @@ public class SocketCommunication implements Runnable  {
     @Override
     public void run() {
         try {
-            ServerSocket serverSocket = null;
             Socket socket = null;
-            serverSocket = new ServerSocket(serverPort);
+            ServerSocket serverSocket = new ServerSocket(serverPort);
 
             while (!Thread.interrupted()) {
                 while (connectedClients.get() < maxClients) {
                     socket = serverSocket.accept();
                     new ClientThread(socket, this, connectedClients.incrementAndGet());
+                    System.out.println("New client connected");
+                    System.out.println("Number of clients: " + Integer.toString(connectedClients.get()));
                 }
                 synchronized (serverLock) {
                     serverLock.wait();

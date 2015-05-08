@@ -5,10 +5,8 @@ package net.haviss.havissIoT.Command;
  */
 public interface CommandCallback {
     //Code to run when command is called
-    void run(String[] parameters);
+    String run(String[] parameters);
 
+    //Get command name
     String getName();
-
-    //Returns a string containing useful information about the command
-    String getHelp();
 }

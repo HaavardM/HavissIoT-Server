@@ -7,17 +7,14 @@ import net.haviss.havissIoT.HavissIoT;
  */
 public class CommandSubscribe implements CommandCallback {
     @Override
-    public void run(String[] parameters) {
+    public String run(String[] parameters) {
+        StringBuilder builder = new StringBuilder();
         for(String s : parameters) {
             HavissIoT.client.subscribeToTopic(s, HavissIoT.client.getQOS());
+            builder.append(" " + s);
         }
-    }
-
-    @Override
-    public String getHelp() {
-        //TODO: Return help string
-        return "subscribe\tSubsribes to topic(s)\n" +
-                "USAGE: subscribe {topic1} {topic2} {topic3} ....{topic n}";
+        HavissIoT.printMessage("Subscribing to" + builder.toString());
+        return "success";
     }
 
     @Override

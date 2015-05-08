@@ -1,5 +1,6 @@
 package net.haviss.havissIoT;
 
+import java.io.*;
 import java.net.Socket;
 
 /**
@@ -23,13 +24,35 @@ public class ClientThread implements Runnable {
     }
     @Override
     public void run() {
-       while(!Thread.currentThread().isInterrupted()) {
-           if(socket.isClosed()) {
-               socketCommunication.removeOneClient();
-               Thread.currentThread().interrupt();
-               break;
-           }
+        HavissIoT.printMessage("New thread started");
+        try {
+            //Load new commandhandler and load I/O-streams
+            CommandHandler commandHandler = new CommandHandler();
+            BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintStream output = new PrintStream(socket.getOutputStream());
+            String commandString = "";
+            while (!Thread.currentThread().isInterrupted()) {
+                if (output.checkError()) { //TODO: properly check if connection is terminated
+                    input.close(); //Close I/O streams
+                    output.close();
+                    HavissIoT.printMessage("Client disconnected");
+                    socket.close(); //Close socket
+                    socketCommunication.removeOneClient(); //Remove one connected client
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+                while(input.ready()) {
+                    commandString = input.readLine();
+                    HavissIoT.printMessage(this.threadName + ": " + commandString);
+                    String result = commandHandler.processCommand(commandString);
+                    result += '\n';
+                    output.write(result.getBytes());
+                    output.flush();
+                }
+            }
 
-       }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
