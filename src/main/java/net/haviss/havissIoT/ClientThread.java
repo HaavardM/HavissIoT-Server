@@ -36,7 +36,7 @@ public class ClientThread implements Runnable {
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintStream output = new PrintStream(socket.getOutputStream());
             String commandString = "";
-            long timeSinceTransfer = System.currentTimeMillis();
+            long lastTransferTime = System.currentTimeMillis();
             while (!Thread.currentThread().isInterrupted()) {
                 if (connectionClosed) { //TODO: properly check if connection is terminated
                     input.close(); //Close I/O streams
@@ -55,14 +55,14 @@ public class ClientThread implements Runnable {
                         break;
                     }
                     if(commandString.compareTo("k") == 0) {
-                        timeSinceTransfer = System.currentTimeMillis();
+                        lastTransferTime = System.currentTimeMillis();
                     }
                     String result = commandHandler.processCommand(commandString);
                     result += '\n';
                     output.write(result.getBytes());
                     output.flush();
                 }
-                if((System.currentTimeMillis() - timeSinceTransfer) > this.keepAliveIntervall) {
+                if((System.currentTimeMillis() - lastTransferTime) > this.keepAliveIntervall) {
                     connectionClosed = true;
                 }
             }
