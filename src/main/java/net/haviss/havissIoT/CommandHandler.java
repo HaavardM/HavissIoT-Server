@@ -18,9 +18,7 @@ public class CommandHandler {
 
     //Constructor - adds all available commands to string
     public CommandHandler() {
-        availableCommands.add(new CommandSubscribe());
-        availableCommands.add(new CommandUnsubscribe());
-        availableCommands.add(new CommandTopics());
+
     }
 
     //Processes commandstring and perform corresponding command.
