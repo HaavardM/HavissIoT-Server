@@ -40,13 +40,13 @@ public class ClientThread implements Runnable {
             //Load new commandhandler and load I/O-streams
             CommandHandler commandHandler = new CommandHandler();
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            final PrintStream output = new PrintStream(socket.getOutputStream());
+            final BufferedWriter output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     try {
                         //Send byte
-                        output.write("123".getBytes());
+                        output.write("test");
                     } catch (IOException e) {
                         //If there is a problem with socket - terminate
                         connectionClosed = true;
@@ -73,7 +73,7 @@ public class ClientThread implements Runnable {
                     }
                     String result = commandHandler.processCommand(commandString);
                     result += '\n';
-                    output.write(result.getBytes());
+                    output.write(result);
                     output.flush();
                 }
             }
