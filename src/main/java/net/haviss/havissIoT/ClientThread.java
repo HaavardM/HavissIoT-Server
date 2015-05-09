@@ -55,6 +55,7 @@ public class ClientThread implements Runnable {
                 }
             }, 0, Config.keepAliveIntervall);
             String commandString = "";
+            String result = "";
             while (!Thread.currentThread().isInterrupted()) {
                 if (connectionClosed) { //TODO: properly check if connection is terminated
                     input.close(); //Close I/O streams
@@ -68,12 +69,13 @@ public class ClientThread implements Runnable {
                 if (input.ready()) {
                     commandString = input.readLine();
                     HavissIoT.printMessage(this.threadName + ": " + commandString);
-                    if(commandString.compareTo("-exit") == 0) {
+                    if(commandString.compareTo("exit") == 0) {
                         connectionClosed = true;
-                        break;
+                        result = "Closing connection";
+                    } else {
+                        result = commandHandler.processCommand(commandString);
+                        result += '\n';
                     }
-                    String result = commandHandler.processCommand(commandString);
-                    result += '\n';
                     output.write(result);
                     output.flush();
                 }
