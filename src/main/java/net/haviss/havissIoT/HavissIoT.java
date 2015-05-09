@@ -51,8 +51,8 @@ public class HavissIoT {
             @Override
             public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
                 if (s.compareTo(Config.cmdTopic) == 0) {
-                    //TODO: Handle commands
-                } else {
+                    new CommandHandler().processCommand(mqttMessage.toString());
+                } else if(storage.getTopicsToStore().contains(s)) {
                     HavissIoT.storage.addValues(s, mqttMessage.toString());
                 }
             }

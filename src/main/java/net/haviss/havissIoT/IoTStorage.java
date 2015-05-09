@@ -17,6 +17,7 @@ public class IoTStorage  {
     /*Variables*/
     private String serverAddress = ""; //Database address
     private int serverPort = 27017; //Database port
+    private CopyOnWriteArrayList<String> topicsToStore = new CopyOnWriteArrayList<>();
     private CopyOnWriteArrayList<String[]> toStore = new CopyOnWriteArrayList<>(); //Values to store when ready
     private boolean stopThread = false; //Stop thread
     private String storThreadName = "storageThread"; //Storage thread name
@@ -141,6 +142,16 @@ public class IoTStorage  {
             storageLock.notify(); //Resumes thread after wait
         }
 
+    }
+
+    //Add topic to store
+    public synchronized void addTopicsToStore(String topic) {
+        topicsToStore.add(topic);
+    }
+
+    //Get all stored topics
+    public synchronized CopyOnWriteArrayList<String> getTopicsToStore() {
+        return topicsToStore;
     }
 
     //Gets the toStore list - synchronized

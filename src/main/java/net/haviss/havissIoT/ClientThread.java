@@ -2,9 +2,12 @@ package net.haviss.havissIoT;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by HaavardM on 5/8/2015.
+ * Thread for handling client sockets
  */
 public class ClientThread implements Runnable {
 
@@ -13,12 +16,17 @@ public class ClientThread implements Runnable {
     private Thread clientThread; //New thread for client connection
     private String threadName = "ClientThread"; //
     private boolean connectionClosed = false;
+    BufferedReader input;
+    PrintStream output;
+    private Timer timer;
 
     //Constructor - loading objects and values
     public ClientThread(Socket socket, SocketCommunication socketCommunication, int clientNum) {
         this.socket = socket;
         this.socketCommunication = socketCommunication;
         threadName += Integer.toString(clientNum); //Giving the thread an unique name
+        timer = new Timer();
+
         //Starting thread
         if(clientThread == null) {
              clientThread = new Thread(this, threadName);
@@ -32,7 +40,17 @@ public class ClientThread implements Runnable {
             //Load new commandhandler and load I/O-streams
             CommandHandler commandHandler = new CommandHandler();
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintStream output = new PrintStream(socket.getOutputStream());
+            final PrintStream output = new PrintStream(socket.getOutputStream());
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        output.write("".getBytes());
+                    } catch (IOException e) {
+                        connectionClosed = true;
+                    }
+                }
+            }, Config.keepAliveIntervall);
             String commandString = "";
             while (!Thread.currentThread().isInterrupted()) {
                 if (connectionClosed) { //TODO: properly check if connection is terminated
@@ -57,7 +75,6 @@ public class ClientThread implements Runnable {
                     output.flush();
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
