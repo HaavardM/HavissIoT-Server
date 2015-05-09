@@ -38,6 +38,7 @@ public class ClientThread implements Runnable {
         HavissIoT.printMessage("New thread started");
         try {
             //Load new commandhandler and load I/O-streams
+            this.socket.setSoTimeout(10000);
             CommandHandler commandHandler = new CommandHandler();
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             final BufferedWriter output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
