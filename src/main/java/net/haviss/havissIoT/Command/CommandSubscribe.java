@@ -3,7 +3,7 @@ package net.haviss.havissIoT.Command;
 import net.haviss.havissIoT.HavissIoT;
 
 /**
- * Created by Håvard on 5/2/2015.
+ * Created by HaavardM on 5/2/2015.
  * Command to subscribe to topic(s)
  */
 public class CommandSubscribe implements CommandCallback {

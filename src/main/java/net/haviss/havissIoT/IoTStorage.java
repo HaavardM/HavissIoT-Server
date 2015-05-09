@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by Håvard on 4/3/2015.
+ * Created by HaavardM on 4/3/2015.
  * This class connects to a mongodb database and handles all storage.
  */
 public class IoTStorage  {

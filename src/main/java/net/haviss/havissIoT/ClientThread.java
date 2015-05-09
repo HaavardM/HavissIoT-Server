@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.Socket;
 
 /**
- * Created by Håvard on 5/8/2015.
+ * Created by HaavardM on 5/8/2015.
  */
 public class ClientThread implements Runnable {
 

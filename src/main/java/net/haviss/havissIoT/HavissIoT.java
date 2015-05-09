@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by Håvard on 5/3/2015.
+ * Created by HaavardM on 5/3/2015.
  * Main class
  */
 public class HavissIoT {

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by Håvard Skåra Mellbye on 3/27/2015.
+ * Created by haavardM on 3/27/2015.
  * This library connects to an MQTT broker (using Paho MQTT libraries) and handles communication between the broker and client.
  */
 public class IoTClient {

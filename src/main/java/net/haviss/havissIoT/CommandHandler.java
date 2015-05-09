@@ -1,19 +1,13 @@
 package net.haviss.havissIoT;
 
 import net.haviss.havissIoT.Command.CommandCallback;
-import net.haviss.havissIoT.Command.CommandSubscribe;
-import net.haviss.havissIoT.Command.CommandTopics;
-import net.haviss.havissIoT.Command.CommandUnsubscribe;
 import org.reflections.Reflections;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by Håvard on 5/7/2015.
+ * Created by HaavardM on 5/7/2015.
  * Handles commands
  */
 public class CommandHandler {

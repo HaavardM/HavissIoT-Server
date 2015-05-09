@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 
 /**
- * Created by Håvard on 4/18/2015.
+ * Created by HaavardM on 4/18/2015.
  */
 public class Config {
 

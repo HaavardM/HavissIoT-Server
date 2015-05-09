@@ -6,7 +6,7 @@ import net.haviss.havissIoT.IoTClient;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by Håvard on 5/2/2015.
+ * Created by HaavardM on 5/2/2015.
  * Command to return topics to user
  */
 public class CommandStoretopics implements CommandCallback {
