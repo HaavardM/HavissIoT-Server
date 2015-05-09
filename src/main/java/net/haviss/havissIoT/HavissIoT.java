@@ -32,6 +32,9 @@ public class HavissIoT {
         System.out.println("Settings:\n");
         printSettings();
 
+        //Initialize toPrint list.
+        toPrint = new CopyOnWriteArrayList<>();
+
         //Initialize IoT client
         client = new IoTClient(Config.clientID);
         client.connect(Config.brokerAddress, Config.brokerPort);
@@ -66,9 +69,6 @@ public class HavissIoT {
 
         //Objects for command handling
         SocketCommunication socketCommunication = new SocketCommunication(Config.serverPort, Config.numbOfClients);
-
-        //Initialize toPrint list.
-        toPrint = new CopyOnWriteArrayList<>();
 
         //Waits for storage thread to be done with console
         while(storage.getThreadConsole());
@@ -105,8 +105,10 @@ public class HavissIoT {
         System.out.println("Database address:\t" + Config.databaseAddress);
         System.out.println("Database port:\t" + Integer.toString(Config.databasePort));
         System.out.println("Database:\t" + Config.database);
+        System.out.println("\nServer settings:\n");
         System.out.println("Server port:\t" + Integer.toString(Config.serverPort));
         System.out.println("Number of clients:\t" + Integer.toString(Config.numbOfClients));
+        System.out.print("\n");
     }
 
     //Add new message and notify thread

@@ -31,8 +31,8 @@ public class IoTStorage  {
         @Override
         public void run() {
             try {
-                System.out.println("Storage thread started");
-                System.out.println("Thread name:\t" + storageThread.getName() + "\n");
+                HavissIoT.printMessage("Storage thread started");
+
                 sTConsole = false;
                 while (!Thread.interrupted()) {
                     while (storagePaused) {
