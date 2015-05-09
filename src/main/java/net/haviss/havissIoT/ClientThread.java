@@ -45,8 +45,10 @@ public class ClientThread implements Runnable {
                 @Override
                 public void run() {
                     try {
+                        //Send byte
                         output.write("".getBytes());
                     } catch (IOException e) {
+                        //If there is a problem with socket - terminate
                         connectionClosed = true;
                     }
                 }
