@@ -52,7 +52,7 @@ public class ClientThread implements Runnable {
                         connectionClosed = true;
                     }
                 }
-            }, Config.keepAliveIntervall);
+            }, 0, Config.keepAliveIntervall);
             String commandString = "";
             while (!Thread.currentThread().isInterrupted()) {
                 if (connectionClosed) { //TODO: properly check if connection is terminated
