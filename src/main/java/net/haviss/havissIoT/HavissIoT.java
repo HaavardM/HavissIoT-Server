@@ -40,7 +40,6 @@ public class HavissIoT {
         client = new IoTClient(Config.clientID);
         client.connect(Config.brokerAddress, Config.brokerPort);
 
-
         //Setting up new callback for client
         MqttCallback callback = new MqttCallback() {
             @Override
