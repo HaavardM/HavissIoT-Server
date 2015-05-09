@@ -15,7 +15,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class IoTStorage  {
 
     /*Variables*/
-
     private String serverAddress = ""; //Database address
     private int serverPort = 27017; //Database port
     private CopyOnWriteArrayList<String[]> toStore = new CopyOnWriteArrayList<>(); //Values to store when ready
@@ -32,7 +31,6 @@ public class IoTStorage  {
         public void run() {
             try {
                 HavissIoT.printMessage("Storage thread started");
-
                 sTConsole = false;
                 while (!Thread.interrupted()) {
                     while (storagePaused) {

@@ -23,6 +23,7 @@ public class HavissIoT {
 
     //Main method
     public static void main(String args[]) {
+
         //Load logger and config
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
         mongoLogger.setLevel(Level.WARNING);

@@ -20,7 +20,6 @@ public class CommandStoretopics implements CommandCallback {
         return topicsString.toString();
     }
 
-
     @Override
     public String getName() {
         return "-storetopics";
