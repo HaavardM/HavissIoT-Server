@@ -20,12 +20,14 @@ public class ClientThread implements Runnable {
     private boolean connectionClosed = false;
     private BufferedWriter output;
     private BufferedReader input;
+    private Timer timer;
 
     //Constructor - loading objects and values
     public ClientThread(Socket socket, SocketCommunication socketCommunication, int clientNum) {
         this.socket = socket;
         this.socketCommunication = socketCommunication;
         threadName += Integer.toString(clientNum); //Giving the thread an unique name
+        timer = new Timer();
 
         //Starting thread
         if(clientThread == null) {
@@ -51,7 +53,17 @@ public class ClientThread implements Runnable {
             //Strings to store command and result from commandhandler
             String commandString = "";
             String result = "";
-
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        output.write("ping\n");
+                        input.readLine();
+                    } catch (IOException e) {
+                        connectionClosed = true;
+                    }
+                }
+            }, Config.keepAliveIntervall);
             //Thread should run until client disconnect
             while (!Thread.currentThread().isInterrupted()) {
                 try {

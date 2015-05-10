@@ -9,14 +9,8 @@ import net.haviss.havissIoT.HavissIoT;
 public class CommandDevice implements CommandCallback {
     @Override
     public String run(String[] parameters) {
-        if(parameters.length != 2) {
-            return "Unexpected number of parameters";
-        } else {
-            HavissIoT.client.publishMessage(parameters[0], parameters[1]);
-            HavissIoT.printMessage("Performed action on device " + parameters[0] + ": " + parameters[1]);
-            //TODO: Check if device replys success
-            return "success";
-        }
+        //TODO: Create device class and create this command.
+        return null;
     }
 
     @Override
