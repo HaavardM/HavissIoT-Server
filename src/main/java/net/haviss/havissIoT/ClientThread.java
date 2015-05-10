@@ -17,6 +17,7 @@ public class ClientThread implements Runnable {
     private SocketCommunication socketCommunication; //For terminating connection
     private Thread clientThread; //New thread for client connection
     private String threadName = "ClientThread"; //
+    private int clientNum;
     private boolean connectionClosed = false;
     private BufferedWriter output;
     private BufferedReader input;
@@ -26,7 +27,7 @@ public class ClientThread implements Runnable {
         this.socket = socket;
         this.socketCommunication = socketCommunication;
         threadName += Integer.toString(clientNum); //Giving the thread an unique name
-        timer = new Timer();
+        this.clientNum = clientNum;
 
         //Starting thread
         if(clientThread == null) {
@@ -56,18 +57,17 @@ public class ClientThread implements Runnable {
             //Thread should run until client disconnect
             while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    if (connectionClosed) { //TODO: properly check if connection is terminated
+                    if (connectionClosed) {
                         //Close I/O streams
                         input.close();
                         output.close();
-                        HavissIoT.printMessage("Client disconnected");
-                        socket.close(); //Close socket
+                        HavissIoT.printMessage("Client " + Integer.toString(clientNum) + " disconnected");
+                                socket.close(); //Close socket
                         socketCommunication.removeOneClient(); //Remove one connected client
                         Thread.currentThread().interrupt(); //Interrupt thread
                         break; //Break out of while loop (and thread will stop)
                     }
 
-                    //If input is ready to be used
                     //Read until line-end - \n
                     commandString = input.readLine();
 
