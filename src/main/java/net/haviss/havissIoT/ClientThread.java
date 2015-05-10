@@ -20,7 +20,6 @@ public class ClientThread implements Runnable {
     private boolean connectionClosed = false;
     private BufferedWriter output;
     private BufferedReader input;
-    private Timer timer;
 
     //Constructor - loading objects and values
     public ClientThread(Socket socket, SocketCommunication socketCommunication, int clientNum) {
@@ -53,17 +52,7 @@ public class ClientThread implements Runnable {
             //Strings to store command and result from commandhandler
             String commandString = "";
             String result = "";
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        output.write("ping\n");
-                        input.read();
-                    } catch (IOException e) {
-                        connectionClosed = true;
-                    }
-                }
-            }, Config.keepAliveIntervall);
+
             //Thread should run until client disconnect
             while (!Thread.currentThread().isInterrupted()) {
                 try {
@@ -79,27 +68,24 @@ public class ClientThread implements Runnable {
                     }
 
                     //If input is ready to be used
-                    if (input.ready()) {
-                        //Read until line-end - \n
-                        commandString = input.readLine();
+                    //Read until line-end - \n
+                    commandString = input.readLine();
 
-                        //Print to console
-                        HavissIoT.printMessage(this.threadName + ": " + commandString);
+                    //Print to console
+                    HavissIoT.printMessage(this.threadName + ": " + commandString);
 
-                        //if exit - close connection
-                        if (commandString.compareTo("exit") == 0) {
-                            connectionClosed = true;
-                            result = "Closing connection";
-                        } else {
-                            result = commandHandler.processCommand(commandString);
-                            result += '\n';
-                        }
-
-                        //Send result back to client
-                        output.write(result);
-                        output.flush();
-
+                    //if exit - close connection
+                    if (commandString.compareTo("exit") == 0) {
+                        connectionClosed = true;
+                        result = "Closing connection";
+                    } else {
+                        result = commandHandler.processCommand(commandString);
+                        result += '\n';
                     }
+
+                    //Send result back to client
+                    output.write(result);
+                    output.flush();
                 } catch (IOException e) {
                     //Exception is expected if connection is lost.
                     //Terminate connection and stop thread
