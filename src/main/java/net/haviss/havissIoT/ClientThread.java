@@ -58,7 +58,7 @@ public class ClientThread implements Runnable {
                 public void run() {
                     try {
                         output.write("ping\n");
-                        input.readLine();
+                        input.read();
                     } catch (IOException e) {
                         connectionClosed = true;
                     }
