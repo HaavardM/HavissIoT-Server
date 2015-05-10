@@ -32,4 +32,8 @@ Other information:
 - The clients will be written in the language most appropiate for the platform (C/C++, java, etc)
 - Maven will be used for java applications
 
+To build:
+- Change config.properties file in resources folder to fit your needs
+- run mvn install in same folder as pom.xml
+- Run jar file in target folder (the one with the longes name)
 
