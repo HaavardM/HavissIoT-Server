@@ -2,8 +2,6 @@ package net.haviss.havissIoT;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by HaavardM on 5/8/2015.
@@ -51,17 +49,17 @@ public class ClientThread implements Runnable {
             connectionClosed = true;
         }
             //Strings to store command and result from commandhandler
-            String commandString = "";
-            String result = "";
+        String commandString = "";
+        String result = "";
 
-            //Thread should run until client disconnect
+        //Thread should run until client disconnect
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     if (connectionClosed) {
                         //Close I/O streams
                         input.close();
                         output.close();
-                        HavissIoT.printMessage("Client " + Integer.toString(clientNum) + " disconnected");
+                        HavissIoT.printMessage("Client" + Integer.toString(clientNum) + " disconnected");
                                 socket.close(); //Close socket
                         socketCommunication.removeOneClient(); //Remove one connected client
                         Thread.currentThread().interrupt(); //Interrupt thread
@@ -92,6 +90,5 @@ public class ClientThread implements Runnable {
                     connectionClosed = true;
                 }
             }
-
     }
 }
