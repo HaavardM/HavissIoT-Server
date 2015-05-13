@@ -53,42 +53,41 @@ public class ClientThread implements Runnable {
         String result = "";
 
         //Thread should run until client disconnect
-            while (!Thread.currentThread().isInterrupted()) {
-                try {
-                    if (connectionClosed) {
-                        //Close I/O streams
-                        input.close();
-                        output.close();
-                        HavissIoT.printMessage("Client" + Integer.toString(clientNum) + " disconnected");
-                                socket.close(); //Close socket
-                        socketCommunication.removeOneClient(); //Remove one connected client
-                        Thread.currentThread().interrupt(); //Interrupt thread
-                        break; //Break out of while loop (and thread will stop)
-                    }
-
-                    //Read until line-end - \n
-                    commandString = input.readLine();
-
-                    //Print to console
-                    HavissIoT.printMessage(this.threadName + ": " + commandString);
-
-                    //if exit - close connection
-                    if (commandString.compareTo("exit") == 0) {
-                        connectionClosed = true;
-                        result = "Closing connection";
-                    } else {
-                        result = commandHandler.processCommand(commandString);
-                        result += '\n';
-                    }
-
-                    //Send result back to client
-                    output.write(result);
-                    output.flush();
-                } catch (IOException e) {
-                    //Exception is expected if connection is lost.
-                    //Terminate connection and stop thread
-                    connectionClosed = true;
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
+                if (connectionClosed) {
+                    //Close I/O streams
+                    input.close();
+                    output.close();
+                    HavissIoT.printMessage("Client" + Integer.toString(clientNum) + " disconnected");
+                    socket.close(); //Close socket
+                    socketCommunication.removeOneClient(); //Remove one connected client
+                    Thread.currentThread().interrupt(); //Interrupt thread
+                    break; //Break out of while loop (and thread will stop)
                 }
+                //Read until line-end - \n
+                commandString = input.readLine();
+
+                //Print to console
+                HavissIoT.printMessage(this.threadName + ": " + commandString);
+
+                //if exit - close connection
+                if (commandString.compareTo("exit") == 0) {
+                    connectionClosed = true;
+                    result = "Closing connection";
+                } else {
+                    result = commandHandler.processCommand(commandString);
+                    result += '\n';
+                }
+
+                //Send result back to client
+                output.write(result);
+                output.flush();
+            } catch (IOException e) {
+                //Exception is expected if connection is lost.
+                //Terminate connection and stop thread
+                connectionClosed = true;
             }
+        }
     }
 }
