@@ -77,8 +77,10 @@ public class IoTClient {
     //Subscripe to topic
     public synchronized void subscribeToTopic(String topic, int qos) { //Subscribe to an MQTT topic
         try {
-            mclient.subscribe(topic, qos);
-            topics.add(topic);
+            if(!topics.contains(topic)) {
+                mclient.subscribe(topic, qos);
+                topics.add(topic);
+            }
         } catch (MqttException me) {
             //TODO: Handle exceptions
         }
