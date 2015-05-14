@@ -20,19 +20,19 @@ public class CommandStorage implements CommandCallback {
                 builder.append(" " + s);
             }
             HavissIoT.printMessage("Subscribing to" + builder.toString());
-            return "success";
+            return new Gson().toJson("success");
         } else if(parameters[0].compareTo("-remove") == 0) {
             for(String s : topics) {
                 HavissIoT.client.unsubscribeToTopic(s);
                 builder.append(" " + s);
             }
             HavissIoT.printMessage("Unsubscribing to" + builder.toString());
-            return "success";
+            return new Gson().toJson("success");
         } else if(parameters[0].compareTo("-show") == 0) {
             HavissIoT.printMessage("Sending all topics");
             return new Gson().toJson(HavissIoT.client.getTopics());
         } else {
-            return "No corresponding argument";
+            return new Gson().toJson("No corresponding argument");
         }
     }
 
