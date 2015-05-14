@@ -67,6 +67,9 @@ public class ClientThread implements Runnable {
                 }
                 //Read until line-end - \n
                 commandString = input.readLine();
+                if(commandString == null) {
+                    connectionClosed = true;
+                }
 
                 //Print to console
                 HavissIoT.printMessage(this.threadName + ": " + commandString);
