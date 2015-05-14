@@ -69,6 +69,7 @@ public class ClientThread implements Runnable {
                 commandString = input.readLine();
                 if(commandString == null) {
                     connectionClosed = true;
+                    break;
                 }
 
                 //Print to console
