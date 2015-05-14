@@ -1,5 +1,6 @@
 package net.haviss.havissIoT.Command;
 
+import com.google.gson.Gson;
 import net.haviss.havissIoT.HavissIoT;
 
 import java.util.Arrays;
@@ -28,11 +29,8 @@ public class CommandStorage implements CommandCallback {
             HavissIoT.printMessage("Unsubscribing to" + builder.toString());
             return "success";
         } else if(parameters[0].compareTo("-show") == 0) {
-            for(String s : HavissIoT.client.getTopics()) {
-                builder.append(s).append(" ");
-            }
-            HavissIoT.printMessage("Sending topics " + builder.toString());
-            return builder.toString();
+            HavissIoT.printMessage("Sending all topics");
+            return new Gson().toJson(HavissIoT.client.getTopics());
         } else {
             return "No corresponding argument";
         }
