@@ -49,8 +49,8 @@ public class ClientThread implements Runnable {
             connectionClosed = true;
         }
             //Strings to store command and result from commandhandler
-        String commandString = "";
-        String result = "";
+        String commandString;
+        String result;
 
         //Thread should run until client disconnect
         while (!Thread.currentThread().isInterrupted()) {
@@ -69,24 +69,24 @@ public class ClientThread implements Runnable {
                 commandString = input.readLine();
                 if(commandString == null) {
                     connectionClosed = true;
-                    break;
-                }
-
-                //Print to console
-                HavissIoT.printMessage(this.threadName + ": " + commandString);
-
-                //if exit - close connection
-                if (commandString.compareTo("exit") == 0) {
-                    connectionClosed = true;
-                    result = "Closing connection";
                 } else {
-                    result = commandHandler.processCommand(commandString);
-                    result += '\n';
-                }
 
-                //Send result back to client
-                output.write(result);
-                output.flush();
+                    //Print to console
+                    HavissIoT.printMessage(this.threadName + ": " + commandString);
+
+                    //if exit - close connection
+                    if (commandString.compareTo("exit") == 0) {
+                        connectionClosed = true;
+                        result = "Closing connection";
+                    } else {
+                        result = commandHandler.processCommand(commandString);
+                        result += '\n';
+                    }
+
+                    //Send result back to client
+                    output.write(result);
+                    output.flush();
+                }
             } catch (IOException e) {
                 //Exception is expected if connection is lost.
                 //Terminate connection and stop thread
