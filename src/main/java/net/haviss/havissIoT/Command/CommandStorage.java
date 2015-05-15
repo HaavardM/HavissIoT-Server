@@ -28,7 +28,7 @@ public class CommandStorage implements CommandCallback {
             }
             HavissIoT.printMessage("Unsubscribing to" + builder.toString());
             return new Gson().toJson("success");
-        } else if(parameters[0].compareTo("show ") == 0) {
+        } else if(parameters[0].compareTo("show") == 0) {
             HavissIoT.printMessage("Sending all topics");
             return new Gson().toJson(HavissIoT.client.getTopics());
         } else {
