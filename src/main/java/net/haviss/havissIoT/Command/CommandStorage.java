@@ -14,7 +14,7 @@ public class CommandStorage implements CommandCallback {
     public String run(String[] parameters) {
         StringBuilder builder = new StringBuilder();
         String[] topics = Arrays.copyOfRange(parameters, 1, parameters.length);
-        if(parameters[0].compareTo("add") == 0) {
+        if(parameters[0].compareTo("use") == 0) {
             for (String s : topics) {
                 HavissIoT.client.subscribeToTopic(s, HavissIoT.client.getQOS());
                 builder.append(" " + s);
