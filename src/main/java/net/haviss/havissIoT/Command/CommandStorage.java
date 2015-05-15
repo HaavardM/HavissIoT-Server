@@ -32,7 +32,7 @@ public class CommandStorage implements CommandCallback {
             HavissIoT.printMessage("Sending all topics");
             return new Gson().toJson(HavissIoT.client.getTopics());
         } else {
-            return new Gson().toJson("No corresponding argument");
+            return new Gson().toJson("Couldn't resolve argument " + parameters[0]);
         }
     }
 
