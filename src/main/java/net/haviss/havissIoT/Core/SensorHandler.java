@@ -1,7 +1,12 @@
 package net.haviss.havissIoT.Core;
 
+import com.google.gson.Gson;
 import net.haviss.havissIoT.Sensor.IoTSensor;
+import org.bson.BSON;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -55,6 +60,16 @@ public class SensorHandler {
     //Get list of sensors
     public synchronized CopyOnWriteArrayList<IoTSensor> getSensorsList() {
         return availableSensors;
+    }
+
+    public synchronized void writeToFile() {
+        try {
+            PrintWriter writer = new PrintWriter("sensors.json",  "UTF-8");
+            writer.write(new Gson().toJson(availableSensors));
+            writer.close();
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
 

@@ -4,9 +4,9 @@ package net.haviss.havissIoT.Sensor;
  * Created by Håvard on 5/16/2015.
  */
 public class IoTSensor {
-    private String topic;
     private String name;
     private String type;
+    private String topic;
     private String lastValue;
     private boolean storage;
 
@@ -47,6 +47,7 @@ public class IoTSensor {
         return this.topic;
     }
 
+    //Check if sensordata is to be stored
     public boolean getStorage() {
         return this.storage;
     }
