@@ -96,8 +96,7 @@ public class SensorHandler {
                 String sensorName = (String) sensor.get("name");
                 String sensorType = (String) sensor.get("type");
                 String sensorTopic = (String) sensor.get("topic");
-                String storageString = (String) sensor.get("storage");
-                boolean sensorStorage = Boolean.parseBoolean(storageString);
+                boolean sensorStorage = (boolean) sensor.get("storage");
                 addSensor(sensorName, sensorTopic, sensorType, sensorStorage);
             }
         }
