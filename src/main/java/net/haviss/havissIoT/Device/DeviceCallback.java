@@ -15,7 +15,7 @@ public interface DeviceCallback {
     //Get device topic
     String getCommandTopic();
 
-    String getStatusTopic();
+
 
 
 }

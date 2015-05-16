@@ -4,6 +4,8 @@ import net.haviss.havissIoT.Communication.IoTClient;
 import net.haviss.havissIoT.Communication.IoTStorage;
 import net.haviss.havissIoT.Communication.SocketCommunication;
 import net.haviss.havissIoT.Core.CommandHandler;
+import net.haviss.havissIoT.Core.SensorHandler;
+import net.haviss.havissIoT.Sensor.IoTSensor;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -22,6 +24,7 @@ public class HavissIoT {
     /*Objects*/
     public static IoTClient client;
     public static IoTStorage storage;
+    public static final SensorHandler sensorHandler = new SensorHandler();
     public static final Object threadLock = new Object();
     private static CopyOnWriteArrayList<String> toPrint;
 
@@ -53,10 +56,12 @@ public class HavissIoT {
 
             @Override
             public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-                if (s.compareTo(Config.cmdTopic) == 0) {
-                    new CommandHandler().processCommand(mqttMessage.toString());
-                } else if(storage.getTopicsToStore().contains(s)) {
-                    HavissIoT.storage.addValues(s, mqttMessage.toString());
+                IoTSensor sensor = sensorHandler.getSensorByTopic(s);
+                if(sensor != null) {
+                    if (sensor.getStorage()) {
+                        HavissIoT.storage.addValues(sensor.getName(), mqttMessage.toString());
+                    }
+                    sensor.updateValue(mqttMessage.toString());
                 }
             }
 

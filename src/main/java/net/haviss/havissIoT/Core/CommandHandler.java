@@ -29,7 +29,7 @@ public class CommandHandler {
     //Processes commandstring and perform corresponding command.
     public String processCommand(String commandString) {
         String reply = "";
-        String[] cmd = commandString.toLowerCase().split("\\s+"); //Splits string into seperate arguments
+        String[] cmd = commandString.toUpperCase().split("\\s+"); //Splits string into seperate arguments
         String command = cmd[0]; //First string is the command
         String[] arguments = Arrays.copyOfRange(cmd, 1, cmd.length); //Rest of the strings are arguments
         boolean success = false;
