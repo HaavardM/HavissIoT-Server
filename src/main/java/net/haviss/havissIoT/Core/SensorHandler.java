@@ -1,16 +1,20 @@
 package net.haviss.havissIoT.Core;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Sensor.IoTSensor;
-import org.bson.BSON;
-
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import org.json.simple.JSONArray;
+import java.io.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  * Created by Håvard on 5/16/2015.
+ * Handles all sensors
  */
 public class SensorHandler {
     private CopyOnWriteArrayList<IoTSensor> availableSensors = new CopyOnWriteArrayList<>();
@@ -72,5 +76,24 @@ public class SensorHandler {
         }
     }
 
-
+    //Load sensors from file
+    public synchronized void loadFromFile() {
+        JSONParser parser = new JSONParser();
+        JsonArray jsonArray;
+        try {
+            jsonArray = (JsonArray) parser.parse(new FileReader("sensors.json"));
+        } catch (IOException | ParseException e) {
+            jsonArray = null;
+        }
+        if(jsonArray != null) {
+            for(Object o : jsonArray) {
+                JSONObject sensor = (JSONObject) o;
+                String sensorName = (String) sensor.get("name");
+                String sensorType = (String) sensor.get("type");
+                String sensorTopic = (String) sensor.get("topic");
+                boolean sensorStorage = Boolean.parseBoolean((String)sensor.get("storage"));
+                addSensor(sensorName, sensorTopic, sensorType, sensorStorage);
+            }
+        }
+    }
 }
