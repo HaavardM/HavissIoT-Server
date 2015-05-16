@@ -15,11 +15,8 @@ public class CommandSensor implements CommandCallback {
         StringBuilder builder = new StringBuilder();
         String[] topics = Arrays.copyOfRange(parameters, 1, parameters.length);
         if(parameters[0].compareTo("CREATE_NEW") == 0) {
-            for (String s : topics) {
-                HavissIoT.client.subscribeToTopic(s, HavissIoT.client.getQOS());
-                builder.append(" " + s);
-            }
-            HavissIoT.printMessage("Subscribing to" + builder.toString());
+            HavissIoT.sensorHandler.addSensor(parameters[1], parameters[2], parameters[3],Boolean.parseBoolean(parameters[4]));
+            HavissIoT.printMessage("Adding sensor " + parameters[1]);
             return new Gson().toJson("success");
         } else if(parameters[0].compareTo("REMOVE") == 0) {
             for(String s : topics) {
