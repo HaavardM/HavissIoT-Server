@@ -84,9 +84,9 @@ public class SensorHandler {
     //Load sensors from file
     public synchronized void loadFromFile() {
         JSONParser parser = new JSONParser();
-        JsonArray jsonArray;
+        JSONArray jsonArray;
         try {
-            jsonArray = (JsonArray) parser.parse(new FileReader("sensors.json"));
+            jsonArray = (JSONArray) parser.parse(new FileReader("sensors.json"));
         } catch (IOException | ParseException e) {
             jsonArray = null;
         }
