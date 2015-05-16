@@ -32,6 +32,7 @@ public class SensorHandler {
         } else {
             availableSensors.add(new IoTSensor(name, topic, type, toStore));
             sensorNames.add(name);
+            this.writeToFile();
             return true;
         }
     }
@@ -44,6 +45,7 @@ public class SensorHandler {
                 sensorNames.remove(name);
             }
         }
+        this.writeToFile();
     }
 
     //Get sensor object with name
