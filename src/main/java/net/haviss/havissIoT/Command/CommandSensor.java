@@ -28,6 +28,9 @@ public class CommandSensor implements CommandCallback {
         } else if(parameters[0].compareTo("LIST_ALL") == 0) {
             HavissIoT.printMessage("Listing all sensors");
             return new Gson().toJson(HavissIoT.sensorHandler.getSensorsList());
+        } else if(parameters[0].compareTo("STORE_SENSORS") == 0) {
+            HavissIoT.sensorHandler.writeToFile();
+            return new Gson().toJson("success");
         } else {
             return new Gson().toJson("Couldn't resolve argument " + parameters[0]);
         }
