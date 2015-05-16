@@ -1,4 +1,4 @@
-package net.haviss.havissIoT;
+package net.haviss.havissIoT.Core;
 
 import net.haviss.havissIoT.Command.CommandCallback;
 import org.reflections.Reflections;

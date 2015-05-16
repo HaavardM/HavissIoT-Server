@@ -1,8 +1,9 @@
-package net.haviss.havissIoT;
+package net.haviss.havissIoT.Communication;
 
 import com.mongodb.*;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import net.haviss.havissIoT.HavissIoT;
 import org.bson.Document;
 
 import java.util.*;

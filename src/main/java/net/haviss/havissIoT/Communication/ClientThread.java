@@ -1,4 +1,7 @@
-package net.haviss.havissIoT;
+package net.haviss.havissIoT.Communication;
+
+import net.haviss.havissIoT.Core.CommandHandler;
+import net.haviss.havissIoT.HavissIoT;
 
 import java.io.*;
 import java.net.Socket;
@@ -70,7 +73,6 @@ public class ClientThread implements Runnable {
                 if(commandString == null) {
                     connectionClosed = true;
                 } else {
-
                     //Print to console
                     HavissIoT.printMessage(this.threadName + ": " + commandString);
 

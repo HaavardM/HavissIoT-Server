@@ -18,6 +18,7 @@ public class Config {
     public static String statusTopic;
     public static String databaseAddress;
     public static String database;
+    public static String witAddress;
     public static int brokerPort;
     public static int qos;
     public static int databasePort;
@@ -45,6 +46,7 @@ public class Config {
         databasePort = Integer.parseInt(getProperty("database_port"));
         serverPort = Integer.parseInt(getProperty("server_port"));
         numbOfClients = Integer.parseInt(getProperty("number_of_clients"));
+        witAddress = getProperty("wit_address");
     }
 
     //Get property value

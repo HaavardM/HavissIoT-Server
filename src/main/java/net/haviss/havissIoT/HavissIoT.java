@@ -1,5 +1,9 @@
 package net.haviss.havissIoT;
 
+import net.haviss.havissIoT.Communication.IoTClient;
+import net.haviss.havissIoT.Communication.IoTStorage;
+import net.haviss.havissIoT.Communication.SocketCommunication;
+import net.haviss.havissIoT.Core.CommandHandler;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;

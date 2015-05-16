@@ -1,6 +1,6 @@
-package net.haviss.havissIoT;
+package net.haviss.havissIoT.Communication;
 
-import com.mongodb.connection.Server;
+import net.haviss.havissIoT.HavissIoT;
 
 import java.io.IOException;
 import java.net.ServerSocket;
