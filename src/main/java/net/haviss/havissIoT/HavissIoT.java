@@ -11,6 +11,7 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -122,7 +123,7 @@ public class HavissIoT {
         System.out.println("Server port:\t" + Integer.toString(Config.serverPort));
         System.out.println("Number of clients:\t" + Integer.toString(Config.numbOfClients));
         try {
-            System.out.println("Local IP address:\t" + Inet4Address.getLocalHost());
+            System.out.println("Local IP address:\t" + InetAddress.getLocalHost());
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
