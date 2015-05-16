@@ -85,20 +85,26 @@ public class SensorHandler {
 
     //Load sensors from file
     public synchronized void loadFromFile() {
+        //Setting up parser
         JSONParser parser = new JSONParser();
+        //New json array
         JSONArray jsonArray;
         try {
+            //Load json array from file
             jsonArray = (JSONArray) parser.parse(new FileReader("sensors.json"));
         } catch (IOException | ParseException e) {
             jsonArray = null;
         }
+        //If jsonarray successfully loaded from file
         if(jsonArray != null) {
+            //Foreach object in jsonarray - load properties
             for(Object o : jsonArray) {
                 JSONObject sensor = (JSONObject) o;
                 String sensorName = (String) sensor.get("name");
                 String sensorType = (String) sensor.get("type");
                 String sensorTopic = (String) sensor.get("topic");
                 boolean sensorStorage = (boolean) sensor.get("storage");
+                //Add new sensor to list with appropriate parameters
                 addSensor(sensorName, sensorTopic, sensorType, sensorStorage);
             }
         }
