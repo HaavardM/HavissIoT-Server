@@ -18,7 +18,7 @@ public class IoTStorage  {
     /*Variables*/
     private String serverAddress = ""; //Database address
     private int serverPort = 27017; //Database port
-    private CopyOnWriteArrayList<String> topicsToStore = new CopyOnWriteArrayList<>();
+    private CopyOnWriteArrayList<String> storedTopics = new CopyOnWriteArrayList<>();
     private CopyOnWriteArrayList<String[]> toStore = new CopyOnWriteArrayList<>(); //Values to store when ready
     private boolean stopThread = false; //Stop thread
     private String storThreadName = "storageThread"; //Storage thread name
@@ -80,7 +80,7 @@ public class IoTStorage  {
     /*Functions*/
 
     //Start threads
-    public void start() {
+    private void start() {
         if (storageThread == null) {
             storageThread = new Thread(this.storageHandler, storThreadName);
             storageThread.start();
@@ -93,7 +93,7 @@ public class IoTStorage  {
     }
 
     //Resumes storage thread
-    public void resumeStorage() {
+    public synchronized void resumeStorage() {
         this.storagePaused = false;
         synchronized (storageLock) {
             storageLock.notify(); //Notify thread - resumes thread after wait
@@ -107,6 +107,7 @@ public class IoTStorage  {
         this.serverPort = serverPort;
         this.connect(this.serverAddress, this.serverPort);
         this.db = mongoClient.getDatabase(db);
+        this.start();
     }
 
     //Overloaded constructor - with authentication
@@ -115,6 +116,7 @@ public class IoTStorage  {
         this.serverPort = serverPort;
         this.connect(this.serverAddress, this.serverPort, username, password, db);
         this.db = mongoClient.getDatabase(db);
+        this.start();
     }
 
     // Connects to server
@@ -124,7 +126,7 @@ public class IoTStorage  {
         this.mongoClient = new MongoClient(serverAddress, serverPort);
     }
 
-    //Overloaded connect funtion to enable autentication
+    //Overloaded connect function to enableauthenticationn
     private void connect(String address, int port, String username, String password, String db) {
         MongoCredential credential = MongoCredential.createCredential(username, db, password.toCharArray());
         this.mongoClient = new MongoClient(new ServerAddress(serverAddress), Arrays.asList(credential));
@@ -147,12 +149,12 @@ public class IoTStorage  {
 
     //Add topic to store
     public synchronized void addTopicsToStore(String topic) {
-        topicsToStore.add(topic);
+        storedTopics.add(topic);
     }
 
     //Get all stored topics
-    public synchronized CopyOnWriteArrayList<String> getTopicsToStore() {
-        return topicsToStore;
+    public synchronized CopyOnWriteArrayList<String> getStoredTopics() {
+        return storedTopics;
     }
 
     //Gets the toStore list - synchronized
@@ -160,11 +162,15 @@ public class IoTStorage  {
         return toStore;
     }
 
+    //Checks if thread is using the console. 
     public boolean getThreadConsole() {
         return (sTConsole);
     }
 
+    //Stop storage thread
     public void stop() {
         //TODO: Stop thread
+        storageThread.interrupt();
+
     }
 }

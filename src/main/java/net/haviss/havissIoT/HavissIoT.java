@@ -1,5 +1,6 @@
 package net.haviss.havissIoT;
 
+import com.mongodb.MongoException;
 import net.haviss.havissIoT.Communication.IoTClient;
 import net.haviss.havissIoT.Communication.IoTStorage;
 import net.haviss.havissIoT.Communication.SocketCommunication;
@@ -8,6 +9,7 @@ import net.haviss.havissIoT.Core.SensorHandler;
 import net.haviss.havissIoT.Sensor.IoTSensor;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.net.Inet4Address;
@@ -15,6 +17,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,6 +31,7 @@ public class HavissIoT {
     /*Objects*/
     public static IoTClient client;
     public static IoTStorage storage;
+    public static ExecutorService executor;
     public static final SensorHandler sensorHandler = new SensorHandler();
     public static final Object threadLock = new Object();
     private static CopyOnWriteArrayList<String> toPrint;
@@ -36,7 +41,7 @@ public class HavissIoT {
 
         //Load logger and config
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
-        mongoLogger.setLevel(Level.WARNING);
+        mongoLogger.setLevel(Level.SEVERE);
         Config.loadConfig("/config.properties");
 
         //Load config from file
@@ -48,45 +53,53 @@ public class HavissIoT {
         //Initialize toPrint list.
         toPrint = new CopyOnWriteArrayList<>();
 
+        //Start executor service
+        executor = Executors.newFixedThreadPool(1);
+
         //Initialize IoT client
-        client = new IoTClient(Config.clientID);
-        client.connect(Config.brokerAddress, Config.brokerPort);
+        if (!Config.offlineMode) {
+            client = new IoTClient(Config.clientID);
+            client.connect(Config.brokerAddress, Config.brokerPort);
 
-        //Setting up new callback for client
-        MqttCallback callback = new MqttCallback() {
-            @Override
-            public void connectionLost(Throwable throwable) {
-                //TODO: Handle connection lost
-            }
-
-            @Override
-            public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-                IoTSensor sensor = sensorHandler.getSensorByTopic(s);
-                if(sensor != null) {
-                    if (sensor.getStorage()) {
-                        HavissIoT.storage.addValues(sensor.getName(), mqttMessage.toString());
-                    }
-                    sensor.updateValue(mqttMessage.toString());
+            //Setting up new callback for client
+            MqttCallback callback = new MqttCallback() {
+                @Override
+                public void connectionLost(Throwable throwable) {
+                    //TODO: Handle connection lost
                 }
+
+                @Override
+                public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
+                    IoTSensor sensor = sensorHandler.getSensorByTopic(s);
+                    if (sensor != null) {
+                        if (sensor.getStorage()) {
+                            HavissIoT.storage.addValues(sensor.getName(), mqttMessage.toString());
+                        }
+                        sensor.updateValue(mqttMessage.toString());
+                    }
+                }
+
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+                    //No messages is delivered - should never be called
+                }
+            };
+            client.setCallback(callback);
+
+            try {
+                //Initialize storage client
+                storage = new IoTStorage(Config.databaseAddress, Config.databasePort, Config.database);
+            } catch (MongoException e) {
+                printMessage("Couldnt connect to database server");
             }
+            //Objects for command handling
+            SocketCommunication socketCommunication = new SocketCommunication(Config.serverPort, Config.numbOfClients);
 
-            @Override
-            public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-                //No messages is delivered - should never be called
-            }
-        };
-        client.setCallback(callback);
-
-        //Initialize storage client
-        storage = new IoTStorage(Config.databaseAddress, Config.databasePort, Config.database);
-        storage.start();
-
-        //Objects for command handling
-        SocketCommunication socketCommunication = new SocketCommunication(Config.serverPort, Config.numbOfClients);
-
-        //Waits for storage thread to be done with console
-        while(storage.getThreadConsole());
-
+            //Waits for storage thread to be done with console
+            while (storage.getThreadConsole()) ;
+        } else {
+            printMessage("OFFLINE MODE! - No network connections");
+        }
         //Everything is started
         printMessage("Application is ready");
 

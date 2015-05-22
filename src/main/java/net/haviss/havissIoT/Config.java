@@ -24,6 +24,7 @@ public class Config {
     public static int databasePort;
     public static int serverPort;
     public static int numbOfClients;
+    public static boolean offlineMode;
 
     //Properties object to load from file
     private static Properties properties = new Properties();
@@ -47,6 +48,8 @@ public class Config {
         serverPort = Integer.parseInt(getProperty("server_port"));
         numbOfClients = Integer.parseInt(getProperty("number_of_clients"));
         witAddress = getProperty("wit_address");
+        offlineMode = Boolean.parseBoolean(getProperty("offline_mode"));
+
     }
 
     //Get property value

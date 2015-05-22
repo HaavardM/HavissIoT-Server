@@ -1,5 +1,6 @@
 package net.haviss.havissIoT.Communication;
 
+import net.haviss.havissIoT.HavissIoT;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
@@ -45,7 +46,7 @@ public class IoTClient {
             connOpts.setCleanSession(true);
             mclient.connect(connOpts); //Connecting to broker
         } catch (MqttException me) {
-            //TODO: Handle exception
+            HavissIoT.printMessage("MQTT connection error: " + me.getMessage() );
         }
     }
 

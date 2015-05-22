@@ -38,7 +38,7 @@ public class ClientThread implements Runnable {
     }
     @Override
     public void run() {
-        HavissIoT.printMessage("New thread started");
+        HavissIoT.printMessage("New client thread started");
         //Load new commandhandler and load I/O-streams
         CommandHandler commandHandler = new CommandHandler();
         try {
@@ -54,6 +54,8 @@ public class ClientThread implements Runnable {
             //Strings to store command and result from commandhandler
         String commandString;
         String result;
+
+
 
         //Thread should run until client disconnect
         while (!Thread.currentThread().isInterrupted()) {
