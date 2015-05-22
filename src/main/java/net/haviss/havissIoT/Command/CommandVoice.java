@@ -4,7 +4,14 @@ import com.google.gson.Gson;
 import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Core.CommandHandler;
 import net.haviss.havissIoT.HavissIoT;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,35 +30,37 @@ public class CommandVoice implements CommandCallback {
         StringBuilder stringBuilder = new StringBuilder();
         CommandHandler commandHandler = new CommandHandler();
 
+        //If there are no parameters there is no text to analyze
         if(parameters.length <= 0) {
             return new Gson().toJson("Too few arguments");
         }
 
+        //Rebuild strings as commandhandler separates whitespaces
         for (String s : parameters) {
             stringBuilder.append(s + " ");
         }
 
+        //Build an URI
         uriBuilder.setScheme("http")
                 .setHost("https://api.wit.ai")
                 .setPath("/message")
-                .setParameter("v", stringBuilder.toString());
+                .setParameter("v", "20141022")
+                .setParameter("q", stringBuilder.toString());
 
+        //Reset stringbuilder - new purpose
         stringBuilder = new StringBuilder();
-
-        HttpURLConnection conn;
         try {
-            conn = (HttpURLConnection) uriBuilder.build().toURL().openConnection();
-            conn.setRequestMethod("GET");
-            BufferedReader input = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            HttpClient conn = HttpClientBuilder.create().build();
+            HttpRequest request = new HttpGet(uriBuilder.build());
+            request.addHeader("Authorization", "Bearer " + Config.witToken);
+            HttpResponse response = conn.execute((HttpUriRequest) request);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
             String line;
-            while((line = input.readLine()) != null) {
+            while((line = reader.readLine()) != null) {
                 stringBuilder.append(line);
             }
-            input.close();
-            HavissIoT.printMessage(stringBuilder.toString());
-        } catch (IOException | URISyntaxException e) {
+        } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
-            conn = null;
         }
         return null;
     }

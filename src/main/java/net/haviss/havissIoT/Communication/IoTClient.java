@@ -75,7 +75,7 @@ public class IoTClient {
         }
     }
 
-    //Subscripe to topic
+    //Subscribe to topic
     public synchronized void subscribeToTopic(String topic, int qos) { //Subscribe to an MQTT topic
         try {
             if(!topics.contains(topic)) {

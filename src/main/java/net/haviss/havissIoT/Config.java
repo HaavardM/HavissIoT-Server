@@ -12,19 +12,20 @@ import java.util.Properties;
 public class Config {
 
     /*Config values*/
-    public static String brokerAddress;
-    public static String clientID;
-    public static String cmdTopic;
-    public static String statusTopic;
-    public static String databaseAddress;
-    public static String database;
-    public static String witAddress;
-    public static int brokerPort;
-    public static int qos;
-    public static int databasePort;
-    public static int serverPort;
-    public static int numbOfClients;
-    public static boolean offlineMode;
+    public static volatile String brokerAddress;
+    public static volatile String clientID;
+    public static volatile String cmdTopic;
+    public static volatile String statusTopic;
+    public static volatile String databaseAddress;
+    public static volatile String database;
+    public static volatile String witAddress;
+    public static volatile String witToken;
+    public static volatile int brokerPort;
+    public static volatile int qos;
+    public static volatile int databasePort;
+    public static volatile int serverPort;
+    public static volatile int numbOfClients;
+    public static volatile boolean offlineMode;
 
     //Properties object to load from file
     private static Properties properties = new Properties();
@@ -48,6 +49,7 @@ public class Config {
         serverPort = Integer.parseInt(getProperty("server_port"));
         numbOfClients = Integer.parseInt(getProperty("number_of_clients"));
         witAddress = getProperty("wit_address");
+        witToken = getProperty("wit_token");
         offlineMode = Boolean.parseBoolean(getProperty("offline_mode"));
 
     }
