@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import net.haviss.havissIoT.HavissIoT;
 
 import java.util.Arrays;
+import org.apache.http.HttpStatus;
+import org.apache.http.protocol.HTTP;
 
 /**
  * Created by HaavardM on 5/2/2015.
@@ -17,19 +19,19 @@ public class CommandSensor implements CommandCallback {
         if(parameters[0].compareTo("CREATE_NEW") == 0) {
             HavissIoT.sensorHandler.addSensor(parameters[1], parameters[2], parameters[3],Boolean.parseBoolean(parameters[4]));
             HavissIoT.printMessage("Adding sensor " + parameters[1]);
-            return new Gson().toJson("success");
+            return Integer.toString(HttpStatus.SC_OK);
         } else if(parameters[0].compareTo("REMOVE") == 0) {
             HavissIoT.sensorHandler.removeSensor(parameters[1]);
             HavissIoT.printMessage("Unsubscribing to" + builder.toString());
-            return new Gson().toJson("success");
+            return Integer.toString(HttpStatus.SC_OK);
         } else if(parameters[0].compareTo("LIST_ALL") == 0) {
             HavissIoT.printMessage("Listing all sensors");
             return new Gson().toJson(HavissIoT.sensorHandler.getSensorsList());
         } else if(parameters[0].compareTo("STORE_SENSORS") == 0) {
             HavissIoT.sensorHandler.writeToFile();
-            return new Gson().toJson("success");
+            return Integer.toString(HttpStatus.SC_OK);
         } else {
-            return new Gson().toJson("Couldn't resolve argument " + parameters[0]);
+            return Integer.toString(HttpStatus.SC_BAD_REQUEST);
         }
     }
 

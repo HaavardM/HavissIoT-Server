@@ -51,11 +51,10 @@ public class ClientThread implements Runnable {
             output = null;
             connectionClosed = true;
         }
-            //Strings to store command and result from commandhandler
+
+        //Strings to store command and result from commandhandler
         String commandString;
         String result;
-
-
 
         //Thread should run until client disconnect
         while (!Thread.currentThread().isInterrupted()) {
@@ -84,11 +83,18 @@ public class ClientThread implements Runnable {
                         result = "Closing connection";
                     } else {
                         result = commandHandler.processCommand(commandString);
-                        result += '\n';
+
+                        //If result is a integer - parse number and send it
+                        if(result.matches("\\d+")) {
+                            int number = Integer.parseInt(result);
+                            output.write(number);
+                        } else {
+                            result += '\n';
+                            output.write(result);
+                        }
                     }
 
-                    //Send result back to client
-                    output.write(result);
+                    //Flush output buffer
                     output.flush();
                 }
             } catch (IOException e) {

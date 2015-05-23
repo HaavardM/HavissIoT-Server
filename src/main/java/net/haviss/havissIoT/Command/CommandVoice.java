@@ -21,7 +21,7 @@ import java.net.URISyntaxException;
 
 
 /**
- *Created by Håvard on 5/16/2015.
+ *Created by HaavardM on 5/16/2015.
  */
 public class CommandVoice implements CommandCallback {
     @Override
@@ -49,6 +49,7 @@ public class CommandVoice implements CommandCallback {
 
         //Reset stringbuilder - new purpose
         stringBuilder = new StringBuilder();
+
         try {
             HttpClient conn = HttpClientBuilder.create().build();
             HttpRequest request = new HttpGet(uriBuilder.build());
