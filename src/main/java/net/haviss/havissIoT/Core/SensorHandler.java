@@ -3,6 +3,8 @@ package net.haviss.havissIoT.Core;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import net.haviss.havissIoT.Config;
+import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Sensor.IoTSensor;
 import org.json.simple.JSONArray;
 import java.io.*;
@@ -13,7 +15,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 /**
- * Created by Håvard on 5/16/2015.
+ * Created by Hï¿½vard on 5/16/2015.
  * Handles all sensors
  */
 public class SensorHandler {
@@ -32,6 +34,7 @@ public class SensorHandler {
         } else {
             availableSensors.add(new IoTSensor(name, topic, type, toStore));
             sensorNames.add(name);
+            HavissIoT.client.subscribeToTopic(topic, Config.qos);
             this.writeToFile();
             return true;
         }
@@ -43,6 +46,7 @@ public class SensorHandler {
             if(name.compareTo(s.getName()) == 0) {
                 availableSensors.remove(s);
                 sensorNames.remove(name);
+                HavissIoT.client.unsubscribeToTopic(s.getTopic());
             }
         }
         this.writeToFile();

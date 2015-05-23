@@ -1,7 +1,9 @@
 package net.haviss.havissIoT.Communication;
 
+import com.google.gson.Gson;
 import net.haviss.havissIoT.Core.CommandHandler;
 import net.haviss.havissIoT.HavissIoT;
+import org.apache.http.HttpStatus;
 
 import java.io.*;
 import java.net.Socket;
@@ -80,21 +82,13 @@ public class ClientThread implements Runnable {
                     //if exit - close connection
                     if (commandString.compareTo("exit") == 0) {
                         connectionClosed = true;
-                        result = "Closing connection";
+                        result = new Gson().toJson(HttpStatus.SC_SERVICE_UNAVAILABLE);
                     } else {
                         result = commandHandler.processCommand(commandString);
-
-                        //If result is a integer - parse number and send it
-                        if(result.matches("\\d+")) {
-                            int number = Integer.parseInt(result);
-                            output.write(number);
-                        } else {
-                            result += '\n';
-                            output.write(result);
-                        }
                     }
 
-                    //Flush output buffer
+                    //Send data back to client and flush output buffer
+                    output.write(result);
                     output.flush();
                 }
             } catch (IOException e) {
