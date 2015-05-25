@@ -95,6 +95,7 @@ public class HavissIoT {
             //Objects for command handling
             SocketCommunication socketCommunication = new SocketCommunication(Config.serverPort, Config.numbOfClients);
 
+            sensorHandler.loadFromFile();
             //Waits for storage thread to be done with console
             while (storage.getThreadConsole()) ;
         } else {

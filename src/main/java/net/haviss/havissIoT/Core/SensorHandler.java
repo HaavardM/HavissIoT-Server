@@ -22,11 +22,6 @@ public class SensorHandler {
     private CopyOnWriteArrayList<IoTSensor> availableSensors = new CopyOnWriteArrayList<>();
     private CopyOnWriteArrayList<String> sensorNames = new CopyOnWriteArrayList<>();
 
-    //Constructor
-    public SensorHandler() {
-        loadFromFile();
-    }
-
     //Add new sensor
     public synchronized boolean addSensor(String name, String topic, String type, boolean toStore) {
         if (sensorNames.contains(name)) {
