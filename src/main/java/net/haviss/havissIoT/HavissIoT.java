@@ -98,11 +98,17 @@ public class HavissIoT {
             sensorHandler.loadFromFile();
             //Waits for storage thread to be done with console
             while (storage.getThreadConsole()) ;
+            //Everything is started
+            if(client.isConnected()) {
+                printMessage("Application is ready");
+            } else {
+                printMessage("Application not ready for use - Stopping");
+                System.exit(1);
+            }
         } else {
             printMessage("OFFLINE MODE! - No network connections");
         }
-        //Everything is started
-        printMessage("Application is ready");
+
 
         //Application must run forever
         while(true) {

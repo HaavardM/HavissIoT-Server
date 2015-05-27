@@ -21,6 +21,7 @@ public class IoTClient {
     private int brokerPort = 1883; //Default port is used if not else specified in connect
     private String clientID = "";
     private int qos = 2;
+    private boolean connected = false;
 
     //Objects
     private MqttClient mclient;
@@ -45,6 +46,7 @@ public class IoTClient {
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
             mclient.connect(connOpts); //Connecting to broker
+            connected = true;
         } catch (MqttException me) {
             HavissIoT.printMessage("MQTT connection error: " + me.getMessage() );
         }
@@ -59,6 +61,7 @@ public class IoTClient {
     public void disconnect() {
         try {
             mclient.disconnect();
+            connected = false;
         } catch (MqttException me) {
             //TODO: Handle exception
             me.printStackTrace();
@@ -103,12 +106,19 @@ public class IoTClient {
     }
 
     //Get clientID
-    public String getClientID() {
+    public synchronized String getClientID() {
         return clientID;
     }
 
     //Get qos
-    public int getQOS() {
+    public synchronized int getQOS() {
         return qos;
     }
+
+    //Check if connected
+    public synchronized boolean isConnected() {
+        return this.connected;
+    }
+
+
 }
