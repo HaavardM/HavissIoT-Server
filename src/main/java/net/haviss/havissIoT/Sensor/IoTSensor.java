@@ -1,14 +1,14 @@
 package net.haviss.havissIoT.Sensor;
 
 /**
- * Created by Håvard on 5/16/2015.
+ * Created by Hï¿½vard on 5/16/2015.
  */
 public class IoTSensor {
-    private String name;
-    private String type;
-    private String topic;
-    private String lastValue;
-    private boolean storage;
+    private volatile String name;
+    private volatile String type;
+    private volatile String topic;
+    private volatile String lastValue;
+    private volatile boolean storage;
 
     public IoTSensor(String name, String topic, String type, boolean toStore) {
         this.topic = topic;
@@ -47,10 +47,16 @@ public class IoTSensor {
         return this.topic;
     }
 
+    //Get sensortype
+    public String getType() {
+        return this.type;
+    }
+
     //Check if sensordata is to be stored
     public boolean getStorage() {
         return this.storage;
     }
+
 
 
 }

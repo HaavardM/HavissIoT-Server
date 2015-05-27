@@ -29,15 +29,11 @@ public class SocketCommunication implements Runnable  {
         this.connectedClients = new AtomicInteger(0);
         this.clientNames = new boolean[Config.numbOfClients];
         Arrays.fill(this.clientNames, false);
-        start();
-    }
-
-    public void start() {
-            if(serverThread == null) {
-                serverThread = new Thread(this, this.threadName);
-                serverThread.start();
-            }
+        if(serverThread == null) {
+            serverThread = new Thread(this, this.threadName);
+            serverThread.start();
         }
+    }
 
     @Override
     public void run() {
