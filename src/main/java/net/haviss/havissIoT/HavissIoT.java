@@ -96,8 +96,7 @@ public class HavissIoT {
             SocketCommunication socketCommunication = new SocketCommunication(Config.serverPort, Config.numbOfClients);
 
             sensorHandler.loadFromFile();
-            //Waits for storage thread to be done with console
-            while (storage.getThreadConsole()) ;
+
             //Everything is started
             if(client.isConnected()) {
                 printMessage("Application is ready");
