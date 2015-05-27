@@ -32,6 +32,13 @@ public class IoTStorage  {
     private MongoClient mongoClient;
     private MongoDatabase db;
     private MongoCollection<Document> dbCollection;
+    private SingleResultCallback<Void> finishedCallBack = new SingleResultCallback<Void>() {
+
+        @Override
+        public void onResult(Void aVoid, Throwable throwable) {
+
+        }
+    };
 
     /*Functions*/
 
@@ -94,8 +101,27 @@ public class IoTStorage  {
         return toStore;
     }
 
-    public String[] getCollectioNames() {
-        MongoIterable<String> result = db.listCollectionNames();
+    //Gets all available collections from database
+    public ArrayList<String> getCollectioNames() {
+        final ArrayList<String> collections = new ArrayList<>();
+        db.listCollectionNames().forEach(new Block<String>() {
+            @Override
+            public void apply(String s) {
+                collections.add(s);
+            }
+        }, finishedCallBack);
+        return collections;
+    }
 
-}
+    //Gets all available database names from server
+    public ArrayList<String> getDatabaseNames() {
+        final ArrayList<String> databases = new ArrayList<>();
+        this.mongoClient.listDatabaseNames().forEach(new Block<String>() {
+            @Override
+            public void apply(String s) {
+                databases.add(s);
+            }
+        }, finishedCallBack);
+        return databases;
+    }
 }

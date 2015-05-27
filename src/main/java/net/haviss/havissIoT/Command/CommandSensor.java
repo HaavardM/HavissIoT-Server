@@ -15,14 +15,13 @@ public class CommandSensor implements CommandCallback {
     @Override
     public String run(String[] parameters) {
         StringBuilder builder = new StringBuilder();
-        String[] topics = Arrays.copyOfRange(parameters, 1, parameters.length);
         if(parameters[0].compareTo("CREATE_NEW") == 0) {
             HavissIoT.sensorHandler.addSensor(parameters[1], parameters[2], parameters[3],Boolean.parseBoolean(parameters[4]));
             HavissIoT.printMessage("Adding sensor " + parameters[1]);
             return new Gson().toJson(HttpStatus.SC_OK);
         } else if(parameters[0].compareTo("REMOVE") == 0) {
             HavissIoT.sensorHandler.removeSensor(parameters[1]);
-            HavissIoT.printMessage("Unsubscribing to" + builder.toString());
+            HavissIoT.printMessage("Removing sensors " + parameters[1]);
             return new Gson().toJson(HttpStatus.SC_OK);
         } else if(parameters[0].compareTo("LIST_ALL") == 0) {
             HavissIoT.printMessage("Listing all sensors");
