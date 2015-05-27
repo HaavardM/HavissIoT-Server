@@ -1,20 +1,24 @@
 package net.haviss.havissIoT.Communication;
 
+import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.HavissIoT;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Created by Håvard on 5/8/2015.
+ * Created by Hï¿½vard on 5/8/2015.
  */
 public class SocketCommunication implements Runnable  {
 
     private Thread serverThread;
     private String threadName = "ServerThread";
     private AtomicInteger connectedClients;
+    private boolean[] clientNames;
     private int maxClients;
     private int serverPort;
     private final Object serverLock = new Object();
@@ -22,7 +26,9 @@ public class SocketCommunication implements Runnable  {
     public SocketCommunication(int serverPort, int maxClients) {
         this.serverPort = serverPort;
         this.maxClients = maxClients;
-        connectedClients = new AtomicInteger(0);
+        this.connectedClients = new AtomicInteger(0);
+        this.clientNames = new boolean[Config.numbOfClients];
+        Arrays.fill(this.clientNames, false);
         start();
     }
 
@@ -47,10 +53,16 @@ public class SocketCommunication implements Runnable  {
                 //Only accept new connection as long there are available connections
                 while (connectedClients.get() < maxClients) {
                     socket = serverSocket.accept();
-                    //Start new thread for new client
-                    new ClientThread(socket, this, connectedClients.incrementAndGet());
-                    HavissIoT.printMessage("New client connected");
-                    HavissIoT.printMessage("Number of clients: " + Integer.toString(connectedClients.get()));
+                    for(int i = 0; i < Config.numbOfClients; i++) {
+                        if(!clientNames[i]) {
+                            //Start new thread for new client
+                            new ClientThread(socket, this, i);
+                            HavissIoT.printMessage("Client " + Integer.toString(i) + " connected");
+                            HavissIoT.printMessage("Number of clients: " + Integer.toString(connectedClients.get()));
+                            break;
+                        }
+                    }
+
                 }
 
                 //Wait while all clients are used - saves cycles
@@ -64,12 +76,15 @@ public class SocketCommunication implements Runnable  {
     }
 
     //Method for decrementing number of clients - if client disconnects
-    public void removeOneClient() {
-        connectedClients.decrementAndGet();
+    public void removeOneClient(int number) {
+        this.connectedClients.decrementAndGet();
+        this.clientNames[number] = false;
     }
 
     //Notify server thread if new clients can connect
-    public void notifyThread() {
-        serverLock.notify();
+    public synchronized void notifyThread() {
+        synchronized (serverLock) {
+            serverLock.notify();
+        }
     }
 }

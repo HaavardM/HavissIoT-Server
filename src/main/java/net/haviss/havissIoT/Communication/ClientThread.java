@@ -67,7 +67,7 @@ public class ClientThread implements Runnable {
                     output.close();
                     HavissIoT.printMessage("Client" + Integer.toString(clientNum) + " disconnected");
                     socket.close(); //Close socket
-                    socketCommunication.removeOneClient(); //Remove one connected client
+                    socketCommunication.removeOneClient(clientNum); //Remove one connected client
                     Thread.currentThread().interrupt(); //Interrupt thread
                     break; //Break out of while loop (and thread will stop)
                 }
