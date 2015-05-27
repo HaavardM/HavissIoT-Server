@@ -1,13 +1,14 @@
 package net.haviss.havissIoT.Communication;
 
 import com.mongodb.*;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.async.SingleResultCallback;
+import com.mongodb.async.client.*;
 import net.haviss.havissIoT.HavissIoT;
 import org.bson.Document;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 
 /**
  * Created by HaavardM on 4/3/2015.
@@ -23,83 +24,21 @@ public class IoTStorage  {
     private boolean stopThread = false; //Stop thread
     private String storThreadName = "storageThread"; //Storage thread name
     private boolean storagePaused = false;
-    private boolean sTConsole = true; //A storage thread writes to the console
+    private boolean connected = false;
 
-    /*Anonymous classes*/
-    //Using anonymous classes to enable use of multiple threads in one class
-    //Runnable for storage thread
-    private final Runnable storageHandler = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                HavissIoT.printMessage("Storage thread started");
-                sTConsole = false;
-                while (!Thread.interrupted()) {
-                    while (storagePaused) {
-                        synchronized (storageLock) {
-                            storageLock.wait();
-                        }
-                    }
-                    if (getToStore().size() > 0) {
-                        try {
-                            for (String[] s : getToStore()) {
-                                getCollection(s[0]);
-                                String date = new Date().toString();
-                                Document document = new Document("Topic", s[0])
-                                        .append("Value", s[1])
-                                        .append("Date", date);
-                                //Insert document to database
-                                dbCollection.insertOne(document);
-                            }
-                            toStore.clear(); //All data has been stored, clear toStore list
-                        } catch (MongoException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        //If no data to store - wait for notification
-                        synchronized (storageLock) {
-                            storageLock.wait();
-                        }
-                    }
-                }
-            } catch (InterruptedException e) {
-                //TODO: Handle exception
-                e.printStackTrace();
-            }
-        }
-    };
 
     /*Objects*/
 
-    private Thread storageThread;
     private MongoClient mongoClient;
     private MongoDatabase db;
     private MongoCollection<Document> dbCollection;
-    public final Object storageLock = new Object();;
 
     /*Functions*/
-
-    //Start threads
-    private void start() {
-        if (storageThread == null) {
-            storageThread = new Thread(this.storageHandler, storThreadName);
-            storageThread.start();
-        }
-    }
 
     //Pause storage thread if needed
     public void pauseStorage() {
         this.storagePaused = true; //Tell thread to pause
     }
-
-    //Resumes storage thread
-    public synchronized void resumeStorage() {
-        this.storagePaused = false;
-        synchronized (storageLock) {
-            storageLock.notify(); //Notify thread - resumes thread after wait
-        }
-    }
-
 
     //Constructor - stores new values and connects to server
     public IoTStorage(String serverAddress, int serverPort, String db) {
@@ -107,29 +46,13 @@ public class IoTStorage  {
         this.serverPort = serverPort;
         this.connect(this.serverAddress, this.serverPort);
         this.db = mongoClient.getDatabase(db);
-        this.start();
-    }
-
-    //Overloaded constructor - with authentication
-    public IoTStorage(String serverAddress, int serverPort, String username, String password, String db) {
-        this.serverAddress = serverAddress;
-        this.serverPort = serverPort;
-        this.connect(this.serverAddress, this.serverPort, username, password, db);
-        this.db = mongoClient.getDatabase(db);
-        this.start();
     }
 
     // Connects to server
     private void connect(String address, int port) {
         this.serverAddress = address;
         this.serverPort = port;
-        this.mongoClient = new MongoClient(serverAddress, serverPort);
-    }
-
-    //Overloaded connect function to enableauthenticationn
-    private void connect(String address, int port, String username, String password, String db) {
-        MongoCredential credential = MongoCredential.createCredential(username, db, password.toCharArray());
-        this.mongoClient = new MongoClient(new ServerAddress(serverAddress), Arrays.asList(credential));
+        this.mongoClient = MongoClients.create(new ConnectionString("mongodb://" + address));
     }
 
     //Get collection from database
@@ -138,13 +61,22 @@ public class IoTStorage  {
     }
 
     //Adding values for thread to store in Db
-    public synchronized void addValues(String topic, String value) {
-        String tempValues[] = {topic, value};
-        toStore.add(tempValues);
-        synchronized (storageLock) {
-            storageLock.notify(); //Resumes thread after wait
+    public synchronized void storeValues(String topic, String value) {
+        try {
+            String date = new Date().toString();
+            Document document = new Document("Topic", topic)
+                    .append("Value", value)
+                    .append("Date", date);
+            //Insert document to database
+            dbCollection.insertOne(document, new SingleResultCallback<Void>() {
+                @Override
+                public void onResult(Void aVoid, Throwable throwable) {
+                //TODO: Handle result
+                }
+            });
+        } catch (MongoException e) {
+            HavissIoT.printMessage("MONGO WRITE ERROR: " + e.getMessage());
         }
-
     }
 
     //Add topic to store
@@ -162,15 +94,8 @@ public class IoTStorage  {
         return toStore;
     }
 
-    //Checks if thread is using the console. 
-    public boolean getThreadConsole() {
-        return (sTConsole);
-    }
+    public String[] getCollectioNames() {
+        MongoIterable<String> result = db.listCollectionNames();
 
-    //Stop storage thread
-    public void stop() {
-        //TODO: Stop thread
-        storageThread.interrupt();
-
-    }
+}
 }

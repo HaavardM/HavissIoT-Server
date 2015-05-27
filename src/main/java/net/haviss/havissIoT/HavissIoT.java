@@ -73,7 +73,7 @@ public class HavissIoT {
                     IoTSensor sensor = sensorHandler.getSensorByTopic(s);
                     if (sensor != null) {
                         if (sensor.getStorage()) {
-                            HavissIoT.storage.addValues(sensor.getName(), mqttMessage.toString());
+                            HavissIoT.storage.storeValues(sensor.getName(), mqttMessage.toString());
                         }
                         sensor.updateValue(mqttMessage.toString());
                     }
@@ -102,11 +102,12 @@ public class HavissIoT {
             if(client.isConnected()) {
                 printMessage("Application is ready");
             } else {
-                printMessage("Application not ready for use - Stopping");
+                System.out.println("Application not ready for use - Stopping");
                 System.exit(1);
             }
         } else {
             printMessage("OFFLINE MODE! - No network connections");
+            printMessage("Application is ready");
         }
 
 
