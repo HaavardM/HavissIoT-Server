@@ -59,7 +59,6 @@ public class SocketCommunication implements Runnable  {
                             break;
                         }
                     }
-
                 }
 
                 //Wait while all clients are used - saves cycles
