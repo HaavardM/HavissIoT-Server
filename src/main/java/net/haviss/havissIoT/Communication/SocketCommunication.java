@@ -53,6 +53,7 @@ public class SocketCommunication implements Runnable  {
                         if(!clientNames[i]) {
                             //Start new thread for new client
                             new ClientThread(socket, this, i);
+                            connectedClients.incrementAndGet();
                             HavissIoT.printMessage("Client " + Integer.toString(i) + " connected");
                             HavissIoT.printMessage("Number of clients: " + Integer.toString(connectedClients.get()));
                             break;
