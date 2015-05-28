@@ -84,6 +84,7 @@ public class ClientThread implements Runnable {
                     if(result == null) {
                         result = new Gson().toJson(null);
                     }
+                    result += '\n';
                     //Send data back to client and flush output buffer
                     output.write(result);
                     output.flush();
