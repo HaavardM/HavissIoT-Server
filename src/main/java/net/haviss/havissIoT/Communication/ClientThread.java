@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import net.haviss.havissIoT.Core.CommandHandler;
 import net.haviss.havissIoT.HavissIoT;
 import org.apache.http.HttpStatus;
+import org.json.simple.JSONObject;
 
 import java.io.*;
 import java.net.Socket;
@@ -82,7 +83,9 @@ public class ClientThread implements Runnable {
                     //if exit - close connection
                     result = commandHandler.processCommand(commandString);
                     if(result == null) {
-                        result = new Gson().toJson(null);
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put('r', null);
+                        result = jsonObject.toJSONString();
                     }
                     result += '\n';
                     //Send data back to client and flush output buffer

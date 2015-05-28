@@ -1,5 +1,6 @@
 package net.haviss.havissIoT.Command;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
@@ -7,7 +8,7 @@ import org.json.simple.JSONObject;
  */
 public interface CommandCallback {
     //Code to run when command is called
-    String run(JSONObject parameters);
+    String run(JSONArray parameters);
 
     //Get command name
     String getName();

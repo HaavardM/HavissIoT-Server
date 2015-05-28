@@ -3,6 +3,7 @@ package net.haviss.havissIoT.Core;
 import com.google.gson.Gson;
 import net.haviss.havissIoT.Command.CommandCallback;
 import net.haviss.havissIoT.HavissIoT;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -35,15 +36,14 @@ public class CommandHandler {
     public String processCommand(String commandString) {
         JSONParser parser = new JSONParser();
         JSONObject jsonObject;
-        JSONObject parameters;
+        JSONArray parameters;
         String reply = null;
         String command = null;
 
         try {
             jsonObject = (JSONObject) parser.parse(commandString);
             command = (String) jsonObject.get("cmd");
-            parameters = (JSONObject) jsonObject.get("args");
-
+            parameters = (JSONArray) jsonObject.get("args");
         } catch (ParseException e) {
             HavissIoT.printMessage(e.getMessage());
             jsonObject = null;
