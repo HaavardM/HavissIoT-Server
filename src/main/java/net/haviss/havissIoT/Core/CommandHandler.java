@@ -50,7 +50,7 @@ public class CommandHandler {
             command = null;
             parameters = null;
         }
-        if(jsonObject != null) {
+        if(command != null && parameters != null) {
             for (CommandCallback cb : availableCommands) {
                 if (command.compareTo(cb.getName()) == 0) { //Check if command string corresponds to command
                     reply = cb.run(parameters); //run the command
