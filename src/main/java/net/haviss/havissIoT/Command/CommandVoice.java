@@ -10,6 +10,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.json.simple.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,8 +23,8 @@ import java.net.URISyntaxException;
  */
 public class CommandVoice implements CommandCallback {
     @Override
-    public String run(String[] parameters) {
-        URIBuilder uriBuilder = new URIBuilder();
+    public String run(JSONObject parameters) {
+        /*URIBuilder uriBuilder = new URIBuilder();
         StringBuilder stringBuilder = new StringBuilder();
         CommandHandler commandHandler = new CommandHandler();
 
@@ -60,6 +61,7 @@ public class CommandVoice implements CommandCallback {
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
+        */
         return null;
     }
 

@@ -6,6 +6,7 @@ import net.haviss.havissIoT.HavissIoT;
 import java.util.Arrays;
 import org.apache.http.HttpStatus;
 import org.apache.http.protocol.HTTP;
+import org.json.simple.JSONObject;
 
 /**
  * Created by HaavardM on 5/2/2015.
@@ -13,9 +14,9 @@ import org.apache.http.protocol.HTTP;
  */
 public class CommandSensor implements CommandCallback {
     @Override
-    public String run(String[] parameters) {
+    public String run(JSONObject parameters) {
         StringBuilder builder = new StringBuilder();
-        if(parameters[0].compareTo("CREATE_NEW") == 0) {
+        /*if(parameters[0].compareTo("CREATE_NEW") == 0) {
             HavissIoT.sensorHandler.addSensor(parameters[1], parameters[2], parameters[3],Boolean.parseBoolean(parameters[4]));
             HavissIoT.printMessage("Adding sensor " + parameters[1]);
             return new Gson().toJson(HttpStatus.SC_OK);
@@ -32,6 +33,8 @@ public class CommandSensor implements CommandCallback {
         } else {
             return Integer.toString(HttpStatus.SC_BAD_REQUEST);
         }
+        */
+        return null;
     }
 
     @Override

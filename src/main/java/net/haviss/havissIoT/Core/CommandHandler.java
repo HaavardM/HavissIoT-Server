@@ -1,6 +1,11 @@
 package net.haviss.havissIoT.Core;
 
+import com.google.gson.Gson;
 import net.haviss.havissIoT.Command.CommandCallback;
+import net.haviss.havissIoT.HavissIoT;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.reflections.Reflections;
 import java.util.Arrays;
 import java.util.Set;
@@ -28,22 +33,34 @@ public class CommandHandler {
     }
     //Processes commandstring and perform corresponding command.
     public String processCommand(String commandString) {
-        String reply = "";
-        String[] cmd = commandString.toUpperCase().split("\\s+"); //Splits string into seperate arguments
-        String command = cmd[0]; //First string is the command
-        String[] arguments = Arrays.copyOfRange(cmd, 1, cmd.length); //Rest of the strings are arguments
-        boolean success = false;
-        for(CommandCallback cb : availableCommands) {
-            if(command.compareTo(cb.getName()) == 0) { //Check if command string corresponds to command
-                reply = cb.run(arguments); //run the command
-                success = true; //set success
+        JSONParser parser = new JSONParser();
+        JSONObject jsonObject;
+        JSONObject parameters;
+        String reply = null;
+        String command = null;
+
+        try {
+            jsonObject = (JSONObject) parser.parse(commandString);
+            command = (String) jsonObject.get("cmd");
+            parameters = (JSONObject) jsonObject.get("args");
+
+        } catch (ParseException e) {
+            HavissIoT.printMessage(e.getMessage());
+            jsonObject = null;
+            command = null;
+            parameters = null;
+        }
+        if(jsonObject != null) {
+
+            boolean success = false;
+            for (CommandCallback cb : availableCommands) {
+                if (command.compareTo(cb.getName()) == 0) { //Check if command string corresponds to command
+                    reply = cb.run(parameters); //run the command
+                    success = true; //set success
+                }
             }
         }
         //If no command were found - throw exception
-        if(!success) {
-            return "Couldn't find command";
-        } else {
-            return reply;
-        }
+        return reply;
     }
 }
