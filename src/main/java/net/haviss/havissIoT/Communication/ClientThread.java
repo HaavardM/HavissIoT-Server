@@ -80,13 +80,10 @@ public class ClientThread implements Runnable {
                     HavissIoT.printMessage(this.threadName + ": " + commandString);
 
                     //if exit - close connection
-                    if (commandString.compareTo("exit") == 0) {
-                        connectionClosed = true;
-                        result = new Gson().toJson(HttpStatus.SC_SERVICE_UNAVAILABLE);
-                    } else {
-                        result = commandHandler.processCommand(commandString);
+                    result = commandHandler.processCommand(commandString);
+                    if(result == null) {
+                        result = new Gson().toJson(null);
                     }
-
                     //Send data back to client and flush output buffer
                     output.write(result);
                     output.flush();

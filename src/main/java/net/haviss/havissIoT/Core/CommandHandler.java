@@ -51,16 +51,14 @@ public class CommandHandler {
             parameters = null;
         }
         if(jsonObject != null) {
-
-            boolean success = false;
             for (CommandCallback cb : availableCommands) {
                 if (command.compareTo(cb.getName()) == 0) { //Check if command string corresponds to command
                     reply = cb.run(parameters); //run the command
-                    success = true; //set success
+                    return reply;
                 }
             }
         }
-        //If no command were found - throw exception
-        return reply;
+        return null;
+
     }
 }
