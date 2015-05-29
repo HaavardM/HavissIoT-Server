@@ -15,6 +15,6 @@ public class CommandStorage implements CommandCallback {
 
     @Override
     public String getName() {
-        return null;
+        return "STORAGE";
     }
 }
