@@ -72,7 +72,7 @@ public class CommandHandler {
         }
 
         //If it is JSON it can be a command - find correct command and run it
-        if(command != null) {
+        if(command != null && parameters != null) {
             for (CommandCallback cb : availableCommands) {
                 if (command.compareTo(cb.getName()) == 0) { //Check if command string corresponds to command
                     reply = cb.run(parameters); //run the command
