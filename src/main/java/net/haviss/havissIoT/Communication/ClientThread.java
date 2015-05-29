@@ -84,7 +84,7 @@ public class ClientThread implements Runnable {
                     result = commandHandler.processCommand(commandString);
                     if(result == null) {
                         JSONObject jsonObject = new JSONObject();
-                        jsonObject.put('r', null);
+                        jsonObject.put('r', HttpStatus.SC_BAD_REQUEST);
                         result = jsonObject.toJSONString();
                     }
                     result += '\n';
