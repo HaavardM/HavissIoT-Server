@@ -39,7 +39,7 @@ public class CommandSensor implements CommandCallback {
             if (parameters.containsKey("type")) {
                 sensorType = (String) parameters.get("type");
             } else {
-                sensorType = null;
+                sensorType = "default";
             }
             HavissIoT.sensorHandler.addSensor(sensorName, sensorTopic, sensorType, toStore);
             HavissIoT.printMessage("Adding sensor " + sensorName);

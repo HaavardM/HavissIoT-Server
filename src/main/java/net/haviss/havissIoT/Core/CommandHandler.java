@@ -38,10 +38,10 @@ public class CommandHandler {
 
         //Objects and variables
         JSONParser parser = new JSONParser();
-        JSONObject jsonObject = null;
-        JSONObject parameters = null;
-        String reply = null;
-        String command = null;
+        JSONObject jsonObject;
+        JSONObject parameters;
+        String reply;
+        String command;
         Boolean isValidJson = false;
 
         //Try to parse
@@ -49,6 +49,9 @@ public class CommandHandler {
             jsonObject = (JSONObject) parser.parse(commandString);
             if(jsonObject.containsKey("cmd")) {
                 command = ((String) jsonObject.get("cmd")).toUpperCase();
+            }
+            else {
+                command = "";
             }
             if(jsonObject.containsKey("args")) {
                 parameters = (JSONObject) jsonObject.get("args");
@@ -59,6 +62,8 @@ public class CommandHandler {
         } catch (ParseException e) {
             HavissIoT.printMessage(e.getMessage());
             isValidJson = false;
+            parameters = null;
+            command = null;
         }
 
         //If string not JSON there is nothing to process - return bad request to client
