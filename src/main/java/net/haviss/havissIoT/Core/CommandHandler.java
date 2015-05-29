@@ -35,23 +35,24 @@ public class CommandHandler {
     }
     //Processes commandstring and perform corresponding command.
     public String processCommand(String commandString) {
-
         //Objects and variables
         JSONParser parser = new JSONParser();
         JSONObject jsonObject;
         JSONObject parameters = null;
         String reply;
         String command = null;
-
         //Try to parse
         try {
             jsonObject = (JSONObject) parser.parse(commandString);
+            //Check if JSON object contains all necessary keys
             if(jsonObject.containsKey("cmd") && jsonObject.containsKey("args")) {
                 command = ((String) jsonObject.get("cmd")).toUpperCase();
                 parameters = (JSONObject) jsonObject.get("args");
             }
-        } catch (ParseException e) {
+        } catch (ParseException | ClassCastException e) {
             HavissIoT.printMessage(e.getMessage());
+            return Integer.toString(HttpStatus.SC_BAD_REQUEST);
+
         }
 
         //If it is JSON it can be a command - find correct command and run it
