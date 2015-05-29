@@ -3,6 +3,7 @@ package net.haviss.havissIoT.Core;
 import com.google.gson.Gson;
 import net.haviss.havissIoT.Command.CommandCallback;
 import net.haviss.havissIoT.HavissIoT;
+import org.apache.http.HttpStatus;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -34,23 +35,40 @@ public class CommandHandler {
     }
     //Processes commandstring and perform corresponding command.
     public String processCommand(String commandString) {
+
+        //Objects and variables
         JSONParser parser = new JSONParser();
-        JSONObject jsonObject;
-        JSONArray parameters;
+        JSONObject jsonObject = null;
+        JSONArray parameters = null;
         String reply = null;
         String command = null;
+        Boolean isValidJson = false;
 
+        //Try to parse
         try {
             jsonObject = (JSONObject) parser.parse(commandString);
-            command = (String) jsonObject.get("cmd");
-            parameters = (JSONArray) jsonObject.get("args");
+            if(jsonObject.containsKey("cmd")) {
+                command = (String) jsonObject.get("cmd");
+            }
+            if(jsonObject.containsKey("args")) {
+                parameters = (JSONArray) jsonObject.get("args");
+            } else {
+                parameters = new JSONArray();
+            }
+            isValidJson = true;
         } catch (ParseException e) {
             HavissIoT.printMessage(e.getMessage());
             jsonObject = null;
-            command = null;
-            parameters = null;
+            isValidJson = false;
         }
-        if(command != null && parameters != null) {
+
+        //If string not JSON there is nothing to process - return bad request to client
+        if(!isValidJson) {
+            return Integer.toString(HttpStatus.SC_BAD_REQUEST);
+        }
+
+        //If it is JSON it can be a command - find correct command and run it
+        if(command != null) {
             for (CommandCallback cb : availableCommands) {
                 if (command.compareTo(cb.getName()) == 0) { //Check if command string corresponds to command
                     reply = cb.run(parameters); //run the command
@@ -59,6 +77,5 @@ public class CommandHandler {
             }
         }
         return null;
-
     }
 }
