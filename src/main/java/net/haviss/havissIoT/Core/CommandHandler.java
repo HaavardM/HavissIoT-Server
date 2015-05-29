@@ -75,6 +75,6 @@ public class CommandHandler {
                 }
             }
         }
-        return null;
+        return Integer.toString(HttpStatus.SC_BAD_REQUEST);
     }
 }
