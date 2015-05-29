@@ -35,16 +35,27 @@ public class SensorHandler {
         }
     }
 
-    //Remove sensor
-    public void removeSensor(String name) {
+    //Remove sensor by name
+    public void removeSensorByName(String name) {
         for(IoTSensor s : availableSensors) {
             if(name.compareTo(s.getName()) == 0) {
                 availableSensors.remove(s);
-                sensorNames.remove(name);
+                sensorNames.remove(s.getName());
                 HavissIoT.client.unsubscribeToTopic(s.getTopic());
             }
         }
         this.writeToFile();
+    }
+
+    //Remove sensor by topic
+    public void removeSensorByTopic(String topic) {
+        for(IoTSensor s : availableSensors) {
+            if(topic.compareTo(s.getTopic()) == 0) {
+                availableSensors.remove(s);
+                sensorNames.remove(s.getName());
+                HavissIoT.client.unsubscribeToTopic(s.getTopic());
+            }
+        }
     }
 
     //Get sensor object with name

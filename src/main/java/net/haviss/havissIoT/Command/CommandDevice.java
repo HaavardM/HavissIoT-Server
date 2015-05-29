@@ -9,7 +9,7 @@ import org.json.simple.JSONObject;
  */
 public class CommandDevice implements CommandCallback {
     @Override
-    public String run(JSONArray parameters) {
+    public String run(JSONObject parameters) {
         //TODO: Create device class and create this command.
         return null;
     }

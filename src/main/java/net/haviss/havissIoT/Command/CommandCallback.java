@@ -8,7 +8,7 @@ import org.json.simple.JSONObject;
  */
 public interface CommandCallback {
     //Code to run when command is called
-    String run(JSONArray parameters);
+    String run(JSONObject parameters);
 
     //Get command name
     String getName();

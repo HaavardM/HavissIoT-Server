@@ -39,7 +39,7 @@ public class CommandHandler {
         //Objects and variables
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = null;
-        JSONArray parameters = null;
+        JSONObject parameters = null;
         String reply = null;
         String command = null;
         Boolean isValidJson = false;
@@ -48,17 +48,16 @@ public class CommandHandler {
         try {
             jsonObject = (JSONObject) parser.parse(commandString);
             if(jsonObject.containsKey("cmd")) {
-                command = (String) jsonObject.get("cmd");
+                command = ((String) jsonObject.get("cmd")).toUpperCase();
             }
             if(jsonObject.containsKey("args")) {
-                parameters = (JSONArray) jsonObject.get("args");
+                parameters = (JSONObject) jsonObject.get("args");
             } else {
-                parameters = new JSONArray();
+                parameters = new JSONObject();
             }
             isValidJson = true;
         } catch (ParseException e) {
             HavissIoT.printMessage(e.getMessage());
-            jsonObject = null;
             isValidJson = false;
         }
 

@@ -24,7 +24,7 @@ import java.net.URISyntaxException;
  */
 public class CommandVoice implements CommandCallback {
     @Override
-    public String run(JSONArray parameters) {
+    public String run(JSONObject parameters) {
         /*URIBuilder uriBuilder = new URIBuilder();
         StringBuilder stringBuilder = new StringBuilder();
         CommandHandler commandHandler = new CommandHandler();
