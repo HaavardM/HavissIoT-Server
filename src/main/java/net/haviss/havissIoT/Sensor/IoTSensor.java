@@ -4,12 +4,15 @@ package net.haviss.havissIoT.Sensor;
  * Created by H�vard on 5/16/2015.
  */
 public class IoTSensor {
+
+    /*Variables*/
     private volatile String name;
     private volatile String type;
     private volatile String topic;
     private volatile String lastValue;
     private volatile boolean storage;
 
+    //Constructor - setting variables
     public IoTSensor(String name, String topic, String type, boolean toStore) {
         this.topic = topic;
         this.name = name;
