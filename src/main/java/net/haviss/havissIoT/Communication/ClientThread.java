@@ -1,6 +1,6 @@
 package net.haviss.havissIoT.Communication;
 
-import com.google.gson.Gson;
+import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Core.CommandHandler;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Type.User;
@@ -9,9 +9,12 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import javax.jws.soap.SOAPBinding;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
+
 
 /**
  * Created by HaavardM on 5/8/2015.
@@ -26,6 +29,7 @@ public class ClientThread implements Runnable {
     private Thread clientThread; //New thread for client connection
     private String threadName = "ClientThread"; //
     private int clientNum;
+    private volatile long lastActivity;
     private User user;
     private boolean connectionClosed = false;
     private BufferedWriter output;
@@ -44,6 +48,17 @@ public class ClientThread implements Runnable {
             HavissIoT.printMessage("ERROR - no guest user - stopping application");
             System.exit(1);
         }
+        //Set input and output stream read/writer
+        try {
+            input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        } catch (IOException e) {
+            //Exception is unexpected
+            HavissIoT.printMessage(e.getMessage());
+            input = null;
+            output = null;
+            connectionClosed = true;
+        }
         //Starting thread
         if(clientThread == null) {
              clientThread = new Thread(this, threadName);
@@ -55,20 +70,25 @@ public class ClientThread implements Runnable {
         HavissIoT.printMessage("New client thread started");
         //Load new commandhandler and load I/O-streams
         CommandHandler commandHandler = new CommandHandler();
-        try {
-            input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        } catch (IOException e) {
-            //Exception is unexpected
-            e.printStackTrace();
-            input = null;
-            output = null;
-            connectionClosed = true;
-        }
 
         //Strings to store command and result from commandhandler
         String commandString;
         String result;
+        lastActivity = System.currentTimeMillis();
+
+        //Timer to check if sockets are unused (and needs to be closed)
+        Timer timer = new Timer(5000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(System.currentTimeMillis() - lastActivity > Config.keepAlive) {
+                    connectionClosed = true;
+                    HavissIoT.printMessage("Client " + Integer.toString(clientNum) + " timed out!");
+                }
+            }
+        });
+
+        //Start timer
+        timer.start();
 
         //Thread should run until client disconnect
         while (!Thread.currentThread().isInterrupted()) {
@@ -85,6 +105,7 @@ public class ClientThread implements Runnable {
                 }
                 //Read until line-end - \n
                 commandString = input.readLine();
+                lastActivity = System.currentTimeMillis();
                 if(commandString == null) {
                     connectionClosed = true;
                 } else {
