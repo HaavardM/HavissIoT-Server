@@ -6,6 +6,7 @@ import net.haviss.havissIoT.Communication.IoTStorage;
 import net.haviss.havissIoT.Communication.SocketCommunication;
 import net.haviss.havissIoT.Core.CommandHandler;
 import net.haviss.havissIoT.Core.SensorHandler;
+import net.haviss.havissIoT.Core.UserHandler;
 import net.haviss.havissIoT.Sensor.IoTSensor;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -32,7 +33,7 @@ public class HavissIoT {
     /*Objects*/
     public static IoTClient client;
     public static IoTStorage storage;
-    public static ExecutorService executor;
+    public static UserHandler userHandler;
     public static final SensorHandler sensorHandler = new SensorHandler();
     public static final Object threadLock = new Object();
     private static CopyOnWriteArrayList<String> toPrint;
@@ -45,6 +46,8 @@ public class HavissIoT {
         mongoLogger.setLevel(Level.SEVERE);
         Config.loadConfig("/config.properties");
 
+        //Set up user handler
+        userHandler = new UserHandler();
 
         //Load config from file
         System.out.println("Settings:\n");
@@ -54,9 +57,6 @@ public class HavissIoT {
 
         //Initialize toPrint list.
         toPrint = new CopyOnWriteArrayList<>();
-
-        //Start executor service
-        executor = Executors.newFixedThreadPool(1);
 
         //Initialize IoT client
         if (!Config.offlineMode) {

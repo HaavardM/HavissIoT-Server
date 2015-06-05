@@ -1,6 +1,7 @@
 package net.haviss.havissIoT.Command;
 
 import com.google.gson.JsonArray;
+import net.haviss.havissIoT.Type.User;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -9,7 +10,7 @@ import org.json.simple.JSONObject;
  */
 public class CommandStorage implements CommandCallback {
     @Override
-    public String run(JSONObject parameters) {
+    public String run(JSONObject parameters, User user) {
         return null;
     }
 
