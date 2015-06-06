@@ -1,5 +1,6 @@
 package net.haviss.havissIoT.Core;
 
+import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Command.CommandCallback;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Type.User;
@@ -32,7 +33,7 @@ public class CommandHandler {
         }
     }
     //Processes commandstring and perform corresponding command.
-    public String processCommand(String command, JSONObject parameters, User user) {
+    public String processCommand(String command, JsonObject parameters, User user) {
         /*variables*/
         String reply;
 

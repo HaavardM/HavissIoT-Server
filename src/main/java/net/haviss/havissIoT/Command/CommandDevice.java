@@ -1,5 +1,6 @@
 package net.haviss.havissIoT.Command;
 
+import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Type.User;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -10,7 +11,7 @@ import org.json.simple.JSONObject;
  */
 public class CommandDevice implements CommandCallback {
     @Override
-    public String run(JSONObject parameters, User user) {
+    public String run(JsonObject parameters, User user) {
         //TODO: Create device class and create this command.
         return null;
     }

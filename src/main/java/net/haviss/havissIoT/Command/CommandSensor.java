@@ -1,6 +1,7 @@
 package net.haviss.havissIoT.Command;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
@@ -12,12 +13,12 @@ import org.json.simple.JSONObject;
  */
 public class CommandSensor implements CommandCallback {
     @Override
-    public String run(JSONObject parameters, User user) {
+    public String run(JsonObject parameters, User user) {
         String intent;
         boolean isOP = false;
         isOP = user != null && user.isOP();
-        if (parameters.containsKey("intent")) {
-            intent = ((String) parameters.get("intent")).toUpperCase();
+        if (parameters.has("intent")) {
+            intent = parameters.get("intent").getAsString().toUpperCase();
         } else {
             //Return bad request if there is no intent key in JSON
             return Integer.toString(HttpStatus.SC_BAD_REQUEST);
@@ -52,18 +53,18 @@ public class CommandSensor implements CommandCallback {
         return "SENSOR";
     }
 
-    private String create(JSONObject parameters) {
+    private String create(JsonObject parameters) {
         String sensorName;
         String sensorTopic;
         String sensorType;
         Boolean toStore;
         //Must contain a name and topic
-        if (parameters.containsKey("name") && parameters.containsKey("topic") && parameters.containsKey("type") && parameters.containsKey("toStore")) {
+        if (parameters.has("name") && parameters.has("topic") && parameters.has("type") && parameters.has("toStore")) {
             try {
-                sensorName = (String) parameters.get("name");
-                sensorTopic = (String) parameters.get("topic");
-                sensorType = (String) parameters.get("type");
-                toStore = (boolean) parameters.get("toStore");
+                sensorName = parameters.get("name").getAsString();
+                sensorTopic = parameters.get("topic").getAsString();
+                sensorType = parameters.get("type").getAsString();
+                toStore = parameters.get("toStore").getAsBoolean();
             } catch (ClassCastException e) {
                 HavissIoT.printMessage(e.getMessage());
                 return Integer.toString(HttpStatus.SC_BAD_REQUEST);
@@ -77,14 +78,14 @@ public class CommandSensor implements CommandCallback {
         return Integer.toString(HttpStatus.SC_OK);
     }
 
-    private String remove(JSONObject parameters) {
-        if (parameters.containsKey("name")) {
-            HavissIoT.sensorHandler.removeSensorByName((String) parameters.get("name"));
+    private String remove(JsonObject parameters) {
+        if (parameters.has("name")) {
+            HavissIoT.sensorHandler.removeSensorByName(parameters.get("name").getAsString());
             HavissIoT.printMessage("Removing sensor with name " + parameters.get("topic"));
             return Integer.toString(HttpStatus.SC_OK);
         }
-        if (parameters.containsKey("topic")) {
-            HavissIoT.sensorHandler.removeSensorByTopic((String) parameters.get("topic"));
+        if (parameters.has("topic")) {
+            HavissIoT.sensorHandler.removeSensorByTopic(parameters.get("topic").getAsString());
             HavissIoT.printMessage("Removing sensor on topic " + parameters.get("topic"));
             return Integer.toString(HttpStatus.SC_OK);
         }

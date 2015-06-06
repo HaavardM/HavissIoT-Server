@@ -1,15 +1,16 @@
 package net.haviss.havissIoT.Command;
 
+import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Type.User;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
- * Created by Håvard on 5/2/2015.
+ * Created by Hï¿½vard on 5/2/2015.
  */
 public interface CommandCallback {
     //Code to run when command is called
-    String run(JSONObject parameters, User user);
+    String run(JsonObject parameters, User user);
 
     //Get command name
     String getName();

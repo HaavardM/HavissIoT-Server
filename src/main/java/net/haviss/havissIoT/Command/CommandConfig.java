@@ -1,22 +1,23 @@
 package net.haviss.havissIoT.Command;
 
+import com.google.gson.JsonObject;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
 /**
- * Created by Håvard on 6/1/2015.
+ * Created by Hï¿½vard on 6/1/2015.
  */
 public class CommandConfig implements CommandCallback {
     private boolean isOP;
     @Override
-    public String run(JSONObject parameters, User user) {
+    public String run(JsonObject parameters, User user) {
         isOP = user != null && user.isOP();
         String intent;
         try {
-            if (parameters.containsKey("intent")) {
-                intent = (String) parameters.get("intent");
+            if (parameters.has("intent")) {
+                intent = parameters.get("intent").getAsString();
             } else {
                 return Integer.toString(HttpStatus.SC_BAD_REQUEST);
             }
@@ -33,31 +34,31 @@ public class CommandConfig implements CommandCallback {
         }
     }
 
-    private String newUser(JSONObject parameters) {
+    private String newUser(JsonObject parameters) {
         if (isOP) {
             User newUser;
             String name;
             char[] password;
             boolean userOP;
             boolean userProtected;
-            if (parameters.containsKey("name")) {
-                name = (String) parameters.get("name");
+            if (parameters.has("name")) {
+                name = parameters.get("name").getAsString();
             } else {
                 return Integer.toString(HttpStatus.SC_BAD_REQUEST);
             }
-            if (parameters.containsKey("password")) {
-                password = (char[]) parameters.get("password");
+            if (parameters.has("password")) {
+                password = parameters.get("password").getAsString().toCharArray();
                 newUser = new User(name, password);
 
             } else {
                 newUser = new User(name);
             }
-            if (parameters.containsKey("isOP")) {
-                userOP = (boolean) parameters.get("isOP");
+            if (parameters.has("isOP")) {
+                userOP = parameters.get("isOP").getAsBoolean();
                 newUser.setOP(userOP);
             }
-            if(parameters.containsKey("protected")) {
-                userProtected = (boolean) parameters.get("protected");
+            if(parameters.has("protected")) {
+                userProtected = parameters.get("protected").getAsBoolean();
                 newUser.setProtected(userProtected);
             }
             if (HavissIoT.userHandler.addUser(newUser)) {
@@ -72,10 +73,10 @@ public class CommandConfig implements CommandCallback {
         }
     }
 
-    private String removeUser(JSONObject parameters) {
+    private String removeUser(JsonObject parameters) {
         String name;
-        if(parameters.containsKey("name")) {
-            name = (String) parameters.get("name");
+        if(parameters.has("name")) {
+            name = parameters.get("name").getAsString();
             if(HavissIoT.userHandler.removeUser(name)) {
                 return Integer.toString(HttpStatus.SC_OK);
             } else {
