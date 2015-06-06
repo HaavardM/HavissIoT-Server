@@ -1,5 +1,8 @@
 package net.haviss.havissIoT.Communication;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Core.CommandHandler;
 import net.haviss.havissIoT.HavissIoT;
@@ -34,7 +37,7 @@ public class ClientThread implements Runnable {
     private boolean connectionClosed = false;
     private BufferedWriter output;
     private BufferedReader input;
-    private JSONParser parser;
+    private JsonParser parser;
 
     //Constructor - loading objects and values
     public ClientThread(Socket socket, SocketCommunication socketCommunication, int clientNum) {
@@ -42,7 +45,7 @@ public class ClientThread implements Runnable {
         this.socketCommunication = socketCommunication;
         threadName += Integer.toString(clientNum); //Giving the thread an unique name
         this.clientNum = clientNum;
-        this.parser = new JSONParser();
+        this.parser = new JsonParser();
         user = HavissIoT.userHandler.getUser("guest");
         if(user == null) {
             HavissIoT.printMessage("ERROR - no guest user - stopping application");
@@ -111,19 +114,18 @@ public class ClientThread implements Runnable {
                 } else {
                     //Print to console
                     HavissIoT.printMessage(this.threadName + ": " + commandString);
-                    JSONObject object = (JSONObject) parser.parse(commandString);
+                    JsonObject object = parser.parse(commandString).getAsJsonObject();
 
-                    if(object.containsKey("user")) {
-                        if(object.containsKey("password")) {
-                            this.user = HavissIoT.userHandler.getUser((String) object.get("user"), (char[]) object.get("password"));
+                    if(object.has("user")) {
+                        if(object.has("password")) {
+                            this.user = HavissIoT.userHandler.getUser(object.get("name").getAsString(), object.get("password").getAsString().toCharArray());
                         } else {
-                            this.user = HavissIoT.userHandler.getUser((String) object.get("user"));
+                            this.user = HavissIoT.userHandler.getUser(object.get("name").getAsString());
                         }
                     }
 
-                    if(object.containsKey("cmd") && object.containsKey("args")) {
-                        result = commandHandler.processCommand((String)object.get("cmd"), (JSONObject) object.get("args"), user);
-
+                    if(object.has("cmd") && object.has("args")) {
+                        result = commandHandler.processCommand(object.get("cmd").getAsString(), object.get("args").getAsJsonObject() , user);
                     } else {
                         result = Integer.toString(HttpStatus.SC_BAD_REQUEST);
                     }
@@ -137,7 +139,7 @@ public class ClientThread implements Runnable {
                 //Exception is expected if connection is lost.
                 //Terminate connection and stop thread
                 connectionClosed = true;
-            } catch (ParseException e) {
+            } catch (JsonParseException e) {
                 HavissIoT.printMessage(e.getMessage());
             }
         }
