@@ -105,62 +105,65 @@ public class ClientThread implements Runnable {
                     HavissIoT.printMessage("Client" + Integer.toString(clientNum) + " disconnected");
                     socket.close(); //Close socket
                     socketCommunication.removeOneClient(clientNum); //Remove one connected client
+                    timer.stop();
                     Thread.currentThread().interrupt(); //Interrupt thread
                     break; //Break out of while loop (and thread will stop)
                 }
                 //Read until line-end - \n
-                commandString = input.readLine();
-                lastActivity = System.currentTimeMillis();
-                if(commandString == null) {
-                    connectionClosed = true;
-                } else {
-                    //Print to console
-                    HavissIoT.printMessage(this.threadName + ": " + commandString);
-                    JsonObject object = parser.parse(commandString).getAsJsonObject();
+                if(input.ready()) {
+                    commandString = input.readLine();
+                    lastActivity = System.currentTimeMillis();
+                    if(commandString == null) {
+                        connectionClosed = true;
+                    } else {
+                        //Print to console
+                        HavissIoT.printMessage(this.threadName + ": " + commandString);
+                        JsonObject object = parser.parse(commandString).getAsJsonObject();
 
-                    if(object.has("user")) {
-                        if(object.has("password")) {
-                            this.user = HavissIoT.userHandler.getUser(object.get("name").getAsString(), object.get("password").getAsString().toCharArray());
-                        } else {
-                            this.user = HavissIoT.userHandler.getUser(object.get("name").getAsString());
+                        if (object.has("user")) {
+                            if (object.has("password")) {
+                                this.user = HavissIoT.userHandler.getUser(object.get("name").getAsString(), object.get("password").getAsString().toCharArray());
+                            } else {
+                                this.user = HavissIoT.userHandler.getUser(object.get("name").getAsString());
+                            }
+                            response.remove("user");
+                            response.addProperty("user", this.user.getName());
                         }
-                        response.remove("user");
-                        response.addProperty("user", this.user.getName());
-                    }
 
-                    if(object.has("cmd") && object.has("args")) {
-                        command = object.get("cmd").getAsString();
-                        arguments = object.get("args").getAsJsonObject();
-                        result = commandHandler.processCommand(command , arguments, user);
-                    } else {
-                        command = null;
-                        arguments = null;
-                        result = Integer.toString(HttpStatus.SC_BAD_REQUEST);
-                    }
-                    response.remove("r");
+                        if (object.has("cmd") && object.has("args")) {
+                            command = object.get("cmd").getAsString();
+                            arguments = object.get("args").getAsJsonObject();
+                            result = commandHandler.processCommand(command, arguments, user);
+                        } else {
+                            command = null;
+                            arguments = null;
+                            result = Integer.toString(HttpStatus.SC_BAD_REQUEST);
+                        }
+                        response.remove("r");
 
-                    //Check if response is json
-                    if(parser.parse(result).isJsonArray()) {
-                        response.add("r", parser.parse(result).getAsJsonArray());
-                    } else if(parser.parse(result).isJsonObject()) {
-                        response.add("r", parser.parse(result).getAsJsonObject());
-                    } else if(parser.parse(result).isJsonNull()) {
-                        response.add("r", parser.parse(result).getAsJsonNull());
-                    } else if(parser.parse(result).isJsonPrimitive()) {
-                        response.add("r", parser.parse(result).getAsJsonPrimitive());
-                    } else {
-                        response.addProperty("r", result);
-                    }
-                    //Update the response json object
-                    response.remove("cmd");
-                    response.addProperty("cmd", command);
-                    response.remove("args");
-                    response.add("args", arguments);
+                        //Check if response is json
+                        if (parser.parse(result).isJsonArray()) {
+                            response.add("r", parser.parse(result).getAsJsonArray());
+                        } else if (parser.parse(result).isJsonObject()) {
+                            response.add("r", parser.parse(result).getAsJsonObject());
+                        } else if (parser.parse(result).isJsonNull()) {
+                            response.add("r", parser.parse(result).getAsJsonNull());
+                        } else if (parser.parse(result).isJsonPrimitive()) {
+                            response.add("r", parser.parse(result).getAsJsonPrimitive());
+                        } else {
+                            response.addProperty("r", result);
+                        }
+                        //Update the response json object
+                        response.remove("cmd");
+                        response.addProperty("cmd", command);
+                        response.remove("args");
+                        response.add("args", arguments);
 
-                    //Send data back to client and flush output buffer
-                    output.write(response.toString());
-                    output.write("\n");
-                    output.flush();
+                        //Send data back to client and flush output buffer
+                        output.write(response.toString());
+                        output.write("\n");
+                        output.flush();
+                    }
                 }
             } catch (IOException e) {
                 //Exception is expected if connection is lost.
