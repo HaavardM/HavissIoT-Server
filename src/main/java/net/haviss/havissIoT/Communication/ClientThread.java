@@ -115,7 +115,7 @@ public class ClientThread implements Runnable {
                     lastActivity = System.currentTimeMillis();
                     if(commandString == null) {
                         connectionClosed = true;
-                    } else {
+                    } else if(commandString.compareTo("k") != 0)  {
                         //Print to console
                         HavissIoT.printMessage(this.threadName + ": " + commandString);
                         JsonObject object = parser.parse(commandString).getAsJsonObject();
