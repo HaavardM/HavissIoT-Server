@@ -1,8 +1,6 @@
 package net.haviss.havissIoT.Communication;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Core.CommandHandler;
 import net.haviss.havissIoT.HavissIoT;
@@ -77,6 +75,10 @@ public class ClientThread implements Runnable {
         //Strings to store command and result from commandhandler
         String commandString;
         String result;
+        String command;
+        JsonObject arguments;
+        JsonObject response = new JsonObject();
+        response.addProperty("user", user.getName());
         lastActivity = System.currentTimeMillis();
 
         //Timer to check if sockets are unused (and needs to be closed)
@@ -122,17 +124,42 @@ public class ClientThread implements Runnable {
                         } else {
                             this.user = HavissIoT.userHandler.getUser(object.get("name").getAsString());
                         }
+                        response.remove("user");
+                        response.addProperty("user", this.user.getName());
                     }
 
                     if(object.has("cmd") && object.has("args")) {
-                        result = commandHandler.processCommand(object.get("cmd").getAsString(), object.get("args").getAsJsonObject() , user);
+                        command = object.get("cmd").getAsString();
+                        arguments = object.get("args").getAsJsonObject();
+                        result = commandHandler.processCommand(command , arguments, user);
                     } else {
+                        command = null;
+                        arguments = null;
                         result = Integer.toString(HttpStatus.SC_BAD_REQUEST);
                     }
+                    response.remove("r");
 
-                    result += '\n';
+                    //Check if response is json
+                    if(parser.parse(result).isJsonArray()) {
+                        response.add("r", parser.parse(result).getAsJsonArray());
+                    } else if(parser.parse(result).isJsonObject()) {
+                        response.add("r", parser.parse(result).getAsJsonObject());
+                    } else if(parser.parse(result).isJsonNull()) {
+                        response.add("r", parser.parse(result).getAsJsonNull());
+                    } else if(parser.parse(result).isJsonPrimitive()) {
+                        response.add("r", parser.parse(result).getAsJsonPrimitive());
+                    } else {
+                        response.addProperty("r", result);
+                    }
+                    //Update the response json object
+                    response.remove("cmd");
+                    response.addProperty("cmd", command);
+                    response.remove("args");
+                    response.add("args", arguments);
+
                     //Send data back to client and flush output buffer
-                    output.write(result);
+                    output.write(response.toString());
+                    output.write("\n");
                     output.flush();
                 }
             } catch (IOException e) {
