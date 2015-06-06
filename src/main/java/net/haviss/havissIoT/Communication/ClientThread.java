@@ -30,7 +30,7 @@ public class ClientThread implements Runnable {
     private String threadName = "ClientThread"; //
     private int clientNum;
     private volatile long lastActivity;
-    private User user;
+    private User clientUser;
     private boolean connectionClosed = false;
     private BufferedWriter output;
     private BufferedReader input;
@@ -43,8 +43,9 @@ public class ClientThread implements Runnable {
         threadName += Integer.toString(clientNum); //Giving the thread an unique name
         this.clientNum = clientNum;
         this.parser = new JSONParser();
-        user = HavissIoT.userHandler.getUser("guest");
-        if(user == null) {
+        this.clientUser = HavissIoT.userHandler.getUser("guest");
+
+        if(this.clientUser == null) {
             HavissIoT.printMessage("ERROR - no guest user - stopping application");
             System.exit(1);
         }
@@ -115,14 +116,18 @@ public class ClientThread implements Runnable {
 
                     if(object.containsKey("user")) {
                         if(object.containsKey("password")) {
-                            this.user = HavissIoT.userHandler.getUser((String) object.get("user"), (char[]) object.get("password"));
+                            this.clientUser = HavissIoT.userHandler.getUser((String) object.get("user"), (char[]) object.get("password"));
                         } else {
-                            this.user = HavissIoT.userHandler.getUser((String) object.get("user"));
+                            this.clientUser = HavissIoT.userHandler.getUser((String) object.get("user"));
                         }
                     }
 
-                    if(object.containsKey("cmd") && object.containsKey("args")) {
-                        result = commandHandler.processCommand((String)object.get("cmd"), (JSONObject) object.get("args"), user);
+                    if(object.containsKey("cmd")) {
+                        if(object.containsKey("args")) {
+                            result = commandHandler.processCommand((String) object.get("cmd"), (JSONObject) object.get("args"), this.clientUser);
+                        } else {
+                            result = commandHandler.processCommand((String) object.get("cmd"), null, this.clientUser);
+                        }
 
                     } else {
                         result = Integer.toString(HttpStatus.SC_BAD_REQUEST);
