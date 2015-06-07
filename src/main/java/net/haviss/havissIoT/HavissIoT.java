@@ -7,6 +7,7 @@ import net.haviss.havissIoT.Communication.SocketCommunication;
 import net.haviss.havissIoT.Core.CommandHandler;
 import net.haviss.havissIoT.Core.SensorHandler;
 import net.haviss.havissIoT.Core.UserHandler;
+import net.haviss.havissIoT.External.PublicIP;
 import net.haviss.havissIoT.Sensor.IoTSensor;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -144,6 +145,7 @@ public class HavissIoT {
         System.out.println("\nServer settings:\n");
         System.out.println("Server port:\t" + Integer.toString(Config.serverPort));
         System.out.println("Number of clients:\t" + Integer.toString(Config.numbOfClients));
+        System.out.println("Public IP address\t" + PublicIP.getPublicIP());
         try {
             System.out.println("Local IP address:\t" + InetAddress.getLocalHost());
         } catch (UnknownHostException e) {
