@@ -19,4 +19,9 @@ public class CommandStorage implements CommandCallback {
     public String getName() {
         return "STORAGE";
     }
+
+    @Override
+    public boolean requireArgs() {
+        return true;
+    }
 }

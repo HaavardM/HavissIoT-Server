@@ -49,4 +49,26 @@ public class CommandHandler {
         //Return bad request if nothing worked
         return Integer.toString(HttpStatus.SC_BAD_REQUEST);
     }
+
+    //Processes commandstring and perform corresponding command.
+    public String processCommand(String command,  User user) {
+        /*variables*/
+        String reply;
+
+        //If it is JSON it can be a command - find correct command and run it
+        if(command != null) {
+            for (CommandCallback cb : availableCommands) {
+                if ((command.compareTo(cb.getName()) == 0)) { //Check if command string corresponds to command
+                    if(!cb.requireArgs()) {
+                        reply = cb.run(null, user); //run the command without arguments
+                        return reply;
+                    } else {
+                        return Integer.toString(HttpStatus.SC_BAD_REQUEST);
+                    }
+                }
+            }
+        }
+        //Return bad request if nothing worked
+        return Integer.toString(HttpStatus.SC_BAD_REQUEST);
+    }
 }

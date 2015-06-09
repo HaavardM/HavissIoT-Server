@@ -92,4 +92,9 @@ public class CommandConfig implements CommandCallback {
     public String getName() {
         return "CONFIG";
     }
+
+    @Override
+    public boolean requireArgs() {
+        return true;
+    }
 }

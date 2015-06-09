@@ -131,10 +131,15 @@ public class ClientThread implements Runnable {
                             response.addProperty("user", this.user.getName());
                         }
 
-                        if (object.has("cmd") && object.has("args")) {
+                        if (object.has("cmd")) {
                             command = object.get("cmd").getAsString();
-                            arguments = object.get("args").getAsJsonObject();
-                            result = commandHandler.processCommand(command, arguments, user);
+                            if(object.has("args")) {
+                                arguments = object.get("args").getAsJsonObject();
+                                result = commandHandler.processCommand(command, arguments, this.user);
+                            } else {
+                                result = commandHandler.processCommand(command, this.user);
+                                arguments = null;
+                            }
                         } else {
                             command = null;
                             arguments = null;

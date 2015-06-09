@@ -18,4 +18,9 @@ public class CommandExit implements CommandCallback {
     public String getName() {
         return "EXIT";
     }
+
+    @Override
+    public boolean requireArgs() {
+        return false;
+    }
 }

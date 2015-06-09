@@ -14,4 +14,6 @@ public interface CommandCallback {
 
     //Get command name
     String getName();
+
+    boolean requireArgs();
 }

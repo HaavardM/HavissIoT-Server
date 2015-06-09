@@ -20,4 +20,9 @@ public class CommandDevice implements CommandCallback {
     public String getName() {
         return "device";
     }
+
+    @Override
+    public boolean requireArgs() {
+        return true;
+    }
 }

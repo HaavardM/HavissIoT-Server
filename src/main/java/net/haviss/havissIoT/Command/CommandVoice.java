@@ -19,4 +19,9 @@ public class CommandVoice implements CommandCallback {
     public String getName() {
         return "VOICE";
     }
+
+    @Override
+    public boolean requireArgs() {
+        return true;
+    }
 }

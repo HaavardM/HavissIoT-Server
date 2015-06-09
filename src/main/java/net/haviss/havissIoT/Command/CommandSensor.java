@@ -53,6 +53,11 @@ public class CommandSensor implements CommandCallback {
         return "SENSOR";
     }
 
+    @Override
+    public boolean requireArgs() {
+        return true;
+    }
+
     private String create(JsonObject parameters) {
         String sensorName;
         String sensorTopic;
