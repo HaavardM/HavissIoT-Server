@@ -14,7 +14,7 @@ import net.haviss.havissIoT.HavissIoT;
 public class IPLocation {
     public JsonObject findLocation(String IP) {
         try {
-
+            //Return body from external API
             return new JsonParser()
                     .parse(Unirest.get("http://ip-api.com/json")
                             .asString()
@@ -22,6 +22,7 @@ public class IPLocation {
                     .getAsJsonObject();
         } catch (UnirestException e) {
             HavissIoT.printMessage(e.getMessage());
+            //Return null if request error
             return null;
         }
     }

@@ -124,4 +124,10 @@ public class IoTStorage  {
         }, finishedCallBack);
         return databases;
     }
+
+    public synchronized void disconnect() {
+        this.mongoClient.close();
+        this.mongoClient = null;
+    }
+
 }

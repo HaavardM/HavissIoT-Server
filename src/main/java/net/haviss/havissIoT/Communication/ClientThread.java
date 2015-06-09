@@ -63,6 +63,7 @@ public class ClientThread implements Runnable {
         //Starting thread
         if(clientThread == null) {
              clientThread = new Thread(this, threadName);
+            HavissIoT.allThreads.add(clientThread);
             clientThread.start();
         }
     }
@@ -173,5 +174,7 @@ public class ClientThread implements Runnable {
                 HavissIoT.printMessage(e.getMessage());
             }
         }
+        //Remove thread when it shutdown
+        HavissIoT.allThreads.remove(clientThread);
     }
 }

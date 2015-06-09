@@ -64,7 +64,7 @@ public class IoTClient {
             connected = false;
         } catch (MqttException me) {
             //TODO: Handle exception
-            me.printStackTrace();
+            HavissIoT.printMessage(me.getMessage());
         }
     }
 
@@ -119,6 +119,7 @@ public class IoTClient {
     public synchronized boolean isConnected() {
         return this.connected;
     }
+
 
 
 }

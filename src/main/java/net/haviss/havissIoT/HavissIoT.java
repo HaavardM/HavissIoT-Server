@@ -37,8 +37,8 @@ public class HavissIoT {
     public static UserHandler userHandler;
     public static final SensorHandler sensorHandler = new SensorHandler();
     public static final Object threadLock = new Object();
+    public static CopyOnWriteArrayList<Thread> allThreads;
     private static CopyOnWriteArrayList<String> toPrint;
-
     //Main method
     public static void main(String args[]) {
 
@@ -58,6 +58,9 @@ public class HavissIoT {
 
         //Initialize toPrint list.
         toPrint = new CopyOnWriteArrayList<>();
+
+        //All threads
+        allThreads = new CopyOnWriteArrayList<>();
 
         //Initialize IoT client
         if (!Config.offlineMode) {
@@ -132,6 +135,7 @@ public class HavissIoT {
             }
         }
     }
+    //print all current configurations
     public static void printSettings() {
         System.out.println("MQTT broker settings:\n");
         System.out.println("Broker address:\t " + Config.brokerAddress);
@@ -160,6 +164,22 @@ public class HavissIoT {
         synchronized (threadLock) {
             threadLock.notify();
         }
+    }
+
+    //Shutdown all threads and disconnects from all servers
+    public static synchronized void exit(int status) {
+        for(Thread t : allThreads) {
+            try {
+                t.interrupt();
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        storage.disconnect();
+        client.disconnect();
+        System.out.println("Application is shutting down....");
+        System.exit(status);
     }
 
 

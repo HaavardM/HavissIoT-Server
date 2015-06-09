@@ -31,6 +31,7 @@ public class SocketCommunication implements Runnable  {
         Arrays.fill(this.clientNames, false);
         if(serverThread == null) {
             serverThread = new Thread(this, this.threadName);
+            HavissIoT.allThreads.add(serverThread);
             serverThread.start();
         }
     }
@@ -69,6 +70,8 @@ public class SocketCommunication implements Runnable  {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+        //Remove thread from list on finish
+        HavissIoT.allThreads.remove(serverThread);
     }
 
     //Method for decrementing number of clients - if client disconnects
