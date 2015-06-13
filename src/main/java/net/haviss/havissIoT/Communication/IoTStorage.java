@@ -4,6 +4,7 @@ import com.mongodb.*;
 import com.mongodb.async.SingleResultCallback;
 import com.mongodb.async.client.*;
 import net.haviss.havissIoT.HavissIoT;
+import net.haviss.havissIoT.Sensor.IoTSensor;
 import org.bson.Document;
 
 import java.util.*;
@@ -19,33 +20,20 @@ public class IoTStorage  {
     /*Variables*/
     private String serverAddress = ""; //Database address
     private int serverPort = 27017; //Database port
-    private CopyOnWriteArrayList<String> storedTopics = new CopyOnWriteArrayList<>();
-    private CopyOnWriteArrayList<String[]> toStore = new CopyOnWriteArrayList<>(); //Values to store when ready
-    private boolean stopThread = false; //Stop thread
-    private String storThreadName = "storageThread"; //Storage thread name
-    private boolean storagePaused = false;
-    private boolean connected = false;
-
+    private CopyOnWriteArrayList<String> storedSensors = new CopyOnWriteArrayList<>();
 
     /*Objects*/
-
     private MongoClient mongoClient;
     private MongoDatabase db;
-    private MongoCollection<Document> dbCollection;
     private SingleResultCallback<Void> finishedCallBack = new SingleResultCallback<Void>() {
 
         @Override
         public void onResult(Void aVoid, Throwable throwable) {
-
+            //TODO: Handle onResult
         }
     };
 
     /*Functions*/
-
-    //Pause storage thread if needed
-    public void pauseStorage() {
-        this.storagePaused = true; //Tell thread to pause
-    }
 
     //Constructor - stores new values and connects to server
     public IoTStorage(String serverAddress, int serverPort, String db) {
@@ -63,42 +51,27 @@ public class IoTStorage  {
     }
 
     //Get collection from database
-    public void getCollection(String collection) {
-        this.dbCollection = db.getCollection(collection);
+    public MongoCollection<Document> getCollection(String collection) {
+        return this.db.getCollection(collection);
     }
 
     //Adding values for thread to store in Db
-    public synchronized void storeValues(String topic, String value) {
+    public synchronized void storeValues(IoTSensor sensor, String value) {
         try {
-            String date = new Date().toString();
-            Document document = new Document("Topic", topic)
+            Document document = new Document("Name", sensor.getName())
+                    .append("Topic", sensor.getTopic())
                     .append("Value", value)
-                    .append("Date", date);
+                    .append("Date", new Date().toString());
             //Insert document to database
-            dbCollection.insertOne(document, new SingleResultCallback<Void>() {
-                @Override
-                public void onResult(Void aVoid, Throwable throwable) {
-                //TODO: Handle result
-                }
-            });
+            sensor.getCollection().insertOne(document, finishedCallBack);
         } catch (MongoException e) {
             HavissIoT.printMessage("MONGO WRITE ERROR: " + e.getMessage());
         }
     }
 
-    //Add topic to store
-    public synchronized void addTopicsToStore(String topic) {
-        storedTopics.add(topic);
-    }
-
     //Get all stored topics
-    public synchronized CopyOnWriteArrayList<String> getStoredTopics() {
-        return storedTopics;
-    }
-
-    //Gets the toStore list - synchronized
-    public CopyOnWriteArrayList<String[]> getToStore() {
-        return toStore;
+    public synchronized CopyOnWriteArrayList<String> getStoredSensors() {
+        return storedSensors;
     }
 
     //Gets all available collections from database
@@ -125,6 +98,12 @@ public class IoTStorage  {
         return databases;
     }
 
+    //change database
+    public void changeDatabase(String name) {
+        this.db = this.mongoClient.getDatabase(name);
+    }
+
+    //Disconnect from mongodb
     public synchronized void disconnect() {
         this.mongoClient.close();
         this.mongoClient = null;

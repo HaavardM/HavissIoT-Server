@@ -26,7 +26,6 @@ public class IoTClient {
     //Objects
     private MqttClient mclient;
     private MemoryPersistence persistence = new MemoryPersistence();
-    private final Object threadLock = new Object();
 
     public IoTClient(String clientID) {
         this.clientID = clientID;

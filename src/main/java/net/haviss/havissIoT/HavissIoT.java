@@ -79,7 +79,7 @@ public class HavissIoT {
                     IoTSensor sensor = sensorHandler.getSensorByTopic(s);
                     if (sensor != null) {
                         if (sensor.getStorage()) {
-                            HavissIoT.storage.storeValues(sensor.getName(), mqttMessage.toString());
+                            HavissIoT.storage.storeValues(sensor, mqttMessage.toString());
                         }
                         sensor.updateValue(mqttMessage.toString());
                     }
