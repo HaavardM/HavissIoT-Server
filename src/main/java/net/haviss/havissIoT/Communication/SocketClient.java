@@ -5,11 +5,9 @@ import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Core.CommandHandler;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Sensor.IoTSensor;
+import net.haviss.havissIoT.Type.Subscription;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -17,7 +15,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.concurrent.CopyOnWriteArrayList;
+
 
 
 /**
@@ -40,10 +38,8 @@ public class SocketClient implements Runnable {
     private BufferedReader input;
     private JsonParser parser;
     private boolean hasSubscribed = false;
-    private int updateSubscriptions = 1000;
-    private CopyOnWriteArrayList<IoTSensor> subscribedSensors = new CopyOnWriteArrayList<>();
+    private Subscription subscription;
     private Timer timeOutTimer = null;
-    private Timer subscriptionTimer;
 
     //Constructor - loading objects and values
     public SocketClient(Socket socket, SocketCommunication socketCommunication, int clientNum) {
@@ -52,6 +48,7 @@ public class SocketClient implements Runnable {
         threadName += Integer.toString(clientNum); //Giving the thread an unique name
         this.clientNum = clientNum;
         this.parser = new JsonParser();
+        this.subscription = new Subscription(this);
         user = null;
         //Set input and output stream read/writer
         try {
@@ -65,30 +62,6 @@ public class SocketClient implements Runnable {
             output = null;
             connectionClosed = true;
         }
-        subscriptionTimer = new Timer(updateSubscriptions, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JsonObject sensorValues = new JsonObject();
-                JsonObject sensorStatus = new JsonObject();
-                JsonObject response = new JsonObject();
-                for(IoTSensor s : subscribedSensors) {
-                    sensorValues.addProperty(s.getName(), s.getLastValue());
-                    sensorStatus.addProperty(s.getName(), s.isActive());
-                }
-                if(user != null) {
-                    response.addProperty("user", user.getName());
-                } else {
-                    response.add("user", null);
-                }
-                response.add("values", sensorValues);
-                response.add("status", sensorStatus);
-                try {
-                    output.write(response.toString() + "\n");
-                } catch (IOException e1) {
-                    HavissIoT.printMessage(e1.getMessage());
-                }
-            }
-        });
         //Starting thread
         if(clientThread == null) {
              clientThread = new Thread(this, threadName);
@@ -113,7 +86,7 @@ public class SocketClient implements Runnable {
 
         //KeepAlive == 0 => unlimited
 
-        if(Config.keepAlive != 0) {
+        if(Config.keepAlive > 0) {
             //Timer to check if sockets are unused (and needs to be closed)
             timeOutTimer = new Timer(5000, new ActionListener() {
                 @Override
@@ -131,7 +104,6 @@ public class SocketClient implements Runnable {
 
         //Thread should run until client disconnect
         while (!Thread.currentThread().isInterrupted()) {
-
             try {
                 if (connectionClosed) {
                     Thread.currentThread().interrupt(); //Interrupt thread
@@ -158,11 +130,11 @@ public class SocketClient implements Runnable {
 
                         if (object.has("cmd")) {
                             command = object.get("cmd").getAsString();
-                            if(object.has("args")) {
+                            if(object.has("args") && object.get("args").isJsonObject()) {
                                 arguments = object.get("args").getAsJsonObject();
-                                result = commandHandler.processCommand(command, arguments, this.user);
+                                result = commandHandler.processCommand(command, arguments, this.user, this);
                             } else {
-                                result = commandHandler.processCommand(command, this.user);
+                                result = commandHandler.processCommand(command, this.user, this);
                                 arguments = null;
                             }
                         } else {
@@ -170,31 +142,8 @@ public class SocketClient implements Runnable {
                             arguments = null;
                             result = Integer.toString(HttpStatus.SC_BAD_REQUEST);
                         }
-                        response.remove("r");
-
-                        //Check if response is json
-                        if (parser.parse(result).isJsonArray()) {
-                            response.add("r", parser.parse(result).getAsJsonArray());
-                        } else if (parser.parse(result).isJsonObject()) {
-                            response.add("r", parser.parse(result).getAsJsonObject());
-                        } else if (parser.parse(result).isJsonNull()) {
-                            response.add("r", parser.parse(result).getAsJsonNull());
-                        } else if (parser.parse(result).isJsonPrimitive()) {
-                            response.add("r", parser.parse(result).getAsJsonPrimitive());
-                        } else {
-                            response.addProperty("r", result);
-                        }
-                        //Update the response json object
-                        response.remove("user");
-                        if(user != null) {
-                            response.addProperty("user", this.user.getName());
-                        } else {
-                            response.add("user", null);
-                        }
-                        response.remove("cmd");
-                        response.addProperty("cmd", command);
-                        response.remove("args");
-                        response.add("args", arguments);
+                        //Process response and build json object
+                        response = processResult(result, command, arguments);
 
                         //Send data back to client and flush output buffer
                         output.write(response.toString());
@@ -228,36 +177,54 @@ public class SocketClient implements Runnable {
         HavissIoT.allThreads.remove(clientThread);
     }
 
-    //Subscribe to new sensor
-    public boolean subscribeToSensor(String sensorName) {
-        IoTSensor sensor = HavissIoT.sensorHandler.getSensorByName(sensorName);
-        if(sensor != null) {
-            this.subscribedSensors.add(sensor);
-            this.hasSubscribed = true;
-            subscriptionTimer.start();
-            return true;
-        } else {
-            if(this.subscribedSensors.size() <= 0) {
-                this.hasSubscribed = false;
-                if(this.subscriptionTimer.isRunning()) {
-                    this.subscriptionTimer.stop();
-                }
+    //Send message to client
+    public synchronized void writeToSocket(String s) {
+        if(output != null) {
+            try {
+                output.write(s + "\n");
+            } catch (IOException e) {
+                HavissIoT.printMessage(e.getMessage());
             }
-            return false;
         }
     }
 
-    //Unsubscribe to sensor
-    public void unsubscribeToSensor(String sensorName) {
-        IoTSensor sensor = HavissIoT.sensorHandler.getSensorByName(sensorName);
-        if(sensor != null) {
-            this.subscribedSensors.remove(sensor);
-            if(this.subscribedSensors.size() <= 0) {
-                this.hasSubscribed = false;
-                if(this.subscriptionTimer.isRunning()) {
-                    this.subscriptionTimer.stop();
-                }
-            }
+    //Get subscription
+    public Subscription getSubscription() {
+        return this.subscription;
+    }
+
+    //Check if subscribed to any sensors
+    public boolean isSubscribed() {
+        return (this.hasSubscribed = this.subscription.isSubscribed());
+    }
+
+    private JsonObject processResult(String result, String command, JsonObject arguments) {
+        JsonObject response = new JsonObject();
+        response.remove("r");
+
+        //Check if response is json
+        if (parser.parse(result).isJsonArray()) {
+            response.add("r", parser.parse(result).getAsJsonArray());
+        } else if (parser.parse(result).isJsonObject()) {
+            response.add("r", parser.parse(result).getAsJsonObject());
+        } else if (parser.parse(result).isJsonNull()) {
+            response.add("r", parser.parse(result).getAsJsonNull());
+        } else if (parser.parse(result).isJsonPrimitive()) {
+            response.add("r", parser.parse(result).getAsJsonPrimitive());
+        } else {
+            response.addProperty("r", result);
         }
+        //Update the response json object
+        response.remove("user");
+        if(user != null) {
+            response.addProperty("user", this.user.getName());
+        } else {
+            response.add("user", null);
+        }
+        response.remove("cmd");
+        response.addProperty("cmd", command);
+        response.remove("args");
+        response.add("args", arguments);
+        return response;
     }
 }

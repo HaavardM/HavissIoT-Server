@@ -2,6 +2,7 @@ package net.haviss.havissIoT.Core;
 
 import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Command.CommandCallback;
+import net.haviss.havissIoT.Communication.SocketClient;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
@@ -33,7 +34,7 @@ public class CommandHandler {
         }
     }
     //Processes commandstring and perform corresponding command.
-    public String processCommand(String command, JsonObject parameters, User user) {
+    public String processCommand(String command, JsonObject parameters, User user, SocketClient client) {
         /*variables*/
         String reply;
 
@@ -41,7 +42,7 @@ public class CommandHandler {
         if(command != null && parameters != null) {
             for (CommandCallback cb : availableCommands) {
                 if (command.compareTo(cb.getName()) == 0) { //Check if command string corresponds to command
-                    reply = cb.run(parameters, user); //run the command
+                    reply = cb.run(parameters, user, client); //run the command
                     return reply;
                 }
             }
@@ -51,7 +52,7 @@ public class CommandHandler {
     }
 
     //Processes commandstring and perform corresponding command.
-    public String processCommand(String command,  User user) {
+    public String processCommand(String command,  User user, SocketClient client) {
         /*variables*/
         String reply;
 
@@ -60,7 +61,7 @@ public class CommandHandler {
             for (CommandCallback cb : availableCommands) {
                 if ((command.compareTo(cb.getName()) == 0)) { //Check if command string corresponds to command
                     if(!cb.requireArgs()) {
-                        reply = cb.run(null, user); //run the command without arguments
+                        reply = cb.run(null, user, client); //run the command without arguments
                         return reply;
                     } else {
                         return Integer.toString(HttpStatus.SC_BAD_REQUEST);

@@ -28,6 +28,7 @@ public class Config {
     public static volatile int keepAlive;
     public static volatile int readTimeout;
     public static volatile int refreshSensorTime;
+    public static volatile int refreshSubscriptionTime;
     public static volatile boolean offlineMode;
 
 
@@ -39,26 +40,27 @@ public class Config {
     public static void loadConfig(String configName) {
         try {
             properties.load(new BufferedReader(new InputStreamReader(Config.class.getClass().getResourceAsStream(configName))));
-        } catch (IOException e) {
-            e.printStackTrace();
+            brokerAddress = getProperty("broker_address");
+            clientID = getProperty("client_id");
+            cmdTopic = getProperty("cmd_topic");
+            statusTopic = getProperty("status_topic");
+            databaseAddress = getProperty("database_address");
+            database = getProperty("database");
+            brokerPort = Integer.parseInt(getProperty("broker_port"));
+            qos = Integer.parseInt(getProperty("mqtt_qos"));
+            databasePort = Integer.parseInt(getProperty("database_port"));
+            serverPort = Integer.parseInt(getProperty("server_port"));
+            numbOfClients = Integer.parseInt(getProperty("number_of_clients"));
+            keepAlive = Integer.parseInt(getProperty("keep_alive"));
+            readTimeout = Integer.parseInt(getProperty("read_timeout"));
+            refreshSensorTime = Integer.parseInt(getProperty("refresh_sensor_time"));
+            refreshSubscriptionTime = Integer.parseInt(getProperty("refresh_subscription_time"));
+            witAddress = getProperty("wit_address");
+            witToken = getProperty("wit_token");
+            offlineMode = Boolean.parseBoolean(getProperty("offline_mode"));
+        } catch (IOException | NumberFormatException e) {
+            HavissIoT.printMessage(e.getMessage());
         }
-        brokerAddress = getProperty("broker_address");
-        clientID = getProperty("client_id");
-        cmdTopic = getProperty("cmd_topic");
-        statusTopic = getProperty("status_topic");
-        databaseAddress = getProperty("database_address");
-        database = getProperty("database");
-        brokerPort = Integer.parseInt(getProperty("broker_port"));
-        qos = Integer.parseInt(getProperty("mqtt_qos"));
-        databasePort = Integer.parseInt(getProperty("database_port"));
-        serverPort = Integer.parseInt(getProperty("server_port"));
-        numbOfClients = Integer.parseInt(getProperty("number_of_clients"));
-        keepAlive = Integer.parseInt(getProperty("keep_alive"));
-        readTimeout = Integer.parseInt(getProperty("read_timeout"));
-        refreshSensorTime = Integer.parseInt(getProperty("refresh_sensor_time"));
-        witAddress = getProperty("wit_address");
-        witToken = getProperty("wit_token");
-        offlineMode = Boolean.parseBoolean(getProperty("offline_mode"));
 
     }
 
