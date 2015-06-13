@@ -4,6 +4,7 @@ import com.google.gson.*;
 import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Core.CommandHandler;
 import net.haviss.havissIoT.HavissIoT;
+import net.haviss.havissIoT.Sensor.IoTSensor;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
@@ -16,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
@@ -24,7 +26,7 @@ import java.net.SocketTimeoutException;
  * New thread are created for each client connection - avoids client blocking other clients.
  * IMPORTANT: Data must be terminated with new line - or it will block thread!
  */
-public class ClientThread implements Runnable {
+public class SocketClient implements Runnable {
 
     private Socket socket; //Socket connection to client
     private SocketCommunication socketCommunication; //For terminating connection
@@ -37,9 +39,14 @@ public class ClientThread implements Runnable {
     private BufferedWriter output;
     private BufferedReader input;
     private JsonParser parser;
+    private boolean hasSubscribed = false;
+    private int updateSubscriptions = 1000;
+    private CopyOnWriteArrayList<IoTSensor> subscribedSensors = new CopyOnWriteArrayList<>();
+    private Timer timeOutTimer = null;
+    private Timer subscriptionTimer;
 
     //Constructor - loading objects and values
-    public ClientThread(Socket socket, SocketCommunication socketCommunication, int clientNum) {
+    public SocketClient(Socket socket, SocketCommunication socketCommunication, int clientNum) {
         this.socket = socket;
         this.socketCommunication = socketCommunication;
         threadName += Integer.toString(clientNum); //Giving the thread an unique name
@@ -58,6 +65,30 @@ public class ClientThread implements Runnable {
             output = null;
             connectionClosed = true;
         }
+        subscriptionTimer = new Timer(updateSubscriptions, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JsonObject sensorValues = new JsonObject();
+                JsonObject sensorStatus = new JsonObject();
+                JsonObject response = new JsonObject();
+                for(IoTSensor s : subscribedSensors) {
+                    sensorValues.addProperty(s.getName(), s.getLastValue());
+                    sensorStatus.addProperty(s.getName(), s.isActive());
+                }
+                if(user != null) {
+                    response.addProperty("user", user.getName());
+                } else {
+                    response.add("user", null);
+                }
+                response.add("values", sensorValues);
+                response.add("status", sensorStatus);
+                try {
+                    output.write(response.toString() + "\n");
+                } catch (IOException e1) {
+                    HavissIoT.printMessage(e1.getMessage());
+                }
+            }
+        });
         //Starting thread
         if(clientThread == null) {
              clientThread = new Thread(this, threadName);
@@ -80,19 +111,23 @@ public class ClientThread implements Runnable {
         response.addProperty("user", user.getName());
         lastActivity = System.currentTimeMillis();
 
-        //Timer to check if sockets are unused (and needs to be closed)
-        Timer timer = new Timer(5000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(System.currentTimeMillis() - lastActivity > Config.keepAlive) {
-                    connectionClosed = true;
-                    HavissIoT.printMessage("Client " + Integer.toString(clientNum) + " timed out!");
-                }
-            }
-        });
+        //KeepAlive == 0 => unlimited
 
-        //Start timer
-        timer.start();
+        if(Config.keepAlive != 0) {
+            //Timer to check if sockets are unused (and needs to be closed)
+            timeOutTimer = new Timer(5000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (System.currentTimeMillis() - lastActivity > Config.keepAlive) {
+                        connectionClosed = true;
+                        HavissIoT.printMessage("Client " + Integer.toString(clientNum) + " timed out!");
+                    }
+                }
+            });
+
+            //Start timer
+            timeOutTimer.start();
+        }
 
         //Thread should run until client disconnect
         while (!Thread.currentThread().isInterrupted()) {
@@ -182,12 +217,47 @@ public class ClientThread implements Runnable {
             HavissIoT.printMessage("Client" + Integer.toString(clientNum) + " disconnected");
             socket.close(); //Close socket
             socketCommunication.removeOneClient(clientNum); //Remove one connected client
-            timer.stop();
+            if(timeOutTimer != null) {
+                timeOutTimer.stop();
+            }
         } catch (IOException e) {
             HavissIoT.printMessage(e.getMessage());
         }
 
         //Remove thread when it shutdown
         HavissIoT.allThreads.remove(clientThread);
+    }
+
+    //Subscribe to new sensor
+    public boolean subscribeToSensor(String sensorName) {
+        IoTSensor sensor = HavissIoT.sensorHandler.getSensorByName(sensorName);
+        if(sensor != null) {
+            this.subscribedSensors.add(sensor);
+            this.hasSubscribed = true;
+            subscriptionTimer.start();
+            return true;
+        } else {
+            if(this.subscribedSensors.size() <= 0) {
+                this.hasSubscribed = false;
+                if(this.subscriptionTimer.isRunning()) {
+                    this.subscriptionTimer.stop();
+                }
+            }
+            return false;
+        }
+    }
+
+    //Unsubscribe to sensor
+    public void unsubscribeToSensor(String sensorName) {
+        IoTSensor sensor = HavissIoT.sensorHandler.getSensorByName(sensorName);
+        if(sensor != null) {
+            this.subscribedSensors.remove(sensor);
+            if(this.subscribedSensors.size() <= 0) {
+                this.hasSubscribed = false;
+                if(this.subscriptionTimer.isRunning()) {
+                    this.subscriptionTimer.stop();
+                }
+            }
+        }
     }
 }

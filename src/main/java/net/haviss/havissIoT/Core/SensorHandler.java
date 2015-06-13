@@ -2,17 +2,16 @@ package net.haviss.havissIoT.Core;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Sensor.IoTSensor;
-import org.json.simple.JSONArray;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import javax.swing.Timer;
 
 /**
  * Created by H�vard on 5/16/2015.
@@ -21,6 +20,20 @@ import org.json.simple.parser.ParseException;
 public class SensorHandler {
     private CopyOnWriteArrayList<IoTSensor> availableSensors = new CopyOnWriteArrayList<>();
     private CopyOnWriteArrayList<String> sensorNames = new CopyOnWriteArrayList<>();
+    private Timer timer;
+
+    public SensorHandler() {
+        //Check if sensors are inactive each x seconds (se config.properties)
+         timer = new Timer(Config.refreshSensorTime, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for(IoTSensor s : availableSensors) {
+                    s.checkActive();
+                }
+            }
+        });
+        timer.start();
+    }
 
     //Add new sensor
     public synchronized boolean addSensor(String name, String topic, String type, boolean toStore) {
@@ -96,27 +109,19 @@ public class SensorHandler {
     //Load sensors from file
     public synchronized void loadFromFile() {
         //Setting up parser
-        JSONParser parser = new JSONParser();
+        JsonParser parser = new JsonParser();
         //New json array
-        JSONArray jsonArray;
+        JsonArray jsonArray;
         try {
             //Load json array from file
-            jsonArray = (JSONArray) parser.parse(new FileReader("sensors.json"));
-        } catch (IOException | ParseException e) {
+            jsonArray = parser.parse(new FileReader("sensors.json")).getAsJsonArray();
+        } catch (IOException e) {
             jsonArray = null;
         }
         //If jsonarray successfully loaded from file
         if(jsonArray != null) {
-            //Foreach object in jsonarray - load properties
-            for(Object o : jsonArray) {
-                JSONObject sensor = (JSONObject) o;
-                String sensorName = (String) sensor.get("name");
-                String sensorType = (String) sensor.get("type");
-                String sensorTopic = (String) sensor.get("topic");
-                boolean sensorStorage = (boolean) sensor.get("storage");
-                //Add new sensor to list with appropriate parameters
-                addSensor(sensorName, sensorTopic, sensorType, sensorStorage);
-            }
+            //Load object from jsonarray
+            availableSensors = new Gson().fromJson(jsonArray.getAsString(), new TypeToken<CopyOnWriteArrayList<IoTSensor>>(){}.getType());
         }
     }
 }

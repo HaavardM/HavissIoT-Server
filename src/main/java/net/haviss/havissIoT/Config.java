@@ -27,6 +27,7 @@ public class Config {
     public static volatile int numbOfClients;
     public static volatile int keepAlive;
     public static volatile int readTimeout;
+    public static volatile int refreshSensorTime;
     public static volatile boolean offlineMode;
 
 
@@ -54,6 +55,7 @@ public class Config {
         numbOfClients = Integer.parseInt(getProperty("number_of_clients"));
         keepAlive = Integer.parseInt(getProperty("keep_alive"));
         readTimeout = Integer.parseInt(getProperty("read_timeout"));
+        refreshSensorTime = Integer.parseInt(getProperty("refresh_sensor_time"));
         witAddress = getProperty("wit_address");
         witToken = getProperty("wit_token");
         offlineMode = Boolean.parseBoolean(getProperty("offline_mode"));

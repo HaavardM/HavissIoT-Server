@@ -14,7 +14,10 @@ public class IoTSensor {
     private volatile String type;
     private volatile String topic;
     private volatile String lastValue;
+    private volatile long lastUpdated;
+    private volatile long timeout = 10000;
     private volatile boolean storage;
+    private volatile boolean isActive;
     private volatile MongoCollection<Document> sensorCollection;
 
     //Constructor - setting variables
@@ -31,6 +34,8 @@ public class IoTSensor {
     //Updates last value
     public void updateValue(String value) {
         this.lastValue = value;
+        this.isActive = true;
+
     }
 
     //Change sensor topic
@@ -66,6 +71,11 @@ public class IoTSensor {
         return this.type;
     }
 
+    //Get latest value
+    public String getLastValue() {
+        return this.lastValue;
+    }
+
     //Check if sensordata is to be stored
     public boolean getStorage() {
         return this.storage;
@@ -73,6 +83,21 @@ public class IoTSensor {
 
     public MongoCollection<Document> getCollection() {
         return this.sensorCollection;
+    }
+
+    //Checks if sensor is inactive
+    public boolean checkActive() {
+        if(System.currentTimeMillis() - this.lastUpdated > this.timeout) {
+            this.isActive = false;
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    //Return value of isActive
+    public boolean isActive() {
+        return this.isActive;
     }
 
 

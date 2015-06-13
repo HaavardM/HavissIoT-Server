@@ -1,10 +1,10 @@
 package net.haviss.havissIoT.Command;
 
 import com.google.gson.JsonObject;
+import net.haviss.havissIoT.Communication.SocketClient;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
-import org.json.simple.JSONObject;
 
 /**
  * Created by H�vard on 6/1/2015.
@@ -12,7 +12,7 @@ import org.json.simple.JSONObject;
 public class CommandConfig implements CommandCallback {
     private boolean isOP;
     @Override
-    public String run(JsonObject parameters, User user) {
+    public String run(JsonObject parameters, User user, SocketClient client) {
         isOP = user != null && user.isOP();
         String intent;
         try {
