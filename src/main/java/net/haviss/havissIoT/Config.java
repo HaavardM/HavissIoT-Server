@@ -26,7 +26,9 @@ public class Config {
     public static volatile int serverPort;
     public static volatile int numbOfClients;
     public static volatile int keepAlive;
+    public static volatile int readTimeout;
     public static volatile boolean offlineMode;
+
 
 
     //Properties object to load from file
@@ -51,6 +53,7 @@ public class Config {
         serverPort = Integer.parseInt(getProperty("server_port"));
         numbOfClients = Integer.parseInt(getProperty("number_of_clients"));
         keepAlive = Integer.parseInt(getProperty("keep_alive"));
+        readTimeout = Integer.parseInt(getProperty("read_timeout"));
         witAddress = getProperty("wit_address");
         witToken = getProperty("wit_token");
         offlineMode = Boolean.parseBoolean(getProperty("offline_mode"));

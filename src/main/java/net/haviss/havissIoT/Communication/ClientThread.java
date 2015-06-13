@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 
 /**
@@ -44,15 +45,12 @@ public class ClientThread implements Runnable {
         threadName += Integer.toString(clientNum); //Giving the thread an unique name
         this.clientNum = clientNum;
         this.parser = new JsonParser();
-        user = HavissIoT.userHandler.getUser("guest");
-        if(user == null) {
-            HavissIoT.printMessage("ERROR - no guest user - stopping application");
-            System.exit(1);
-        }
+        user = null;
         //Set input and output stream read/writer
         try {
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            this.socket.setSoTimeout(Config.readTimeout);
         } catch (IOException e) {
             //Exception is unexpected
             HavissIoT.printMessage(e.getMessage());
@@ -98,15 +96,9 @@ public class ClientThread implements Runnable {
 
         //Thread should run until client disconnect
         while (!Thread.currentThread().isInterrupted()) {
+
             try {
                 if (connectionClosed) {
-                    //Close I/O streams
-                    input.close();
-                    output.close();
-                    HavissIoT.printMessage("Client" + Integer.toString(clientNum) + " disconnected");
-                    socket.close(); //Close socket
-                    socketCommunication.removeOneClient(clientNum); //Remove one connected client
-                    timer.stop();
                     Thread.currentThread().interrupt(); //Interrupt thread
                     break; //Break out of while loop (and thread will stop)
                 }
@@ -116,7 +108,7 @@ public class ClientThread implements Runnable {
                     lastActivity = System.currentTimeMillis();
                     if(commandString == null) {
                         connectionClosed = true;
-                    } else if(commandString.compareTo("k") != 0)  {
+                    } else if(parser.parse(commandString).isJsonObject())  {
                         //Print to console
                         HavissIoT.printMessage(this.threadName + ": " + commandString);
                         JsonObject object = parser.parse(commandString).getAsJsonObject();
@@ -127,8 +119,6 @@ public class ClientThread implements Runnable {
                             } else {
                                 this.user = HavissIoT.userHandler.getUser(object.get("name").getAsString());
                             }
-                            response.remove("user");
-                            response.addProperty("user", this.user.getName());
                         }
 
                         if (object.has("cmd")) {
@@ -160,6 +150,12 @@ public class ClientThread implements Runnable {
                             response.addProperty("r", result);
                         }
                         //Update the response json object
+                        response.remove("user");
+                        if(user != null) {
+                            response.addProperty("user", this.user.getName());
+                        } else {
+                            response.add("user", null);
+                        }
                         response.remove("cmd");
                         response.addProperty("cmd", command);
                         response.remove("args");
@@ -171,14 +167,26 @@ public class ClientThread implements Runnable {
                         output.flush();
                     }
                 }
+            } catch (SocketTimeoutException | JsonParseException e) {
+                HavissIoT.printMessage(e.getMessage());
             } catch (IOException e) {
                 //Exception is expected if connection is lost.
                 //Terminate connection and stop thread
                 connectionClosed = true;
-            } catch (JsonParseException e) {
-                HavissIoT.printMessage(e.getMessage());
             }
         }
+        //Close I/O streams
+        try {
+            input.close();
+            output.close();
+            HavissIoT.printMessage("Client" + Integer.toString(clientNum) + " disconnected");
+            socket.close(); //Close socket
+            socketCommunication.removeOneClient(clientNum); //Remove one connected client
+            timer.stop();
+        } catch (IOException e) {
+            HavissIoT.printMessage(e.getMessage());
+        }
+
         //Remove thread when it shutdown
         HavissIoT.allThreads.remove(clientThread);
     }
