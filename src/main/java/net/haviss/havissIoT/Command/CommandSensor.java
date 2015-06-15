@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Communication.SocketClient;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Sensor.IoTSensor;
-import net.haviss.havissIoT.Type.Subscription;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
 
@@ -47,9 +46,6 @@ public class CommandSensor implements CommandCallback {
                 return Integer.toString(HttpStatus.SC_OK);
             }
             return Integer.toString(HttpStatus.SC_SERVICE_UNAVAILABLE);
-        } else if(intent.compareTo("SUBSCRIBE") == 0) {
-            return subscribe(parameters, client);
-
         } else {
             return Integer.toString(HttpStatus.SC_NOT_FOUND);
         }
@@ -104,41 +100,6 @@ public class CommandSensor implements CommandCallback {
         return Integer.toString(HttpStatus.SC_BAD_REQUEST);
     }
 
-    private String subscribe(JsonObject parameters, SocketClient client) {
-        if(parameters.has("sensors")) {
-            if(parameters.get("sensors").isJsonArray()) {
-                JsonArray jsonArray = parameters.get("sensors").getAsJsonArray();
-                for(int i = 0; i < jsonArray.size(); i++) {
-                    String sensorName = jsonArray.get(i).getAsString();
-                    IoTSensor sensor = HavissIoT.sensorHandler.getSensorByName(sensorName);
-                    if(sensor != null) {
-                        client.getSubscription().subscribe(sensor);
-                        client.isSubscribed();
-                    } else {
-                        for(int j = 0; j < i; j++) {
-                            String n = jsonArray.get(j).getAsString();
-                            IoTSensor s = HavissIoT.sensorHandler.getSensorByName(sensorName);
-                            client.getSubscription().unsubscribe(s);
-                            client.isSubscribed();
-                        }
-                        return Integer.toString(HttpStatus.SC_NOT_FOUND);
-                    }
-                }
-                return Integer.toString(HttpStatus.SC_OK);
 
-            } else {
-                String sensorName = parameters.get("sensors").getAsString();
-                IoTSensor sensor = HavissIoT.sensorHandler.getSensorByName(sensorName);
-                if(sensor != null) {
-                    client.getSubscription().subscribe(sensor);
-                    return Integer.toString(HttpStatus.SC_OK);
-                } else {
-                    return Integer.toString(HttpStatus.SC_NOT_FOUND);
-                }
-            }
-        } else {
-            return Integer.toString(HttpStatus.SC_BAD_REQUEST);
-        }
-    }
 
 }

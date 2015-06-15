@@ -4,25 +4,18 @@ import com.mongodb.MongoException;
 import net.haviss.havissIoT.Communication.IoTClient;
 import net.haviss.havissIoT.Communication.IoTStorage;
 import net.haviss.havissIoT.Communication.SocketCommunication;
-import net.haviss.havissIoT.Core.CommandHandler;
 import net.haviss.havissIoT.Core.SensorHandler;
-import net.haviss.havissIoT.Core.SubscriptionHandler;
 import net.haviss.havissIoT.Core.UserHandler;
 import net.haviss.havissIoT.External.PublicIP;
 import net.haviss.havissIoT.Sensor.IoTSensor;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-import java.io.Console;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,7 +30,6 @@ public class HavissIoT {
     public static IoTStorage storage;
     public static UserHandler userHandler;
     public static final SensorHandler sensorHandler = new SensorHandler();
-    public static SubscriptionHandler subscriptionHandler;
     public static final Object threadLock = new Object();
     public static CopyOnWriteArrayList<Thread> allThreads;
     private static CopyOnWriteArrayList<String> toPrint;
@@ -117,10 +109,6 @@ public class HavissIoT {
             printMessage("OFFLINE MODE! - No network connections");
             printMessage("Application is ready");
         }
-
-        //Set up subscription handler
-        subscriptionHandler = new SubscriptionHandler(Config.refreshSubscriptionTime);
-
 
         //Application must run forever
         while(true) {

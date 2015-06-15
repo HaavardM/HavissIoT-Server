@@ -4,8 +4,6 @@ import com.google.gson.*;
 import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Core.CommandHandler;
 import net.haviss.havissIoT.HavissIoT;
-import net.haviss.havissIoT.Sensor.IoTSensor;
-import net.haviss.havissIoT.Type.Subscription;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
 
@@ -38,7 +36,6 @@ public class SocketClient implements Runnable {
     private BufferedReader input;
     private JsonParser parser;
     private boolean hasSubscribed = false;
-    private Subscription subscription;
     private Timer timeOutTimer = null;
 
     //Constructor - loading objects and values
@@ -48,7 +45,6 @@ public class SocketClient implements Runnable {
         threadName += Integer.toString(clientNum); //Giving the thread an unique name
         this.clientNum = clientNum;
         this.parser = new JsonParser();
-        this.subscription = new Subscription(this);
         user = null;
         //Set input and output stream read/writer
         try {
@@ -186,16 +182,6 @@ public class SocketClient implements Runnable {
                 HavissIoT.printMessage(e.getMessage());
             }
         }
-    }
-
-    //Get subscription
-    public Subscription getSubscription() {
-        return this.subscription;
-    }
-
-    //Check if subscribed to any sensors
-    public boolean isSubscribed() {
-        return (this.hasSubscribed = this.subscription.isSubscribed());
     }
 
     private JsonObject processResult(String result, String command, JsonObject arguments) {
