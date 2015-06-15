@@ -121,7 +121,13 @@ public class SensorHandler {
         //If jsonarray successfully loaded from file
         if(jsonArray != null) {
             //Load object from jsonarray
-            availableSensors = new Gson().fromJson(jsonArray.getAsString(), new TypeToken<CopyOnWriteArrayList<IoTSensor>>(){}.getType());
+            for(int i = 0; i < jsonArray.size(); i++) {
+                String name = jsonArray.get(i).getAsJsonObject().get("name").getAsString();
+                String topic = jsonArray.get(i).getAsJsonObject().get("topic").getAsString();
+                String type = jsonArray.get(i).getAsJsonObject().get("type").getAsString();
+                boolean toStore = jsonArray.get(i).getAsJsonObject().get("name").getAsBoolean();
+                availableSensors.add(new IoTSensor(name, topic, type, toStore));
+            }
         }
     }
 }
