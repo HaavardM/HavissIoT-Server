@@ -1,4 +1,4 @@
-package net.haviss.havissIoT.Communication;
+package net.haviss.havissIoT.Storage;
 
 import com.mongodb.*;
 import com.mongodb.async.SingleResultCallback;

@@ -35,7 +35,6 @@ public class SocketClient implements Runnable {
     private BufferedWriter output;
     private BufferedReader input;
     private JsonParser parser;
-    private boolean hasSubscribed = false;
     private Timer timeOutTimer = null;
 
     //Constructor - loading objects and values
@@ -184,6 +183,7 @@ public class SocketClient implements Runnable {
         }
     }
 
+    //Proccess the result and generate a json object for result
     private JsonObject processResult(String result, String command, JsonObject arguments) {
         JsonObject response = new JsonObject();
         response.remove("r");

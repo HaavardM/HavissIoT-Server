@@ -2,7 +2,7 @@ package net.haviss.havissIoT;
 
 import com.mongodb.MongoException;
 import net.haviss.havissIoT.Communication.IoTClient;
-import net.haviss.havissIoT.Communication.IoTStorage;
+import net.haviss.havissIoT.Storage.IoTStorage;
 import net.haviss.havissIoT.Communication.SocketCommunication;
 import net.haviss.havissIoT.Core.SensorHandler;
 import net.haviss.havissIoT.Core.UserHandler;
