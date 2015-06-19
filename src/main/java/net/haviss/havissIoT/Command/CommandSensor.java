@@ -18,8 +18,7 @@ public class CommandSensor implements CommandCallback {
     @Override
     public String run(JsonObject parameters, User user, SocketClient client) {
         String intent;
-        boolean isOP = false;
-        isOP = user != null && user.isOP();
+        boolean isOP = user != null && user.isOP();
         if (parameters.has("intent")) {
             intent = parameters.get("intent").getAsString().toUpperCase();
         } else {
@@ -98,6 +97,20 @@ public class CommandSensor implements CommandCallback {
             return Integer.toString(HttpStatus.SC_OK);
         }
         return Integer.toString(HttpStatus.SC_BAD_REQUEST);
+    }
+
+    private String getSensor(JsonObject parameters) {
+        if(parameters.has("name")) {
+            String name = parameters.get("name").getAsString();
+            IoTSensor sensor = HavissIoT.sensorHandler.getSensorByName(name);
+            if(sensor != null) {
+                return new Gson().toJson(sensor);
+            } else {
+                return Integer.toString(HttpStatus.SC_NOT_FOUND);
+            }
+        }  else {
+            return Integer.toString(HttpStatus.SC_BAD_REQUEST);
+        }
     }
 
 

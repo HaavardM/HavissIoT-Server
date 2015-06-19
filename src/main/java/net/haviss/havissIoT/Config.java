@@ -20,6 +20,7 @@ public class Config {
     public static volatile String database;
     public static volatile String witAddress;
     public static volatile String witToken;
+    public static volatile String sensorInfoCollection;
     public static volatile int brokerPort;
     public static volatile int qos;
     public static volatile int databasePort;
@@ -45,6 +46,7 @@ public class Config {
             cmdTopic = getProperty("cmd_topic");
             statusTopic = getProperty("status_topic");
             databaseAddress = getProperty("database_address");
+            sensorInfoCollection = getProperty("sensor_info_collection");
             database = getProperty("database");
             brokerPort = Integer.parseInt(getProperty("broker_port"));
             qos = Integer.parseInt(getProperty("mqtt_qos"));

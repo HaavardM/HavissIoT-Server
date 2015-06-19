@@ -6,7 +6,6 @@ import com.mongodb.async.client.*;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Sensor.IoTSensor;
 import org.bson.Document;
-
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -56,18 +55,25 @@ public class IoTStorage  {
     }
 
     //Adding values for thread to store in Db
-    public synchronized void storeValues(IoTSensor sensor, String value) {
+    public void storeSensorValue(IoTSensor sensor, String value) {
         try {
             Document document = new Document("Name", sensor.getName())
                     .append("Topic", sensor.getTopic())
                     .append("Value", value)
                     .append("Date", new Date().toString());
             //Insert document to database
-            sensor.getCollection().insertOne(document, finishedCallBack);
+            db.getCollection(sensor.getName()).insertOne(document, finishedCallBack);
         } catch (MongoException e) {
             HavissIoT.printMessage("MONGO WRITE ERROR: " + e.getMessage());
         }
     }
+
+    public void storeSensorInfo(IoTSensor sensor) {
+
+
+    }
+
+
 
     //Get all stored topics
     public synchronized CopyOnWriteArrayList<String> getStoredSensors() {
