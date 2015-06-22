@@ -143,10 +143,14 @@ public class SocketClient implements Runnable {
                         output.write(response.toString());
                         output.write("\n");
                         output.flush();
+                    } else {
+                        HavissIoT.printMessage(commandString);
                     }
                 }
-            } catch (SocketTimeoutException | JsonParseException e) {
+            } catch (SocketTimeoutException e) {
                 HavissIoT.printMessage(e.getMessage());
+            } catch (JsonParseException e) {
+              //TODO: Mabye do something here?
             } catch (IOException e) {
                 //Exception is expected if connection is lost.
                 //Terminate connection and stop thread
