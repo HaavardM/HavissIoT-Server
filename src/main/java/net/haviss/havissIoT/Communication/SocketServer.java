@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by H�vard on 5/8/2015.
  */
-public class SocketCommunication implements Runnable  {
+public class SocketServer implements Runnable  {
 
     private Thread serverThread;
     private String threadName = "ServerThread";
@@ -23,7 +23,7 @@ public class SocketCommunication implements Runnable  {
     private int serverPort;
     private final Object serverLock = new Object();
 
-    public SocketCommunication(int serverPort, int maxClients) {
+    public SocketServer(int serverPort, int maxClients) {
         this.serverPort = serverPort;
         this.maxClients = maxClients;
         this.connectedClients = new AtomicInteger(0);

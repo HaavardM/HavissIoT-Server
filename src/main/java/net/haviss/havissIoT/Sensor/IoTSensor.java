@@ -18,7 +18,6 @@ public class IoTSensor {
     private volatile long timeout = 10000;
     private volatile boolean storage;
     private volatile boolean isActive;
-    private volatile MongoCollection<Document> sensorCollection;
 
     //Constructor - setting variables
     public IoTSensor(String name, String topic, String type, boolean toStore) {
@@ -26,9 +25,6 @@ public class IoTSensor {
         this.name = name;
         this.type = type;
         this.storage = toStore;
-        if(storage) {
-            this.sensorCollection = HavissIoT.storage.getCollection(this.name);
-        }
     }
 
     //Updates last value
@@ -51,9 +47,6 @@ public class IoTSensor {
     //Set state of toStore
     public void setStorage(boolean state) {
         this.storage = state;
-        if(this.storage) {
-            sensorCollection = HavissIoT.storage.getCollection(this.name);
-        }
     }
 
     //Get sensor name
@@ -81,8 +74,9 @@ public class IoTSensor {
         return this.storage;
     }
 
-    public MongoCollection<Document> getCollection() {
-        return this.sensorCollection;
+    //Set timeout
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
 
     //Checks if sensor is inactive

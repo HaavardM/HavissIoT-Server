@@ -69,11 +69,9 @@ public class IoTStorage  {
     }
 
     public void storeSensorInfo(IoTSensor sensor) {
-
+        //TODO: Store sensor information to database
 
     }
-
-
 
     //Get all stored topics
     public synchronized CopyOnWriteArrayList<String> getStoredSensors() {

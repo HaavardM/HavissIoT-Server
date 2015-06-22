@@ -2,8 +2,8 @@ package net.haviss.havissIoT;
 
 import com.mongodb.MongoException;
 import net.haviss.havissIoT.Communication.IoTClient;
+import net.haviss.havissIoT.Communication.SocketServer;
 import net.haviss.havissIoT.Storage.IoTStorage;
-import net.haviss.havissIoT.Communication.SocketCommunication;
 import net.haviss.havissIoT.Core.SensorHandler;
 import net.haviss.havissIoT.Core.UserHandler;
 import net.haviss.havissIoT.External.PublicIP;
@@ -94,7 +94,7 @@ public class HavissIoT {
                 printMessage("Couldnt connect to database server");
             }
             //Objects for command handling
-            SocketCommunication socketCommunication = new SocketCommunication(Config.serverPort, Config.numbOfClients);
+            SocketServer socketCommunication = new SocketServer(Config.serverPort, Config.numbOfClients);
 
             sensorHandler.loadFromFile();
 

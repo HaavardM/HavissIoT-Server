@@ -25,7 +25,7 @@ import java.net.SocketTimeoutException;
 public class SocketClient implements Runnable {
 
     private Socket socket; //Socket connection to client
-    private SocketCommunication socketCommunication; //For terminating connection
+    private SocketServer socketCommunication; //For terminating connection
     private Thread clientThread; //New thread for client connection
     private String threadName = "ClientThread"; //
     private int clientNum;
@@ -38,7 +38,7 @@ public class SocketClient implements Runnable {
     private Timer timeOutTimer = null;
 
     //Constructor - loading objects and values
-    public SocketClient(Socket socket, SocketCommunication socketCommunication, int clientNum) {
+    public SocketClient(Socket socket, SocketServer socketCommunication, int clientNum) {
         this.socket = socket;
         this.socketCommunication = socketCommunication;
         threadName += Integer.toString(clientNum); //Giving the thread an unique name
@@ -76,7 +76,6 @@ public class SocketClient implements Runnable {
         String command;
         JsonObject arguments;
         JsonObject response = new JsonObject();
-        response.addProperty("user", user.getName());
         lastActivity = System.currentTimeMillis();
 
         //KeepAlive == 0 => unlimited
