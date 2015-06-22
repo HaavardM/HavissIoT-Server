@@ -109,6 +109,8 @@ public class SocketClient implements Runnable {
                     lastActivity = System.currentTimeMillis();
                     if(commandString == null) {
                         connectionClosed = true;
+                    } else if(commandString.compareTo("close") == 0) {
+                        connectionClosed = true;
                     } else if(parser.parse(commandString).isJsonObject())  {
                         //Print to console
                         HavissIoT.printMessage(this.threadName + ": " + commandString);
