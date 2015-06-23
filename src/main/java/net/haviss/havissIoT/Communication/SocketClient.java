@@ -126,7 +126,7 @@ public class SocketClient implements Runnable {
                         }
 
                         if (object.has("cmd")) {
-                            command = object.get("cmd").getAsString();
+                            command = object.get("cmd").getAsString().toUpperCase();
                             if(Config.debugMode) {
                                 HavissIoT.printMessage("cmd: " + command);
                             }
