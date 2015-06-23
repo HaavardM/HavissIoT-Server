@@ -112,12 +112,12 @@ public class SocketClient implements Runnable {
                         connectionClosed = true;
                     } else if(commandString.compareTo("close") == 0) {
                         connectionClosed = true;
-                    } else if(parser.parse(commandString).isJsonObject())  {
+                    } else if(isValidJson(commandString) && parser.parse(commandString).isJsonObject())  {
                         //Print to console
                         HavissIoT.printMessage(this.threadName + ": " + commandString);
                         JsonObject object = parser.parse(commandString).getAsJsonObject();
 
-                        if (object.has("user")) {
+                        if ( object != null && object.has("user")) {
                             if (object.has("password")) {
                                 this.user = HavissIoT.userHandler.getUser(object.get("name").getAsString(), object.get("password").getAsString().toCharArray());
                             } else {
