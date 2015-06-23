@@ -194,15 +194,18 @@ public class SocketClient implements Runnable {
         response.remove("r");
 
         //Check if response is json
-        if (parser.parse(result).isJsonArray()) {
-            response.add("r", parser.parse(result).getAsJsonArray());
-        } else if (parser.parse(result).isJsonObject()) {
-            response.add("r", parser.parse(result).getAsJsonObject());
-        } else if (parser.parse(result).isJsonNull()) {
-            response.add("r", parser.parse(result).getAsJsonNull());
-        } else if (parser.parse(result).isJsonPrimitive()) {
-            response.add("r", parser.parse(result).getAsJsonPrimitive());
-        } else {
+        if(isValidJson(result)) {
+            if (parser.parse(result).isJsonArray()) {
+                response.add("r", parser.parse(result).getAsJsonArray());
+            } else if (parser.parse(result).isJsonObject()) {
+                response.add("r", parser.parse(result).getAsJsonObject());
+            } else if (parser.parse(result).isJsonNull()) {
+                response.add("r", parser.parse(result).getAsJsonNull());
+            } else if (parser.parse(result).isJsonPrimitive()) {
+                response.add("r", parser.parse(result).getAsJsonPrimitive());
+            }
+        }
+        else {
             response.addProperty("r", result);
         }
         //Update the response json object
@@ -217,5 +220,14 @@ public class SocketClient implements Runnable {
         response.remove("args");
         response.add("args", arguments);
         return response;
+    }
+
+    private boolean isValidJson(String jsonstring) {
+        try {
+            new Gson().fromJson(jsonstring, Object.class);
+            return true;
+        } catch (JsonSyntaxException e) {
+            return false;
+        }
     }
 }
