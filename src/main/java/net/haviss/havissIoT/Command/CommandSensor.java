@@ -29,6 +29,9 @@ public class CommandSensor implements CommandCallback {
                 HavissIoT.printMessage(intent);
             }
         } else {
+            if(Config.debugMode) {
+                HavissIoT.printMessage("No intent");
+            }
             //Return bad request if there is no intent key in JSON
             return Integer.toString(HttpStatus.SC_BAD_REQUEST);
         }
