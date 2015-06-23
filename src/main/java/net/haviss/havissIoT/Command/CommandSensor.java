@@ -20,6 +20,9 @@ public class CommandSensor implements CommandCallback {
     public String run(JsonObject parameters, User user, SocketClient client) {
         String intent;
         boolean isOP = user != null && user.isOP();
+        if(!parameters.isJsonObject() && Config.debugMode) {
+            HavissIoT.printMessage("Error with args");
+        }
         if (parameters.has("intent")) {
             intent = parameters.get("intent").getAsString().toUpperCase();
             if(Config.debugMode) {
