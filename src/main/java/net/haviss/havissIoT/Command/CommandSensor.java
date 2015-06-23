@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Communication.SocketClient;
+import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Sensor.IoTSensor;
 import net.haviss.havissIoT.Type.User;
@@ -21,6 +22,9 @@ public class CommandSensor implements CommandCallback {
         boolean isOP = user != null && user.isOP();
         if (parameters.has("intent")) {
             intent = parameters.get("intent").getAsString().toUpperCase();
+            if(Config.debugMode) {
+                HavissIoT.printMessage(intent);
+            }
         } else {
             //Return bad request if there is no intent key in JSON
             return Integer.toString(HttpStatus.SC_BAD_REQUEST);
