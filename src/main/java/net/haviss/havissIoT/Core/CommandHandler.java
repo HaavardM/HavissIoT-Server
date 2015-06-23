@@ -3,6 +3,7 @@ package net.haviss.havissIoT.Core;
 import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Command.CommandCallback;
 import net.haviss.havissIoT.Communication.SocketClient;
+import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
@@ -46,6 +47,9 @@ public class CommandHandler {
                     return reply;
                 }
             }
+        }
+        if(Config.debugMode) {
+            HavissIoT.printMessage("No command found");
         }
         //Return bad request if nothing worked
         return Integer.toString(HttpStatus.SC_BAD_REQUEST);
