@@ -119,9 +119,9 @@ public class SocketClient implements Runnable {
 
                         if ( object != null && object.has("user")) {
                             if (object.has("password")) {
-                                this.user = HavissIoT.userHandler.getUser(object.get("name").getAsString(), object.get("password").getAsString().toCharArray());
+                                this.user = HavissIoT.userHandler.getUser(object.get("user").getAsString(), object.get("password").getAsString().toCharArray());
                             } else {
-                                this.user = HavissIoT.userHandler.getUser(object.get("name").getAsString());
+                                this.user = HavissIoT.userHandler.getUser(object.get("user").getAsString());
                             }
                         }
 
