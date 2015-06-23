@@ -106,6 +106,7 @@ public class SocketClient implements Runnable {
                 //Read until line-end - \n
                 if(input.ready()) {
                     commandString = input.readLine();
+                    HavissIoT.printMessage(commandString);
                     lastActivity = System.currentTimeMillis();
                     if(commandString == null) {
                         connectionClosed = true;
