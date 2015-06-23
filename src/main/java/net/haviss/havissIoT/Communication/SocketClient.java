@@ -127,9 +127,15 @@ public class SocketClient implements Runnable {
 
                         if (object.has("cmd")) {
                             command = object.get("cmd").getAsString();
+                            if(Config.debugMode) {
+                                HavissIoT.printMessage("cmd: " + command);
+                            }
                             if(object.has("args") && object.get("args").isJsonObject()) {
                                 arguments = object.get("args").getAsJsonObject();
                                 result = commandHandler.processCommand(command, arguments, this.user, this);
+                                if(Config.debugMode) {
+                                    HavissIoT.printMessage("args: " + arguments.toString());
+                                }
                             } else {
                                 result = commandHandler.processCommand(command, this.user, this);
                                 arguments = null;

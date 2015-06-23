@@ -31,6 +31,7 @@ public class Config {
     public static volatile int refreshSensorTime;
     public static volatile int refreshSubscriptionTime;
     public static volatile boolean offlineMode;
+    public static volatile boolean debugMode;
 
 
 
@@ -60,6 +61,7 @@ public class Config {
             witAddress = getProperty("wit_address");
             witToken = getProperty("wit_token");
             offlineMode = Boolean.parseBoolean(getProperty("offline_mode"));
+            debugMode = Boolean.parseBoolean(getProperty("debug_mode"));
         } catch (IOException | NumberFormatException e) {
             HavissIoT.printMessage(e.getMessage());
         }
