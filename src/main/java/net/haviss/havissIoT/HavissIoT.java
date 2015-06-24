@@ -161,6 +161,7 @@ public class HavissIoT {
     }
 
     //Shutdown all threads and disconnects from all servers
+    //TODO: Not working properly
     public static synchronized void exit(int status) {
         for(Thread t : allThreads) {
             try {
