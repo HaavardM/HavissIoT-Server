@@ -48,7 +48,7 @@ public class CommandSensor implements CommandCallback {
             return Integer.toString(HttpStatus.SC_SERVICE_UNAVAILABLE);
         } else if (intent.compareTo("LIST") == 0) {
             HavissIoT.printMessage("Listing all sensors");
-            return new Gson().toJson(HavissIoT.sensorHandler.getSensorsList());
+            return list();
         } else if (intent.compareTo("SAVE") == 0) {
             if(isOP) {
                 HavissIoT.sensorHandler.writeToFile();
@@ -93,6 +93,20 @@ public class CommandSensor implements CommandCallback {
         HavissIoT.sensorHandler.addSensor(sensorName, sensorTopic, sensorType, toStore);
         HavissIoT.printMessage("Adding sensor " + sensorName);
         return Integer.toString(HttpStatus.SC_OK);
+    }
+
+    //List all sensor in jsonArray
+    private String list() {
+        JsonArray jsonArray = new JsonArray();
+        for(IoTSensor s : HavissIoT.sensorHandler.getSensorsList()) {
+            JsonObject object = new JsonObject();
+            object.addProperty("name", s.getName());
+            object.addProperty("topic", s.getTopic());
+            object.addProperty("type", s.getType());
+            object.addProperty("lastValue", s.getLastValue());
+            jsonArray.add(object);
+        }
+        return jsonArray.toString();
     }
 
     private String remove(JsonObject parameters) {

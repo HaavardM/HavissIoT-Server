@@ -17,14 +17,14 @@ public class CommandConfig implements CommandCallback {
         String intent;
         try {
             if (parameters.has("intent")) {
-                intent = parameters.get("intent").getAsString();
+                intent = parameters.get("intent").getAsString().toUpperCase();
             } else {
                 return Integer.toString(HttpStatus.SC_BAD_REQUEST);
             }
 
-            if(intent.compareTo("NEW_USER") == 0) {
+            if(intent.compareTo("CREATE") == 0) {
                 return this.newUser(parameters);
-            } else if(intent.compareTo("REMOVE_USER") == 0) {
+            } else if(intent.compareTo("REMOVE") == 0) {
                 return this.removeUser(parameters);
             }
             return Integer.toString(HttpStatus.SC_NOT_FOUND);
