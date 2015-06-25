@@ -2,6 +2,7 @@ package net.haviss.havissIoT.Core;
 
 import net.haviss.havissIoT.Type.User;
 
+import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -85,5 +86,9 @@ public class UserHandler {
             }
         }
         return false;
+    }
+    //Get all users
+    public CopyOnWriteArrayList<User> getUsers() {
+        return this.availableUsers;
     }
 }
