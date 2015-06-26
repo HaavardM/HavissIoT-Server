@@ -9,7 +9,7 @@ import org.apache.http.HttpStatus;
 
 
 /**
- * Created by Håvard on 6/24/2015.
+ * Created by Haavard on 6/24/2015.
  */
 public class CommandUser implements CommandCallback {
     private boolean isOP;

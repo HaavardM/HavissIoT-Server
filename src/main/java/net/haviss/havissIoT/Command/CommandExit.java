@@ -7,7 +7,7 @@ import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
 
 /**
- * Created by Håvard on 6/9/2015.
+ * Created by HÃ¥vard on 6/9/2015.
  */
 public class CommandExit implements CommandCallback {
     @Override
