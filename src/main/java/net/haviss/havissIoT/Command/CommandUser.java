@@ -18,7 +18,7 @@ public class CommandUser implements CommandCallback {
         isOP = user != null && user.isOP();
         String intent;
         if(parameters.has("intent")) {
-            intent = parameters.get("intent").getAsString();
+            intent = parameters.get("intent").getAsString().toUpperCase();
 
             if (intent.compareTo("ADD") == 0) {
                 return newUser(parameters);
