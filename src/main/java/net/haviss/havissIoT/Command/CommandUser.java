@@ -24,8 +24,8 @@ public class CommandUser implements CommandCallback {
                 return newUser(parameters);
             } else if(intent.compareTo("REMOVE") == 0) {
                 return removeUser(parameters);
-            } else if(intent.compareTo("GET") == 0) {
-                return getUsers(parameters);
+            } else if(intent.compareTo("LIST") == 0) {
+                return listUsers(parameters);
             }
         }
         return Integer.toString(HttpStatus.SC_NOT_FOUND);
@@ -83,19 +83,23 @@ public class CommandUser implements CommandCallback {
     }
 
     private String removeUser(JsonObject parameters) {
-        if(parameters.has("name")) {
-            String name = parameters.get("name").getAsString();
-            if(HavissIoT.userHandler.removeUser(name)) {
-                return Integer.toString(HttpStatus.SC_OK);
+        if(isOP) {
+            if (parameters.has("name")) {
+                String name = parameters.get("name").getAsString();
+                if (HavissIoT.userHandler.removeUser(name)) {
+                    return Integer.toString(HttpStatus.SC_OK);
+                } else {
+                    return Integer.toString(HttpStatus.SC_NOT_FOUND);
+                }
             } else {
-                return Integer.toString(HttpStatus.SC_NOT_FOUND);
+                return Integer.toString(HttpStatus.SC_BAD_REQUEST);
             }
         } else {
-            return Integer.toString(HttpStatus.SC_BAD_REQUEST);
+            return Integer.toString(HttpStatus.SC_UNAUTHORIZED);
         }
     }
 
-    private String getUsers(JsonObject parameters) {
+    private String listUsers(JsonObject parameters) {
         JsonArray users = new JsonArray();
         for(User u : HavissIoT.userHandler.getUsers()) {
             JsonObject user = new JsonObject();
