@@ -104,6 +104,7 @@ public class CommandSensor implements CommandCallback {
             object.addProperty("topic", s.getTopic());
             object.addProperty("type", s.getType());
             object.addProperty("lastValue", s.getLastValue());
+            object.addProperty("toStore", s.getStorage());
             jsonArray.add(object);
         }
         return jsonArray.toString();
