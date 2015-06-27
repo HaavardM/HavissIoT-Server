@@ -75,6 +75,7 @@ public class CommandSensor implements CommandCallback {
         String sensorTopic;
         String sensorType;
         Boolean toStore;
+        long timeout = 0;
         //Must contain a name and topic
         if (parameters.has("name") && parameters.has("topic") && parameters.has("type") && parameters.has("toStore")) {
             try {
@@ -82,6 +83,9 @@ public class CommandSensor implements CommandCallback {
                 sensorTopic = parameters.get("topic").getAsString();
                 sensorType = parameters.get("type").getAsString();
                 toStore = parameters.get("toStore").getAsBoolean();
+                if(parameters.has("timeout")) {
+                    timeout = parameters.get("timeout").getAsLong();
+                }
             } catch (ClassCastException e) {
                 HavissIoT.printMessage(e.getMessage());
                 return Integer.toString(HttpStatus.SC_BAD_REQUEST);
@@ -90,7 +94,7 @@ public class CommandSensor implements CommandCallback {
             return Integer.toString(HttpStatus.SC_BAD_REQUEST);
         }
         //Create new sensor
-        HavissIoT.sensorHandler.addSensor(sensorName, sensorTopic, sensorType, toStore);
+        HavissIoT.sensorHandler.addSensor(sensorName, sensorTopic, sensorType, toStore, timeout);
         HavissIoT.printMessage("Adding sensor " + sensorName);
         return Integer.toString(HttpStatus.SC_OK);
     }
