@@ -2,6 +2,7 @@ package net.haviss.havissIoT.Core;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import net.haviss.havissIoT.Config;
@@ -36,11 +37,11 @@ public class SensorHandler {
     }
 
     //Add new sensor
-    public synchronized boolean addSensor(String name, String topic, String type, boolean toStore) {
+    public synchronized boolean addSensor(String name, String topic, String type, boolean toStore, long timeout) {
         if (sensorNames.contains(name)) {
             return false;
         } else {
-            availableSensors.add(new IoTSensor(name, topic, type, toStore));
+            availableSensors.add(new IoTSensor(name, topic, type, toStore, timeout ));
             sensorNames.add(name);
             HavissIoT.client.subscribeToTopic(topic, Config.qos);
             this.writeToFile();
@@ -121,12 +122,17 @@ public class SensorHandler {
         //If jsonarray successfully loaded from file
         if(jsonArray != null) {
             //Load object from jsonarray
-            for(int i = 0; i < jsonArray.size(); i++) {
-                String name = jsonArray.get(i).getAsJsonObject().get("name").getAsString();
-                String topic = jsonArray.get(i).getAsJsonObject().get("topic").getAsString();
-                String type = jsonArray.get(i).getAsJsonObject().get("type").getAsString();
-                boolean toStore = jsonArray.get(i).getAsJsonObject().get("name").getAsBoolean();
-                availableSensors.add(new IoTSensor(name, topic, type, toStore));
+            try {
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    String name = jsonArray.get(i).getAsJsonObject().get("name").getAsString();
+                    String topic = jsonArray.get(i).getAsJsonObject().get("topic").getAsString();
+                    String type = jsonArray.get(i).getAsJsonObject().get("type").getAsString();
+                    boolean toStore = jsonArray.get(i).getAsJsonObject().get("name").getAsBoolean();
+                    long timeout = jsonArray.get(i).getAsJsonObject().get("timeout").getAsLong();
+                    availableSensors.add(new IoTSensor(name, topic, type, toStore, timeout));
+                }
+            } catch (JsonParseException e) {
+                HavissIoT.printMessage("Json parse error: " + e.getMessage());
             }
         }
     }

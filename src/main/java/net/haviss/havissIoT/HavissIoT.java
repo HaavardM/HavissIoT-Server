@@ -12,6 +12,9 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
@@ -111,11 +114,30 @@ public class HavissIoT {
         }
 
         //Application must run forever
-        while(true) {
+        while(!Thread.currentThread().isInterrupted()) {
             //If there is something to print
             if(toPrint.size() > 0) {
-                for(int i = 0; i < toPrint.size(); i++) {
-                    System.out.println(new Date().toString() + " " + toPrint.get(i)); //Printing to console with date
+                int numberOfPrints = toPrint.size();
+                File logFile = new File("log.txt");
+                FileOutputStream fileWriter = null;
+                try {
+                    logFile.createNewFile();
+                    fileWriter = new FileOutputStream(logFile, true);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    fileWriter = null;
+                }
+
+                for(int i = 0; i < numberOfPrints; i++) {
+                    String toWrite = new Date().toString() + " " + toPrint.get(i);
+                    System.out.println(toWrite); //Printing to console with
+                    if(fileWriter != null && Config.enableLogging) {
+                        try {
+                            fileWriter.write((toWrite + "\n").getBytes());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     toPrint.remove(i); //Remove from list
                 }
             } else {

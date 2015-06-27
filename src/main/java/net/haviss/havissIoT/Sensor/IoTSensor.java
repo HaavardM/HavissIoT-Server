@@ -15,16 +15,26 @@ public class IoTSensor {
     private volatile String topic;
     private volatile String lastValue;
     private volatile long lastUpdated;
-    private volatile long timeout = 10000;
+    private volatile long timeout;
     private volatile boolean storage;
-    private volatile boolean isActive;
+    private volatile boolean isActive = false;
 
     //Constructor - setting variables
+    public IoTSensor(String name, String topic, String type, boolean toStore, long timeout) {
+        this.topic = topic;
+        this.name = name;
+        this.type = type;
+        this.storage = toStore;
+        this.timeout = timeout;
+    }
+
+    //Overloaded - no timeout on sensor
     public IoTSensor(String name, String topic, String type, boolean toStore) {
         this.topic = topic;
         this.name = name;
         this.type = type;
         this.storage = toStore;
+        this.timeout = 0;
     }
 
     //Updates last value
@@ -81,10 +91,15 @@ public class IoTSensor {
 
     //Checks if sensor is inactive
     public boolean checkActive() {
-        if(System.currentTimeMillis() - this.lastUpdated > this.timeout) {
+        //Timeout less than or equal to 0 => no timeout
+        if(this.timeout <= 0) {
+            this.isActive = true;
+            return true;
+        } else if(System.currentTimeMillis() - this.lastUpdated > this.timeout) {
             this.isActive = false;
             return false;
         } else {
+            this.isActive = true;
             return true;
         }
     }
