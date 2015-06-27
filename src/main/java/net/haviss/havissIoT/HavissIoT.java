@@ -117,7 +117,6 @@ public class HavissIoT {
         while(!Thread.currentThread().isInterrupted()) {
             //If there is something to print
             if(toPrint.size() > 0) {
-                int numberOfPrints = toPrint.size();
                 File logFile = new File("log.txt");
                 FileOutputStream fileWriter = null;
                 try {
@@ -127,9 +126,9 @@ public class HavissIoT {
                     e.printStackTrace();
                     fileWriter = null;
                 }
-
-                for(int i = 0; i < numberOfPrints; i++) {
-                    String toWrite = new Date().toString() + " " + toPrint.get(i);
+                int indexReached = 0;
+                for(String s : toPrint) {
+                    String toWrite = (new Date().toString() + " " + s);
                     System.out.println(toWrite); //Printing to console with
                     if(fileWriter != null && Config.enableLogging) {
                         try {
@@ -138,8 +137,9 @@ public class HavissIoT {
                             e.printStackTrace();
                         }
                     }
-                    toPrint.remove(i); //Remove from list
+                    toPrint.remove(s);
                 }
+
             } else {
                 try {
                     synchronized (threadLock) {
