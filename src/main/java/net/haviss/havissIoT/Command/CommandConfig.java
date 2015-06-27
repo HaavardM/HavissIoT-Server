@@ -2,6 +2,7 @@ package net.haviss.havissIoT.Command;
 
 import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Communication.SocketClient;
+import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
@@ -22,10 +23,8 @@ public class CommandConfig implements CommandCallback {
                 return Integer.toString(HttpStatus.SC_BAD_REQUEST);
             }
 
-            if(intent.compareTo("CREATE") == 0) {
-                return this.newUser(parameters);
-            } else if(intent.compareTo("REMOVE") == 0) {
-                return this.removeUser(parameters);
+            if(intent.compareTo("GET") == 0) {
+                return getConfig();
             }
             return Integer.toString(HttpStatus.SC_NOT_FOUND);
 
@@ -34,58 +33,25 @@ public class CommandConfig implements CommandCallback {
         }
     }
 
-    private String newUser(JsonObject parameters) {
-        if (isOP) {
-            User newUser;
-            String name;
-            char[] password;
-            boolean userOP;
-            boolean userProtected;
-            if (parameters.has("name")) {
-                name = parameters.get("name").getAsString();
-            } else {
-                return Integer.toString(HttpStatus.SC_BAD_REQUEST);
-            }
-            if (parameters.has("password")) {
-                password = parameters.get("password").getAsString().toCharArray();
-                newUser = new User(name, password);
-
-            } else {
-                newUser = new User(name);
-            }
-            if (parameters.has("isOP")) {
-                userOP = parameters.get("isOP").getAsBoolean();
-                newUser.setOP(userOP);
-            }
-            if(parameters.has("protected")) {
-                userProtected = parameters.get("protected").getAsBoolean();
-                newUser.setProtected(userProtected);
-            }
-            if (HavissIoT.userHandler.addUser(newUser)) {
-                return Integer.toString(HttpStatus.SC_OK);
-            } else {
-                return Integer.toString(HttpStatus.SC_CONFLICT);
-            }
-
-        } else {
-            return Integer.toString(HttpStatus.SC_UNAUTHORIZED);
-
-        }
-    }
-
-    private String removeUser(JsonObject parameters) {
-        String name;
-        if(parameters.has("name")) {
-            name = parameters.get("name").getAsString();
-            if(HavissIoT.userHandler.removeUser(name)) {
-                return Integer.toString(HttpStatus.SC_OK);
-            } else {
-                return Integer.toString(HttpStatus.SC_CONFLICT);
-            }
-
-        } else {
-            return Integer.toString(HttpStatus.SC_BAD_REQUEST);
-        }
+    private String getConfig() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("brokerAddress", Config.brokerAddress);
+        jsonObject.addProperty("brokerPort", Config.brokerPort);
+        jsonObject.addProperty("qos", Config.qos);
+        jsonObject.addProperty("clientID", Config.clientID);
+        jsonObject.addProperty("cmdTopic", Config.cmdTopic);
+        jsonObject.addProperty("statusTopic", Config.statusTopic);
+        jsonObject.addProperty("databaseAddress", Config.databaseAddress);
+        jsonObject.addProperty("databasePort", Config.databasePort);
+        jsonObject.addProperty("database", Config.database);
+        jsonObject.addProperty("sensorInfoCollection", Config.sensorInfoCollection);
+        jsonObject.addProperty("numbOfClients", Config.numbOfClients);
+        jsonObject.addProperty("keepAlive", Config.keepAlive);
+        jsonObject.addProperty("readTimeout", Config.readTimeout);
+        jsonObject.addProperty("refreshSensorTime", Config.refreshSensorTime);
+        jsonObject.addProperty("offlineMode", Config.offlineMode);
+        jsonObject.addProperty("debugMode", Config.debugMode);
+        return  jsonObject.toString();
     }
 
     @Override

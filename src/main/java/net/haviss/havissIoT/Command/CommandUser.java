@@ -19,7 +19,6 @@ public class CommandUser implements CommandCallback {
         String intent;
         if(parameters.has("intent")) {
             intent = parameters.get("intent").getAsString().toUpperCase();
-
             if (intent.compareTo("ADD") == 0) {
                 return newUser(parameters);
             } else if(intent.compareTo("REMOVE") == 0) {
