@@ -69,7 +69,10 @@ public class HavissIoT {
             MqttCallback callback = new MqttCallback() {
                 @Override
                 public void connectionLost(Throwable throwable) {
-                    //TODO: Handle connection lost
+                    HavissIoT.printMessage("MQTT broker connection lost: " + throwable.getMessage());
+                    client.disconnect();
+                    client = new IoTClient(Config.clientID);
+                    client.connect(Config.brokerAddress, Config.brokerPort);
                 }
 
                 @Override
@@ -86,6 +89,7 @@ public class HavissIoT {
                 @Override
                 public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
                     //No messages is delivered - should never be called
+
                 }
             };
             client.setCallback(callback);
@@ -139,7 +143,6 @@ public class HavissIoT {
                     }
                     toPrint.remove(s);
                 }
-
             } else {
                 try {
                     synchronized (threadLock) {

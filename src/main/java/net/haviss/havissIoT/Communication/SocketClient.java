@@ -149,7 +149,9 @@ public class SocketClient implements Runnable {
                         }
                         //Process response and build json object
                         response = processResult(result, command, arguments);
-                        HavissIoT.printMessage("Replying: " + response.toString());
+                        if(Config.debugMode) {
+                            HavissIoT.printMessage("Replying: " + response.toString());
+                        }
                         //Send data back to client and flush output buffer
                         output.write(response.toString());
                         output.write("\n");
