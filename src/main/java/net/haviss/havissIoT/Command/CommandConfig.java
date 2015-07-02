@@ -23,7 +23,6 @@ public class CommandConfig implements CommandCallback {
             } else {
                 return Integer.toString(HttpStatus.SC_BAD_REQUEST);
             }
-
             if(intent.compareTo("GET") == 0) {
                 return getConfig();
             }
@@ -34,6 +33,7 @@ public class CommandConfig implements CommandCallback {
         }
     }
 
+    //Get all configuration properties and add them to jsonObject
     private String getConfig() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("brokerAddress", Config.brokerAddress);
