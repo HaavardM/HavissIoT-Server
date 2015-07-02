@@ -41,6 +41,9 @@ public class HavissIoT {
     public static void main(String args[]) {
 
         //Load logger and config
+
+        System.out.println("\nhavissIoT server\n");
+
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
         mongoLogger.setLevel(Level.SEVERE);
         Config.loadConfig("/config.properties");
