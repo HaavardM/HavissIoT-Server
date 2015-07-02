@@ -1,15 +1,13 @@
 package net.haviss.havissIoT.Command;
 
 import com.google.gson.JsonObject;
-import com.sun.istack.internal.NotNull;
 import net.haviss.havissIoT.Communication.SocketClient;
 import net.haviss.havissIoT.Config;
-import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
 
 /**
- * Created by H�vard on 6/1/2015.
+ * Created by Haavard on 6/1/2015.
  */
 public class CommandConfig implements CommandCallback {
     private boolean isOP;
