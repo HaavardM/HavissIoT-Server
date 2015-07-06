@@ -35,8 +35,11 @@ public class CommandSensor implements CommandCallback {
             //Return bad request if there is no intent key in JSON
             return Integer.toString(HttpStatus.SC_BAD_REQUEST);
         }
-        if (intent.compareTo("CREATE") == 0) {
+
+        //Find correct intent and run corresponding method.
+        if (intent.compareTo("ADD") == 0) {
             if (isOP) {
+                //Add a new sensor
                 return create(parameters);
             }
             return Integer.toString(HttpStatus.SC_SERVICE_UNAVAILABLE);
@@ -55,7 +58,10 @@ public class CommandSensor implements CommandCallback {
                 return Integer.toString(HttpStatus.SC_OK);
             }
             return Integer.toString(HttpStatus.SC_SERVICE_UNAVAILABLE);
-        } else {
+        } else if(intent.compareTo("GET") == 0) {
+            return getSensor(parameters);
+        }
+        else {
             return Integer.toString(HttpStatus.SC_NOT_FOUND);
         }
     }
@@ -70,6 +76,7 @@ public class CommandSensor implements CommandCallback {
         return true;
     }
 
+    //Create a new sensor and add it to sensor handler based on parameters.
     private String create(JsonObject parameters) {
         String sensorName;
         String sensorTopic;
@@ -114,6 +121,7 @@ public class CommandSensor implements CommandCallback {
         return jsonArray.toString();
     }
 
+    //Remove a sensor from sensor handler
     private String remove(JsonObject parameters) {
         if (parameters.has("name")) {
             HavissIoT.sensorHandler.removeSensorByName(parameters.get("name").getAsString());
@@ -128,20 +136,28 @@ public class CommandSensor implements CommandCallback {
         return Integer.toString(HttpStatus.SC_BAD_REQUEST);
     }
 
+    //Get a sensor by name and return sensor information
     private String getSensor(JsonObject parameters) {
+        IoTSensor sensor;
         if(parameters.has("name")) {
             String name = parameters.get("name").getAsString();
-            IoTSensor sensor = HavissIoT.sensorHandler.getSensorByName(name);
-            if(sensor != null) {
-                return new Gson().toJson(sensor);
-            } else {
-                return Integer.toString(HttpStatus.SC_NOT_FOUND);
-            }
-        }  else {
+            sensor = HavissIoT.sensorHandler.getSensorByName(name);
+        } else if(parameters.has("topic")) {
+            String topic = parameters.get("topic").getAsString();
+            sensor = HavissIoT.sensorHandler.getSensorByTopic(topic);
+        } else {
             return Integer.toString(HttpStatus.SC_BAD_REQUEST);
         }
+        if(sensor != null) {
+            //Create a json object with useful information about the sensor as response
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("name", sensor.getName());
+            jsonObject.addProperty("topic", sensor.getTopic());
+            jsonObject.addProperty("type", sensor.getType());
+            jsonObject.addProperty("toStore", sensor.getStorage());
+            return jsonObject.toString();
+        } else {
+            return Integer.toString(HttpStatus.SC_NOT_FOUND);
+        }
     }
-
-
-
 }

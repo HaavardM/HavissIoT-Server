@@ -10,18 +10,17 @@ public class RPI implements DeviceCallback {
 
     /*Variables*/
     private String deviceName;
-    private String commandTopic;
+    private String deviceTopic;
 
     //Constructor
     public RPI(String deviceName, String commandTopic, String statusTopic) {
         this.deviceName = deviceName;
-        this.commandTopic = commandTopic;
+        this.deviceTopic = commandTopic;
     }
 
     @Override
     public String run(String[] parameters) {
-        HavissIoT.client.publishMessage(commandTopic, new Gson().toJson(parameters));
-        return new Gson().toJson("success");
+        return null;
     }
 
     @Override
@@ -30,8 +29,8 @@ public class RPI implements DeviceCallback {
     }
 
     @Override
-    public String getCommandTopic() {
-        return this.commandTopic;
+    public String getDeviceTopic() {
+        return this.deviceTopic;
     }
 
 

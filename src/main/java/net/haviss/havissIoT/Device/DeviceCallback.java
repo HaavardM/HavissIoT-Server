@@ -13,7 +13,7 @@ public interface DeviceCallback {
     String getName();
 
     //Get device topic
-    String getCommandTopic();
+    String getDeviceTopic();
 
 
 
