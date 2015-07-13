@@ -81,7 +81,11 @@ public class SensorHandler {
             if(topic.compareTo(s.getTopic()) == 0) {
                 availableSensors.remove(s);
                 sensorNames.remove(s.getName());
-                HavissIoT.client.unsubscribeToTopic(s.getTopic());
+                try {
+                    HavissIoT.client.unsubscribeToTopic(s.getTopic());
+                } catch (HavissIoTMQTTException e) {
+                    HavissIoT.printMessage(e.getMessage());
+                }
             }
         }
     }
