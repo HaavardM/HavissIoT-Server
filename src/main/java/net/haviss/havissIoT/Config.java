@@ -12,6 +12,9 @@ import java.util.Properties;
 public class Config {
 
     /*Config values*/
+
+    public static volatile String systemName;
+    public static volatile String houseName;
     public static volatile String brokerAddress;
     public static volatile String clientID;
     public static volatile String cmdTopic;
@@ -43,6 +46,8 @@ public class Config {
     public static void loadConfig(String configName) {
         try {
             properties.load(new BufferedReader(new InputStreamReader(Config.class.getClass().getResourceAsStream(configName))));
+            systemName = getProperty("system_name");
+            houseName = getProperty("house_name");
             brokerAddress = getProperty("broker_address");
             clientID = getProperty("client_id");
             cmdTopic = getProperty("cmd_topic");

@@ -5,6 +5,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import net.haviss.havissIoT.Config;
+import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
+import net.haviss.havissIoT.Exceptions.HavissIoTSensorException;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Sensor.IoTSensor;
 import java.awt.event.ActionEvent;
@@ -36,26 +38,39 @@ public class SensorHandler {
     }
 
     //Add new sensor
-    public synchronized boolean addSensor(String name, String topic, String type, boolean toStore, long timeout) {
+    public synchronized void addSensor(String name, String topic, String type, boolean toStore, long timeout) throws HavissIoTSensorException{
         if (sensorNames.contains(name)) {
-            return false;
+            throw new HavissIoTSensorException("Sensor already exist");
         } else {
             availableSensors.add(new IoTSensor(name, topic, type, toStore, timeout ));
             sensorNames.add(name);
-            HavissIoT.client.subscribeToTopic(topic, Config.qos);
+            try {
+                HavissIoT.client.subscribeToTopic(topic, Config.qos);
+            } catch (HavissIoTMQTTException e) {
+                HavissIoT.printMessage(e.getMessage());
+            }
             this.writeToFile();
-            return true;
         }
     }
 
     //Remove sensor by name
-    public void removeSensorByName(String name) {
+    public void removeSensorByName(String name) throws HavissIoTSensorException {
+        boolean sensorRemoved = false;
         for(IoTSensor s : availableSensors) {
             if(name.compareTo(s.getName()) == 0) {
                 availableSensors.remove(s);
                 sensorNames.remove(s.getName());
-                HavissIoT.client.unsubscribeToTopic(s.getTopic());
+                try {
+                    HavissIoT.client.unsubscribeToTopic(s.getTopic());
+                    sensorRemoved = true;
+                } catch (HavissIoTMQTTException e) {
+                    HavissIoT.printMessage(e.getMessage());
+                }
+                break;
             }
+        }
+        if(!sensorRemoved) {
+            throw new HavissIoTSensorException("Sensor not found");
         }
         this.writeToFile();
     }

@@ -1,5 +1,6 @@
 package net.haviss.havissIoT.Communication;
 
+import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
 import net.haviss.havissIoT.HavissIoT;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
@@ -68,17 +69,18 @@ public class IoTClient {
     }
 
     //Publish a message to a given topic
-    public synchronized void publishMessage(String topic, String msg) {
+    public synchronized void publishMessage(String topic, String msg) throws HavissIoTMQTTException {
         try {
             MqttMessage pubMessage = new MqttMessage(msg.getBytes());
             mclient.publish(topic, pubMessage);
         } catch (MqttException me) {
             //TODO: Handle exception
+            throw new HavissIoTMQTTException(me.getMessage());
         }
     }
 
     //Subscribe to topic
-    public synchronized void subscribeToTopic(String topic, int qos) { //Subscribe to an MQTT topic
+    public synchronized void subscribeToTopic(String topic, int qos) throws HavissIoTMQTTException{ //Subscribe to an MQTT topic
         try {
             if(!topics.contains(topic)) {
                 mclient.subscribe(topic, qos);
@@ -86,16 +88,18 @@ public class IoTClient {
             }
         } catch (MqttException me) {
             //TODO: Handle exceptions
+            throw new HavissIoTMQTTException(me.getMessage());
         }
     }
 
     //Unsubscribe to topic
-    public synchronized void unsubscribeToTopic(String topic) {
+    public synchronized void unsubscribeToTopic(String topic) throws HavissIoTMQTTException {
         try {
             mclient.unsubscribe(topic);
             topics.remove(topic);
         } catch (MqttException me) {
             //TODO: Handle exceptions
+            throw new HavissIoTMQTTException(me.getMessage());
         }
     }
 

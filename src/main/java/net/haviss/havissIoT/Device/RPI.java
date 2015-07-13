@@ -6,7 +6,7 @@ import net.haviss.havissIoT.HavissIoT;
 /**
  * Created by Håvard on 5/11/2015.
  */
-public class RPI implements DeviceCallback {
+public class RPI<P> implements DeviceCallback<P> {
 
     /*Variables*/
     private String deviceName;
@@ -19,7 +19,7 @@ public class RPI implements DeviceCallback {
     }
 
     @Override
-    public String run(String[] parameters) {
+    public String run(P parameters) {
         return null;
     }
 
