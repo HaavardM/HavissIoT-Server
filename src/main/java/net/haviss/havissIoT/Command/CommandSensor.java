@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Communication.SocketClient;
 import net.haviss.havissIoT.Config;
+import net.haviss.havissIoT.Exceptions.HavissIoTSensorException;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Sensor.IoTSensor;
 import net.haviss.havissIoT.Type.User;
@@ -101,7 +102,11 @@ public class CommandSensor implements CommandCallback {
             return Integer.toString(HttpStatus.SC_BAD_REQUEST);
         }
         //Create new sensor
-        HavissIoT.sensorHandler.addSensor(sensorName, sensorTopic, sensorType, toStore, timeout);
+        try {
+            HavissIoT.sensorHandler.addSensor(sensorName, sensorTopic, sensorType, toStore, timeout);
+        } catch (HavissIoTSensorException e) {
+            HavissIoT.printMessage(e.getMessage());
+        }
         HavissIoT.printMessage("Adding sensor " + sensorName);
         return Integer.toString(HttpStatus.SC_OK);
     }
@@ -124,7 +129,11 @@ public class CommandSensor implements CommandCallback {
     //Remove a sensor from sensor handler
     private String remove(JsonObject parameters) {
         if (parameters.has("name")) {
-            HavissIoT.sensorHandler.removeSensorByName(parameters.get("name").getAsString());
+            try {
+                HavissIoT.sensorHandler.removeSensorByName(parameters.get("name").getAsString());
+            } catch (HavissIoTSensorException e) {
+                HavissIoT.printMessage(e.getMessage());
+            }
             HavissIoT.printMessage("Removing sensor with name " + parameters.get("topic"));
             return Integer.toString(HttpStatus.SC_OK);
         }
