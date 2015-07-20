@@ -15,4 +15,7 @@ public interface DeviceCallback<P> {
     //Get device topic
     String getDeviceTopic();
 
+    //Get device type
+    String getType();
+
 }
