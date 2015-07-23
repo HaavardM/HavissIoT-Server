@@ -5,40 +5,36 @@ import net.haviss.havissIoT.HavissIoT;
 import org.bson.Document;
 
 /**
- * Created by H�vard on 5/16/2015.
+ * Created by Haavard on 5/16/2015.
+ * Class containing information about a sensor
  */
-public class IoTSensor {
+public abstract class IoTSensor<SensorValue> {
 
     /*Variables*/
-    private volatile String name;
-    private volatile String type;
-    private volatile String topic;
-    private volatile String lastValue;
-    private volatile long lastUpdated;
-    private volatile long timeout;
+    protected volatile String name;
+    protected volatile String topic;
+    protected volatile SensorValue lastValue;
+    protected volatile long lastUpdated;
+    protected volatile long timeout;
     private volatile boolean storage;
     private volatile boolean isActive = false;
 
-    //Constructor - setting variables
-    public IoTSensor(String name, String topic, String type, boolean toStore, long timeout) {
-        this.topic = topic;
+    public IoTSensor(String name, String topic, boolean toStore) {
         this.name = name;
-        this.type = type;
+        this.topic = topic;
+        this.storage = toStore;
+        this.timeout = 0;
+    }
+    public IoTSensor(String name, String topic, boolean toStore, long timeout) {
+        this.name = name;
+        this.topic = topic;
         this.storage = toStore;
         this.timeout = timeout;
     }
 
-    //Overloaded - no timeout on sensor
-    public IoTSensor(String name, String topic, String type, boolean toStore) {
-        this.topic = topic;
-        this.name = name;
-        this.type = type;
-        this.storage = toStore;
-        this.timeout = 0;
-    }
 
     //Updates last value
-    public void updateValue(String value) {
+    public void updateValue(SensorValue value) {
         this.lastValue = value;
         this.isActive = true;
 
@@ -69,13 +65,8 @@ public class IoTSensor {
         return this.topic;
     }
 
-    //Get sensortype
-    public String getType() {
-        return this.type;
-    }
-
     //Get latest value
-    public String getLastValue() {
+    public SensorValue getLastValue() {
         return this.lastValue;
     }
 
