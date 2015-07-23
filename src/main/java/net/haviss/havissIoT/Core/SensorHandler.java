@@ -9,6 +9,9 @@ import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
 import net.haviss.havissIoT.Exceptions.HavissIoTSensorException;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Sensor.IoTSensor;
+import net.haviss.havissIoT.Sensor.PressureSensor;
+import net.haviss.havissIoT.Sensor.TempSensor;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -42,7 +45,19 @@ public class SensorHandler {
         if (sensorNames.contains(name)) {
             throw new HavissIoTSensorException("Sensor already exist");
         } else {
-            availableSensors.add(new IoTSensor(name, topic, type, toStore, timeout ));
+            IoTSensor sensor;
+            String sensorType = type.toLowerCase();
+            if(sensorType.compareTo("temperature") == 0) {
+                sensor = new TempSensor(name, topic, toStore, timeout);
+            } else if(sensorType.compareTo("pressure") == 0) {
+                sensor = new PressureSensor(name, topic, toStore, timeout);
+            } else {
+                sensor = null;
+            }
+            if(sensor == null) {
+                return;
+            }
+            availableSensors.add(sensor);
             sensorNames.add(name);
             try {
                 HavissIoT.client.subscribeToTopic(topic, Config.qos);

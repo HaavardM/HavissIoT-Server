@@ -5,26 +5,13 @@ package net.haviss.havissIoT.Sensor;
  */
 public class TempSensor extends IoTSensor<Float> {
 
-    private boolean fahrenheit = false;
-
     //Constructor
-    public TempSensor(String name, String topic, boolean toStore, long timeout, boolean fahrenheit) {
+    public TempSensor(String name, String topic, boolean toStore, long timeout) {
         super(name, topic, toStore, timeout);
-        this.fahrenheit = fahrenheit;
     }
 
     //Constructor - overloaded without timeout
     public TempSensor(String name, String topic, boolean toStore) {
         super(name, topic, toStore);
-    }
-
-    //Check if it is fahrenheit
-    public boolean isFahrenheit() {
-        return this.fahrenheit;
-    }
-
-    //Change unit - fahrenheit = true, celsius = false
-    public void setFahrenheit(boolean state) {
-        this.fahrenheit = state;
     }
 }
