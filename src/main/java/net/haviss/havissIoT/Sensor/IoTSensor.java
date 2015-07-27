@@ -100,6 +100,9 @@ public abstract class IoTSensor<SensorValue> {
         return this.isActive;
     }
 
+    public String getType() {
+        return "DEFAULT";
+    }
 
 
 }

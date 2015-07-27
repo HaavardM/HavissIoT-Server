@@ -1,4 +1,4 @@
-package net.haviss.havissIoT.Device;
+package net.haviss.havissIoT.DeviceCommands;
 
 /**
  * Created by Håvard on 5/11/2015.

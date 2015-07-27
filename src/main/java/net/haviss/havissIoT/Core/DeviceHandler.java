@@ -1,9 +1,7 @@
 package net.haviss.havissIoT.Core;
 
-import net.haviss.havissIoT.Device.DeviceCallback;
-import org.reflections.Reflections;
+import net.haviss.havissIoT.DeviceCommands.DeviceCallback;
 
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**

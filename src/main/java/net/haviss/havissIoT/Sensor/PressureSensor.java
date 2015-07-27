@@ -13,4 +13,8 @@ public class PressureSensor extends IoTSensor<Float> {
     public PressureSensor(String name, String topic, boolean toStore, long timeout) {
         super(name, topic, toStore, timeout);
     }
+    @Override
+    public String getType() {
+        return "PRESSURE";
+    }
 }

@@ -1,4 +1,4 @@
-package net.haviss.havissIoT.Device;
+package net.haviss.havissIoT.DeviceCommands;
 
 import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;

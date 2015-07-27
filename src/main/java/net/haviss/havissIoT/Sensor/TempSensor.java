@@ -14,4 +14,12 @@ public class TempSensor extends IoTSensor<Float> {
     public TempSensor(String name, String topic, boolean toStore) {
         super(name, topic, toStore);
     }
+
+    //Return sensor type name
+    @Override
+    public String getType() {
+        return "TEMPERATURE";
+    }
+
+
 }

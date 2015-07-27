@@ -19,7 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.Timer;
 
 /**
- * Created by H�vard on 5/16/2015.
+ * Created by Haavard on 5/16/2015.
  * Handles all sensors
  */
 public class SensorHandler {
@@ -45,15 +45,8 @@ public class SensorHandler {
         if (sensorNames.contains(name)) {
             throw new HavissIoTSensorException("Sensor already exist");
         } else {
-            IoTSensor sensor;
-            String sensorType = type.toLowerCase();
-            if(sensorType.compareTo("temperature") == 0) {
-                sensor = new TempSensor(name, topic, toStore, timeout);
-            } else if(sensorType.compareTo("pressure") == 0) {
-                sensor = new PressureSensor(name, topic, toStore, timeout);
-            } else {
-                sensor = null;
-            }
+            IoTSensor sensor = createSensor(name, topic, type, toStore, timeout);
+
             if(sensor == null) {
                 return;
             }
@@ -162,11 +155,39 @@ public class SensorHandler {
                     String type = jsonArray.get(i).getAsJsonObject().get("type").getAsString();
                     boolean toStore = jsonArray.get(i).getAsJsonObject().get("name").getAsBoolean();
                     long timeout = jsonArray.get(i).getAsJsonObject().get("timeout").getAsLong();
-                    availableSensors.add(new IoTSensor(name, topic, type, toStore, timeout));
+                    IoTSensor sensor = createSensor(name, topic, type, toStore, timeout);
+                    if(sensor != null) {
+                        availableSensors.add(sensor);
+                    }
                 }
             } catch (JsonParseException e) {
                 HavissIoT.printMessage("Json parse error: " + e.getMessage());
             }
         }
     }
+
+    //Create sensor based on type without timeout
+    public IoTSensor createSensor(String name, String topic, String type, boolean toStore) {
+        String sensorType = type.toLowerCase();
+        if(sensorType.compareTo("temperature") == 0) {
+            return new TempSensor(name, topic, toStore);
+        } else if(sensorType.compareTo("pressure") == 0) {
+            return new PressureSensor(name, topic, toStore);
+        } else {
+            return null;
+        }
+    }
+
+    //Create sensor based on type with timeout
+    public IoTSensor createSensor(String name, String topic, String type, boolean toStore, long timeout) {
+        String sensorType = type.toLowerCase();
+        if(sensorType.compareTo("temperature") == 0) {
+            return new TempSensor(name, topic, toStore, timeout);
+        } else if(sensorType.compareTo("pressure") == 0) {
+            return new PressureSensor(name, topic, toStore, timeout);
+        } else {
+            return null;
+        }
+    }
+
 }
