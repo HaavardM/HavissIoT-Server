@@ -4,10 +4,8 @@ import com.mongodb.MongoException;
 import net.haviss.havissIoT.Communication.IoTClient;
 import net.haviss.havissIoT.Communication.SocketServer;
 import net.haviss.havissIoT.Storage.IoTStorage;
-import net.haviss.havissIoT.Core.SensorHandler;
 import net.haviss.havissIoT.Core.UserHandler;
 import net.haviss.havissIoT.External.PublicIP;
-import net.haviss.havissIoT.Sensor.IoTSensor;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -32,7 +30,6 @@ public class HavissIoT {
     public static IoTClient client;
     public static IoTStorage storage;
     public static UserHandler userHandler;
-    public static final SensorHandler sensorHandler = new SensorHandler();
     public static final Object threadLock = new Object();
     public static CopyOnWriteArrayList<Thread> allThreads;
     private static CopyOnWriteArrayList<String> toPrint;
@@ -80,13 +77,7 @@ public class HavissIoT {
 
                 @Override
                 public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-                    IoTSensor sensor = sensorHandler.getSensorByTopic(s);
-                    if (sensor != null) {
-                        if (sensor.getStorage()) {
-                            HavissIoT.storage.storeSensorValue(sensor, mqttMessage.toString());
-                        }
-                        sensor.updateValue(mqttMessage.toString());
-                    }
+                    //TODO: Analyze message
                 }
 
                 @Override
@@ -106,7 +97,6 @@ public class HavissIoT {
             //Objects for command handling
             SocketServer socketCommunication = new SocketServer(Config.serverPort, Config.numbOfClients);
 
-            sensorHandler.loadFromFile();
 
             //Everything is started
             if(client.isConnected()) {

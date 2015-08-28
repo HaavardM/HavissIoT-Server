@@ -1,8 +1,6 @@
 package net.haviss.havissIoT.Core;
 
 import net.haviss.havissIoT.Type.User;
-
-import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**

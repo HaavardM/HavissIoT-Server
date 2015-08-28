@@ -2,7 +2,6 @@ package net.haviss.havissIoT.External;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import net.haviss.havissIoT.HavissIoT;

@@ -4,7 +4,6 @@ import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.HavissIoT;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
