@@ -1,6 +1,9 @@
 package net.haviss.havissIoT;
 
+import com.mongodb.ConnectionString;
 import com.mongodb.MongoException;
+import com.mongodb.async.client.MongoClient;
+import com.mongodb.async.client.MongoClients;
 import net.haviss.havissIoT.Communication.IoTClient;
 import net.haviss.havissIoT.Communication.SocketServer;
 import net.haviss.havissIoT.Storage.IoTStorage;
@@ -28,7 +31,7 @@ public class HavissIoT {
 
     /*Objects*/
     public static IoTClient client;
-    public static IoTStorage storage;
+    public static MongoClient mongoClient;
     public static UserHandler userHandler;
     public static final Object threadLock = new Object();
     public static CopyOnWriteArrayList<Thread> allThreads;
@@ -61,7 +64,10 @@ public class HavissIoT {
         allThreads = new CopyOnWriteArrayList<>();
 
         //Initialize IoT client
-        if (!Config.offlineMode) {
+        if (Config.offlineMode) {
+            printMessage("OFFLINE MODE! - No network connections");
+            printMessage("Application is ready");
+        } else {
             client = new IoTClient(Config.clientID);
             client.connect(Config.brokerAddress, Config.brokerPort);
 
@@ -89,15 +95,12 @@ public class HavissIoT {
             client.setCallback(callback);
 
             try {
-                //Initialize storage client
-                storage = new IoTStorage(Config.databaseAddress, Config.databasePort, Config.database);
+                mongoClient = MongoClients.create(new ConnectionString("mongodb://" + Config.databaseAddress));
             } catch (MongoException e) {
-                printMessage("Couldnt connect to database server");
+                printMessage(e.getMessage());
             }
             //Objects for command handling
             SocketServer socketCommunication = new SocketServer(Config.serverPort, Config.numbOfClients);
-
-
             //Everything is started
             if(client.isConnected()) {
                 printMessage("Application is ready");
@@ -105,9 +108,6 @@ public class HavissIoT {
                 System.out.println("Application not ready for use - Stopping");
                 System.exit(1);
             }
-        } else {
-            printMessage("OFFLINE MODE! - No network connections");
-            printMessage("Application is ready");
         }
 
         //Application must run forever
@@ -189,7 +189,6 @@ public class HavissIoT {
                 e.printStackTrace();
             }
         }
-        storage.disconnect();
         client.disconnect();
         System.out.println("Application is shutting down....");
         System.exit(status);

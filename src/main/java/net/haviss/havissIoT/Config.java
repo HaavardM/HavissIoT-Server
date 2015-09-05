@@ -24,6 +24,7 @@ public class Config {
     public static volatile String witAddress;
     public static volatile String witToken;
     public static volatile String sensorInfoCollection;
+    public static volatile String sensorsCollection;
     public static volatile int brokerPort;
     public static volatile int qos;
     public static volatile int databasePort;
@@ -67,6 +68,7 @@ public class Config {
             offlineMode = Boolean.parseBoolean(getProperty("offline_mode"));
             debugMode = Boolean.parseBoolean(getProperty("debug_mode"));
             enableLogging = Boolean.parseBoolean(getProperty("enable_logging"));
+            sensorsCollection = getProperty("sensors_collection");
         } catch (IOException | NumberFormatException e) {
             HavissIoT.printMessage(e.getMessage());
         }

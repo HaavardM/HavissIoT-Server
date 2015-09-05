@@ -28,6 +28,9 @@ public class UserHandler {
             }
         }
         availableUsers.add(user);
+        if(user.isOP()) {
+            availableOPs.add(user);
+        }
         return true;
     }
 

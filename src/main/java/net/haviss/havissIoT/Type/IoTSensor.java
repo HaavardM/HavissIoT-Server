@@ -1,22 +1,22 @@
 package net.haviss.havissIoT.Type;
-
 import com.sun.istack.internal.NotNull;
+
+import java.util.Date;
 
 /**
  * Created by Håvard on 8/29/2015.
  */
-public class IoTSensor {
+public class IoTSensor<DataType> {
 
     private String name;
     private String topic;
     private String type;
-    private String location;
+    private DataType lastValue = null;
 
-    public IoTSensor(@NotNull String name, @NotNull String topic, @NotNull String type, String location) {
+    public IoTSensor(@NotNull String name, @NotNull String topic, @NotNull String type) {
         this.name = name;
         this.topic = topic;
         this.type = type;
-        this.location = location;
     }
 
     public String getName() {
@@ -31,8 +31,12 @@ public class IoTSensor {
         return type;
     }
 
-    public String getLocation() {
-        return location;
+    public DataType getLastValue() {
+        return lastValue;
+    }
+
+    public void updateValue(DataType value) {
+        lastValue = value;
     }
 
 

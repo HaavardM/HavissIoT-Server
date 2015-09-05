@@ -17,8 +17,9 @@ public class IoTStorage  {
     /*Variables*/
     private String serverAddress = ""; //Database address
     private int serverPort = 27017; //Database port
-    private CopyOnWriteArrayList<String> storedSensors = new CopyOnWriteArrayList<>();
 
+    private String userCollectionName = "users";
+    private String sensorCollectionName = "sensors";
     /*Objects*/
     private MongoClient mongoClient;
     private MongoDatabase db;
@@ -50,11 +51,6 @@ public class IoTStorage  {
     //Get collection from database
     public MongoCollection<Document> getCollection(String collection) {
         return this.db.getCollection(collection);
-    }
-
-    //Get all stored topics
-    public synchronized CopyOnWriteArrayList<String> getStoredSensors() {
-        return storedSensors;
     }
 
     //Gets all available collections from database
@@ -91,5 +87,7 @@ public class IoTStorage  {
         this.mongoClient.close();
         this.mongoClient = null;
     }
+
+    public
 
 }
