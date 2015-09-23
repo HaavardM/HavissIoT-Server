@@ -1,6 +1,6 @@
 package net.haviss.havissIoT.Communication;
 
-import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
+import net.haviss.havissIoT.Exceptions.IoTClientException;
 import net.haviss.havissIoT.HavissIoT;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
@@ -14,7 +14,7 @@ public class IoTClient {
 
     //Variables
     private CopyOnWriteArrayList<String> topics = new CopyOnWriteArrayList<>();
-    private String brokerAddress = "tcp://";
+    private String brokerAddress;
     private int brokerPort = 1883; //Default port is used if not else specified in connect
     private String clientID = "";
     private int qos = 2;
@@ -29,22 +29,22 @@ public class IoTClient {
     }
 
     //Connect to broker
-    public void connect(String address) {
+    public void connect(String address) throws IoTClientException {
         connect(address, brokerPort);
     }
 
     //Overloaded function for connect - use with other ports than default
-    public void connect(String address, int port) {
-        brokerPort = port;
-        brokerAddress += (address + ":" + Integer.toString(brokerPort));
+    public void connect(String address, int port) throws IoTClientException {
         try {
+            brokerPort = port;
+            brokerAddress = ("tcp://" + address + ":" + Integer.toString(brokerPort));
             mclient = new MqttClient(brokerAddress, clientID, persistence); //Setting up MQTT client and connect to broker
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
             mclient.connect(connOpts); //Connecting to broker
             connected = true;
         } catch (MqttException me) {
-            HavissIoT.printMessage("MQTT connection error: " + me.getMessage() );
+            throw new IoTClientException(me.getMessage());
         }
     }
 
@@ -65,18 +65,18 @@ public class IoTClient {
     }
 
     //Publish a message to a given topic
-    public synchronized void publishMessage(String topic, String msg) throws HavissIoTMQTTException {
+    public synchronized void publishMessage(String topic, String msg) throws IoTClientException {
         try {
             MqttMessage pubMessage = new MqttMessage(msg.getBytes());
             mclient.publish(topic, pubMessage);
         } catch (MqttException me) {
             //TODO: Handle exception
-            throw new HavissIoTMQTTException(me.getMessage());
+            throw new IoTClientException(me.getMessage());
         }
     }
 
     //Subscribe to topic
-    public synchronized void subscribeToTopic(String topic, int qos) throws HavissIoTMQTTException{ //Subscribe to an MQTT topic
+    public synchronized void subscribeToTopic(String topic, int qos) throws IoTClientException{ //Subscribe to an MQTT topic
         try {
             if(!topics.contains(topic)) {
                 mclient.subscribe(topic, qos);
@@ -84,18 +84,18 @@ public class IoTClient {
             }
         } catch (MqttException me) {
             //TODO: Handle exceptions
-            throw new HavissIoTMQTTException(me.getMessage());
+            throw new IoTClientException(me.getMessage());
         }
     }
 
     //Unsubscribe to topic
-    public synchronized void unsubscribeToTopic(String topic) throws HavissIoTMQTTException {
+    public synchronized void unsubscribeToTopic(String topic) throws IoTClientException {
         try {
             mclient.unsubscribe(topic);
             topics.remove(topic);
         } catch (MqttException me) {
             //TODO: Handle exceptions
-            throw new HavissIoTMQTTException(me.getMessage());
+            throw new IoTClientException(me.getMessage());
         }
     }
 

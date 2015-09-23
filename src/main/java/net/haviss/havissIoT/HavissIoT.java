@@ -6,7 +6,8 @@ import com.mongodb.async.client.MongoClient;
 import com.mongodb.async.client.MongoClients;
 import net.haviss.havissIoT.Communication.IoTClient;
 import net.haviss.havissIoT.Communication.SocketServer;
-import net.haviss.havissIoT.Storage.IoTStorage;
+import net.haviss.havissIoT.Core.SensorHandler;
+import net.haviss.havissIoT.Exceptions.IoTClientException;
 import net.haviss.havissIoT.Core.UserHandler;
 import net.haviss.havissIoT.External.PublicIP;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -33,6 +34,7 @@ public class HavissIoT {
     public static IoTClient client;
     public static MongoClient mongoClient;
     public static UserHandler userHandler;
+    public static SensorHandler sensorHandler;
     public static final Object threadLock = new Object();
     public static CopyOnWriteArrayList<Thread> allThreads;
     private static CopyOnWriteArrayList<String> toPrint;
@@ -50,6 +52,9 @@ public class HavissIoT {
 
         //Set up user handler
         userHandler = new UserHandler();
+
+        //Set up sensor handler
+        sensorHandler = new SensorHandler();
 
         //Load config from file
         System.out.println("Settings:\n");
@@ -69,7 +74,11 @@ public class HavissIoT {
             printMessage("Application is ready");
         } else {
             client = new IoTClient(Config.clientID);
-            client.connect(Config.brokerAddress, Config.brokerPort);
+            try {
+                client.connect(Config.brokerAddress, Config.brokerPort);
+            } catch (IoTClientException ie) {
+                System.exit(1);
+            }
 
             //Setting up new callback for client
             MqttCallback callback = new MqttCallback() {
@@ -78,7 +87,11 @@ public class HavissIoT {
                     HavissIoT.printMessage("MQTT broker connection lost: " + throwable.getMessage());
                     client.disconnect();
                     client = new IoTClient(Config.clientID);
-                    client.connect(Config.brokerAddress, Config.brokerPort);
+                    try {
+                        client.connect(Config.brokerAddress, Config.brokerPort);
+                    } catch (IoTClientException ie) {
+                        printMessage(ie.getMessage());
+                    }
                 }
 
                 @Override

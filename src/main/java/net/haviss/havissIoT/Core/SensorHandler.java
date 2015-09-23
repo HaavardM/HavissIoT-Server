@@ -1,16 +1,10 @@
 package net.haviss.havissIoT.Core;
 
-import com.mongodb.async.SingleResultCallback;
-import com.mongodb.async.client.MongoClient;
-import com.mongodb.async.client.MongoCollection;
-import com.mongodb.async.client.MongoDatabase;
-import net.haviss.havissIoT.Config;
-import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Type.IoTSensor;
-import org.bson.Document;
+import net.haviss.havissIoT.Type.Room;
 
-import static com.mongodb.client.model.Filters.*;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -18,27 +12,41 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class SensorHandler {
 
-    private MongoClient mClient;
-    private MongoDatabase db;
-    private SingleResultCallback<Void> finishedCallback = new SingleResultCallback<>() {
-        @Override
-        public void onResult(Object o, Throwable throwable) {
-            //TODO: Handle success
+    private CopyOnWriteArrayList<IoTSensor> availableSensors = new CopyOnWriteArrayList<>();
+
+    //Get sensor by knowing the name
+    public IoTSensor getSensorByName(String name) {
+        for(IoTSensor s : availableSensors) {
+            if(s.getName().compareTo(name) == 0) {
+                return s;
+            }
         }
-    };
-
-
-    public SensorHandler(MongoClient client) {
-        mClient = client;
-        db = mClient.getDatabase(Config.database);
+        return null;
     }
 
-    public void addSensor(IoTSensor sensor) {
-        MongoCollection col = db.getCollection(Config.sensorsCollection);
-        col.deleteMany(eq("name", sensor.getName()), finishedCallback);
-        Document newSensor = new Document("name", sensor.getName())
-                .append("topic", sensor.getTopic())
-                .append("type", sensor.getType())
-                .append("value", sensor.getLastValue());
+    //Get a sensor by knowing the topic
+    public IoTSensor getSensorByTopic(String topic) {
+        for(IoTSensor s : availableSensors) {
+            if(s.getTopic().compareTo(topic) == 0) {
+                return s;
+            }
+        }
+        return null;
     }
+
+    //Get an array of sensors in a room
+    public IoTSensor[] getSensorsByRoom(Room room) {
+        List<IoTSensor> sensors = new ArrayList<>();
+        for(IoTSensor s : availableSensors) {
+            if(s.getRoom() == room) {
+                sensors.add(s);
+            }
+        }
+        if(sensors.size() > 0) {
+            return (IoTSensor[])sensors.toArray();
+        } else {
+            return null;
+        }
+    }
+
 }
