@@ -1,17 +1,18 @@
 package net.haviss.havissIoT.Type;
 import com.sun.istack.internal.NotNull;
+import com.sun.org.apache.xpath.internal.operations.String;
 
 import java.util.Date;
 
 /**
- * Created by Håvard on 8/29/2015.
+ * Created by Hï¿½vard on 8/29/2015.
  */
-public class IoTSensor<DataType> {
+public class IoTSensor {
 
     private String name;
     private String topic;
     private String type;
-    private DataType lastValue = null;
+    private String lastValue = null;
 
     public IoTSensor(@NotNull String name, @NotNull String topic, @NotNull String type) {
         this.name = name;
@@ -31,11 +32,11 @@ public class IoTSensor<DataType> {
         return type;
     }
 
-    public DataType getLastValue() {
+    public String getLastValue() {
         return lastValue;
     }
 
-    public void updateValue(DataType value) {
+    public void updateValue(String value) {
         lastValue = value;
     }
 

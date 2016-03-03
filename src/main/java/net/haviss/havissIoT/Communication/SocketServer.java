@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by H�vard on 5/8/2015.
  */
-public class SocketServer implements Runnable  {
+@Deprecated class SocketServer implements Runnable  {
 
     private Thread serverThread;
     private String threadName = "ServerThread";

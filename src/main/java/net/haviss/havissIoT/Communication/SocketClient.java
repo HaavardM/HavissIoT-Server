@@ -22,7 +22,7 @@ import java.net.SocketTimeoutException;
  * New thread are created for each client connection - avoids client blocking other clients.
  * IMPORTANT: Data must be terminated with new line - or it will block thread!
  */
-public class SocketClient implements Runnable {
+@Deprecated public class SocketClient implements Runnable {
 
     private Socket socket; //Socket connection to client
     private SocketServer socketCommunication; //For terminating connection

@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Created by haavardM on 3/27/2015.
  * This library connects to an MQTT broker (using Paho MQTT libraries) and handles communication between the broker and client.
  */
-public class IoTClient {
+public class MQTTClient {
 
     //Variables
     private CopyOnWriteArrayList<String> topics = new CopyOnWriteArrayList<>();
@@ -24,7 +24,7 @@ public class IoTClient {
     private MqttClient mclient;
     private MemoryPersistence persistence = new MemoryPersistence();
 
-    public IoTClient(String clientID) {
+    public MQTTClient(String clientID) {
         this.clientID = clientID;
     }
 
@@ -94,7 +94,6 @@ public class IoTClient {
             mclient.unsubscribe(topic);
             topics.remove(topic);
         } catch (MqttException me) {
-            //TODO: Handle exceptions
             throw new HavissIoTMQTTException(me.getMessage());
         }
     }

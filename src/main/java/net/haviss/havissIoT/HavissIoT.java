@@ -4,15 +4,12 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoException;
 import com.mongodb.async.client.MongoClient;
 import com.mongodb.async.client.MongoClients;
-import net.haviss.havissIoT.Communication.IoTClient;
-import net.haviss.havissIoT.Communication.SocketServer;
-import net.haviss.havissIoT.Storage.IoTStorage;
+import net.haviss.havissIoT.Communication.MQTTClient;
 import net.haviss.havissIoT.Core.UserHandler;
 import net.haviss.havissIoT.External.PublicIP;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,7 +27,7 @@ import java.util.logging.Logger;
 public class HavissIoT {
 
     /*Objects*/
-    public static IoTClient client;
+    public static MQTTClient client;
     public static MongoClient mongoClient;
     public static UserHandler userHandler;
     public static final Object threadLock = new Object();
@@ -68,7 +65,7 @@ public class HavissIoT {
             printMessage("OFFLINE MODE! - No network connections");
             printMessage("Application is ready");
         } else {
-            client = new IoTClient(Config.clientID);
+            client = new MQTTClient(Config.clientID);
             client.connect(Config.brokerAddress, Config.brokerPort);
 
             //Setting up new callback for client
@@ -77,7 +74,7 @@ public class HavissIoT {
                 public void connectionLost(Throwable throwable) {
                     HavissIoT.printMessage("MQTT broker connection lost: " + throwable.getMessage());
                     client.disconnect();
-                    client = new IoTClient(Config.clientID);
+                    client = new MQTTClient(Config.clientID);
                     client.connect(Config.brokerAddress, Config.brokerPort);
                 }
 
@@ -99,8 +96,6 @@ public class HavissIoT {
             } catch (MongoException e) {
                 printMessage(e.getMessage());
             }
-            //Objects for command handling
-            SocketServer socketCommunication = new SocketServer(Config.serverPort, Config.numbOfClients);
             //Everything is started
             if(client.isConnected()) {
                 printMessage("Application is ready");
