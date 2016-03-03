@@ -1,6 +1,7 @@
 package net.haviss.havissIoT.Core;
 
 import com.google.gson.JsonObject;
+import com.sun.istack.internal.NotNull;
 import net.haviss.havissIoT.Command.CommandCallback;
 import net.haviss.havissIoT.Communication.SocketClient;
 import net.haviss.havissIoT.Config;
@@ -8,6 +9,8 @@ import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
 import org.reflections.Reflections;
+import sun.management.Sensor;
+
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -36,7 +39,7 @@ public class CommandHandler {
         /*variables*/
         String reply;
 
-        //If it is JSON it can be a command - find correct command and run it
+        //Check if json - find correct command and run it
         if(command != null && parameters != null) {
             for (CommandCallback cb : availableCommands) {
                 if (command.compareTo(cb.getName()) == 0) { //Check if command string corresponds to command

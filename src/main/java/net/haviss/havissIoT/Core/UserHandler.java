@@ -1,5 +1,6 @@
 package net.haviss.havissIoT.Core;
 
+import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Type.User;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -13,8 +14,10 @@ public class UserHandler {
     private CopyOnWriteArrayList<User> availableOPs = new CopyOnWriteArrayList<>();
 
     public UserHandler() {
-        addUser(new User("root", "root".toCharArray()));
-        getUser("root", "root".toCharArray()).setOP(true);
+        if(Config.debugMode) {
+            addUser(new User("root", "root".toCharArray()));
+            getUser("root", "root".toCharArray()).setOP(true);
+        }
         addUser(new User("guest"));
         getUser("guest").setProtected(true);
     }
@@ -22,7 +25,7 @@ public class UserHandler {
     //Overloaded function for use without a password
     public boolean addUser(User user) {
         //Check if username is already used
-        for(User s: availableUsers) {
+        for(User s : availableUsers) {
             if(s.getName().compareTo(user.getName()) == 0) {
                 return false;
             }
