@@ -4,6 +4,7 @@ import com.mongodb.*;
 import com.mongodb.async.SingleResultCallback;
 import com.mongodb.async.client.*;
 import org.bson.Document;
+
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -52,6 +53,7 @@ public class IoTStorage  {
     public MongoCollection<Document> getCollection(String collection) {
         return this.db.getCollection(collection);
     }
+
 
     //Gets all available collections from database
     public ArrayList<String> getCollectioNames() {

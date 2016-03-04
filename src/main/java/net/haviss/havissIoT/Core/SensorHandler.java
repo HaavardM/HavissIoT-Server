@@ -35,6 +35,7 @@ public class SensorHandler {
     }
 
     //Get an array of sensors in a room
+    /*
     public IoTSensor[] getSensorsByRoom(Room room) {
         List<IoTSensor> sensors = new ArrayList<>();
         for(IoTSensor s : availableSensors) {
@@ -48,5 +49,6 @@ public class SensorHandler {
             return null;
         }
     }
+    */
 
 }

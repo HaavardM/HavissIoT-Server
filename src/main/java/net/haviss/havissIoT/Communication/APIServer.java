@@ -14,7 +14,6 @@ public class APIServer {
 
     //<editor-fold desc="Objects">
     private HttpServer server = null;
-    private InetSocketAddress address = null;
     //</editor-fold>
 
 
@@ -24,7 +23,7 @@ public class APIServer {
 
     public APIServer() throws HavissIoTHttpException {
         try {
-            server = HttpServer.create(address, port);
+            server = HttpServer.create(new InetSocketAddress(port), 0);
         } catch (IOException e) {
             throw new HavissIoTHttpException(e.getMessage());
         }
