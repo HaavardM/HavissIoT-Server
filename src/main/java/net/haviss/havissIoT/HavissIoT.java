@@ -4,8 +4,10 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoException;
 import com.mongodb.async.client.MongoClient;
 import com.mongodb.async.client.MongoClients;
+import net.haviss.havissIoT.Communication.APIServer;
 import net.haviss.havissIoT.Communication.MQTTClient;
 import net.haviss.havissIoT.Core.UserHandler;
+import net.haviss.havissIoT.Exceptions.HavissIoTHttpException;
 import net.haviss.havissIoT.External.PublicIP;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -144,16 +146,16 @@ public class HavissIoT {
     }
     //print all current configurations
     public static void printSettings() {
-        System.out.println("MQTT broker settings:\n");
+        System.out.println("MQTT broker settings:");
         System.out.println("Broker address:\t " + Config.brokerAddress);
         System.out.println("Broker port:\t" + Integer.toString(Config.brokerPort));
         System.out.println("Client id:\t" + Config.clientID);
         System.out.println("QOS:\t" + Integer.toString(Config.qos));
-        System.out.println("\nDatabase settings:\n");
+        System.out.println("\nDatabase settings:");
         System.out.println("Database address:\t" + Config.databaseAddress);
         System.out.println("Database port:\t" + Integer.toString(Config.databasePort));
         System.out.println("Database:\t" + Config.database);
-        System.out.println("\nServer settings:\n");
+        System.out.println("\nServer settings:");
         System.out.println("Server port:\t" + Integer.toString(Config.serverPort));
         System.out.println("Number of clients:\t" + Integer.toString(Config.numbOfClients));
         System.out.println("Public IP address\t" + PublicIP.getPublicIP());

@@ -1,5 +1,6 @@
 package net.haviss.havissIoT.Core;
 
+import com.sun.istack.internal.NotNull;
 import net.haviss.havissIoT.Type.IoTSensor;
 import net.haviss.havissIoT.Type.Room;
 
@@ -35,8 +36,8 @@ public class SensorHandler {
     }
 
     //Get an array of sensors in a room
-    /*
-    public IoTSensor[] getSensorsByRoom(Room room) {
+
+    public IoTSensor[] getSensorsByRoom(@NotNull Room room) {
         List<IoTSensor> sensors = new ArrayList<>();
         for(IoTSensor s : availableSensors) {
             if(s.getRoom() == room) {
@@ -49,6 +50,5 @@ public class SensorHandler {
             return null;
         }
     }
-    */
 
 }

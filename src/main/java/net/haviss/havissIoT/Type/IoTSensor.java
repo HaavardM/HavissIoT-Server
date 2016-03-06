@@ -12,11 +12,19 @@ public class IoTSensor {
     private String topic;
     private String type;
     private String lastValue = null;
+    private Room room = null;
 
     public IoTSensor(@NotNull String name, @NotNull String topic, @NotNull String type) {
         this.name = name;
         this.topic = topic;
         this.type = type;
+    }
+
+    public IoTSensor(@NotNull String name, @NotNull String topic, @NotNull String type, Room room) {
+        this.name = name;
+        this.topic = topic;
+        this.type = type;
+        this.room = room;
     }
 
     public String getName() {
@@ -33,6 +41,10 @@ public class IoTSensor {
 
     public String getLastValue() {
         return lastValue;
+    }
+
+    public Room getRoom() {
+        return this.room;
     }
 
     public void updateValue(String value) {
