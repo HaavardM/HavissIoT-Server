@@ -1,29 +1,26 @@
-package net.haviss.havissIoT.Type;
-import com.sun.istack.internal.NotNull;
+package net.haviss.havissIoT.Sensors;
 
-import java.util.Date;
+
+import com.sun.istack.internal.NotNull;
+import net.haviss.havissIoT.Type.Room;
 
 /**
- * Created by H�vard on 8/29/2015.
+ * Created by havar on 06.03.2016.
  */
 public class IoTSensor {
-
     private String name;
     private String topic;
-    private String type;
     private String lastValue = null;
     private Room room = null;
 
     public IoTSensor(@NotNull String name, @NotNull String topic, @NotNull String type) {
         this.name = name;
         this.topic = topic;
-        this.type = type;
     }
 
     public IoTSensor(@NotNull String name, @NotNull String topic, @NotNull String type, Room room) {
         this.name = name;
         this.topic = topic;
-        this.type = type;
         this.room = room;
     }
 
@@ -33,10 +30,6 @@ public class IoTSensor {
 
     public String getTopic() {
         return topic;
-    }
-
-    public String getType() {
-        return type;
     }
 
     public String getLastValue() {
@@ -50,6 +43,4 @@ public class IoTSensor {
     public void updateValue(String value) {
         lastValue = value;
     }
-
-
 }

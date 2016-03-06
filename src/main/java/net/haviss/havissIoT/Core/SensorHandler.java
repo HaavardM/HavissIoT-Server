@@ -1,7 +1,6 @@
 package net.haviss.havissIoT.Core;
 
 import com.sun.istack.internal.NotNull;
-import net.haviss.havissIoT.Type.IoTSensor;
 import net.haviss.havissIoT.Type.Room;
 
 import java.util.ArrayList;
