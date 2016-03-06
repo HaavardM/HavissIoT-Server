@@ -21,6 +21,7 @@ public class TemperatureSensor extends IoTSensor {
 
     public double getTempC() throws NumberFormatException {
         return Double.parseDouble(getLastValue());
+
     }
 
     public double getTempF() throws NumberFormatException {
