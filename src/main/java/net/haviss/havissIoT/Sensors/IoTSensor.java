@@ -1,7 +1,7 @@
 package net.haviss.havissIoT.Sensors;
 
 
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 import net.haviss.havissIoT.Type.Room;
 
 /**

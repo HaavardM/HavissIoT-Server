@@ -36,6 +36,7 @@ public class HavissIoT {
     public static CopyOnWriteArrayList<Thread> allThreads;
     private static CopyOnWriteArrayList<String> toPrint;
 
+
     //Main method
     public static void main(String args[]) {
 
@@ -107,19 +108,22 @@ public class HavissIoT {
             }
         }
 
+        FileOutputStream fileWriter = null;
+        if(Config.enableLogging) {
+            File logFile = new File("log.txt");
+            try {
+                logFile.createNewFile();
+                fileWriter = new FileOutputStream(logFile, true);
+            } catch (IOException e) {
+                e.printStackTrace();
+                fileWriter = null;
+            }
+        }
+
         //Application must run forever
         while(!Thread.currentThread().isInterrupted()) {
             //If there is something to print
             if(toPrint.size() > 0) {
-                File logFile = new File("log.txt");
-                FileOutputStream fileWriter = null;
-                try {
-                    logFile.createNewFile();
-                    fileWriter = new FileOutputStream(logFile, true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    fileWriter = null;
-                }
                 int indexReached = 0;
                 for(String s : toPrint) {
                     String toWrite = (new Date().toString() + " " + s);

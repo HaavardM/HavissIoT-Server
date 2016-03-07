@@ -1,6 +1,5 @@
 package net.haviss.havissIoT.Communication.APIHandlers;
 
-import com.sun.deploy.net.HttpResponse;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.apache.http.HttpStatus;

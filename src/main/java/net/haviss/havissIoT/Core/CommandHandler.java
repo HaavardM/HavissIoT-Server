@@ -1,7 +1,6 @@
 package net.haviss.havissIoT.Core;
 
 import com.google.gson.JsonObject;
-import com.sun.istack.internal.NotNull;
 import net.haviss.havissIoT.Command.CommandCallback;
 import net.haviss.havissIoT.Communication.SocketClient;
 import net.haviss.havissIoT.Config;
@@ -9,8 +8,6 @@ import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
 import org.reflections.Reflections;
-import sun.management.Sensor;
-
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 

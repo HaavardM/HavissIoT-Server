@@ -13,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Created by HaavardM on 4/3/2015.
  * This class connects to a mongodb database and handles all storage.
  */
-public class IoTStorage  {
+public class IoTLogger {
 
     /*Variables*/
     private String serverAddress = ""; //Database address
@@ -35,7 +35,7 @@ public class IoTStorage  {
     /*Functions*/
 
     //Constructor - stores new values and connects to server
-    public IoTStorage(String serverAddress, int serverPort, String db) {
+    public IoTLogger(String serverAddress, int serverPort, String db) {
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
         this.connect(this.serverAddress, this.serverPort);
