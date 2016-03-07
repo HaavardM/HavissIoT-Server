@@ -13,18 +13,11 @@ public class Device implements APIRespond {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-            BufferedReader br = new BufferedReader(new InputStreamReader(httpExchange.getRequestBody()));
-            String s = null;
-            StringBuilder requestBuilder = new StringBuilder();
-            do {
-                s = br.readLine();
-                if(s != null)
-                    requestBuilder.append(s);
-            } while (s != null);
-            br.close();
-            HavissIoT.printMessage(s.toString());
+
+            HavissIoT.printMessage(httpExchange.getRequestURI().toString());
+            httpExchange.sendResponseHeaders(200, "Heisann".length());
             OutputStream os = httpExchange.getResponseBody();
-            os.write("200".getBytes());
+            os.write("Heisann".getBytes());
             os.close();
     }
 

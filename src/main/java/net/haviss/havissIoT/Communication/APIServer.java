@@ -20,7 +20,7 @@ public class APIServer {
 
 
     //<editor-fold desc="Variables">
-    private int port = 80;
+    private int port = 8000;
     //</editor-fold>
 
     public APIServer() throws HavissIoTHttpException {
