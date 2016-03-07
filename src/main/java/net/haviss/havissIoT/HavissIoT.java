@@ -63,6 +63,12 @@ public class HavissIoT {
         //All threads
         allThreads = new CopyOnWriteArrayList<>();
 
+        try {
+            APIServer apiServer = new APIServer();
+        } catch (HavissIoTHttpException e) {
+            HavissIoT.printMessage(e.getMessage());
+        }
+
         //Initialize IoT client
         if (Config.offlineMode) {
             printMessage("OFFLINE MODE! - No network connections");
