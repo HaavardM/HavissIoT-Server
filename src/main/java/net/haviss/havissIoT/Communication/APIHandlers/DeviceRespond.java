@@ -9,7 +9,7 @@ import java.io.*;
 /**
  * Created by Håvard on 07.03.2016.
  */
-public class Device implements APIRespond {
+public class DeviceRespond implements APIRespond {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
