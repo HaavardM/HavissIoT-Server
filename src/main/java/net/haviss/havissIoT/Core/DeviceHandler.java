@@ -2,6 +2,8 @@ package net.haviss.havissIoT.Core;
 
 import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Type.Room;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -31,7 +33,11 @@ public class DeviceHandler {
     }
 
     public Device[] getDevicesByRoom(Room room) {
-        List<Device> returnList = availableDevices.stream().filter(d -> d.getRoom() == room).collect(Collectors.toList());
+        List<Device> returnList = new ArrayList<>();
+        for(Device d : availableDevices) {
+            if(d.getRoom() == room)
+                returnList.add(d);
+        }
         if(returnList.size() > 0)
             return (Device[])returnList.toArray();
         else
