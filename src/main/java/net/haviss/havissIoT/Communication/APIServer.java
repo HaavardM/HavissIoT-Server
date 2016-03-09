@@ -1,12 +1,10 @@
 package net.haviss.havissIoT.Communication;
 
 import com.sun.net.httpserver.HttpServer;
-import net.haviss.havissIoT.Communication.APIHandlers.APIRespondTest;
-import net.haviss.havissIoT.Communication.APIHandlers.Device;
+import net.haviss.havissIoT.Communication.APIHandlers.DeviceRespond;
 import net.haviss.havissIoT.Exceptions.HavissIoTHttpException;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 /**
@@ -26,7 +24,7 @@ public class APIServer {
     public APIServer() throws HavissIoTHttpException {
         try {
             server = HttpServer.create(new InetSocketAddress(port), 0);
-            Device d = new Device();
+            DeviceRespond d = new DeviceRespond();
             server.createContext(d.getAPIPath(), d);
             server.setExecutor(null);
             server.start();

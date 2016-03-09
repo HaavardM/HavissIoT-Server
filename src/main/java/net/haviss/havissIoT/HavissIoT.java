@@ -139,7 +139,8 @@ public class HavissIoT {
                 int indexReached = 0;
                 for(String s : toPrint) {
                     String toWrite = (new Date().toString() + " " + s);
-                    System.out.println(toWrite); //Printing to console with
+                    if(!Config.enableBackground)
+                        System.out.println(toWrite); //Printing to console with
                     if(fileWriter != null && Config.enableLogging) {
                         try {
                             fileWriter.write((toWrite + "\n").getBytes());
