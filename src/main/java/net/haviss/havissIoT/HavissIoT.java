@@ -52,7 +52,7 @@ public class HavissIoT {
         //Set up user handler
         userHandler = new UserHandler();
 
-        DeviceHandler deviceHandler = new DeviceHandler();
+        final DeviceHandler deviceHandler = new DeviceHandler();
 
         //Load config from file
         System.out.println("Settings:\n");
