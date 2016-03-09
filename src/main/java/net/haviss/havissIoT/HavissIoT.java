@@ -6,6 +6,7 @@ import com.mongodb.async.client.MongoClient;
 import com.mongodb.async.client.MongoClients;
 import net.haviss.havissIoT.Communication.APIServer;
 import net.haviss.havissIoT.Communication.MQTTClient;
+import net.haviss.havissIoT.Core.DeviceHandler;
 import net.haviss.havissIoT.Core.UserHandler;
 import net.haviss.havissIoT.Exceptions.HavissIoTHttpException;
 import net.haviss.havissIoT.External.PublicIP;
@@ -51,6 +52,8 @@ public class HavissIoT {
         //Set up user handler
         userHandler = new UserHandler();
 
+        DeviceHandler deviceHandler = new DeviceHandler();
+
         //Load config from file
         System.out.println("Settings:\n");
 
@@ -90,11 +93,14 @@ public class HavissIoT {
                 @Override
                 public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
                     //TODO: Analyze message
+                    deviceHandler.deliverMessage(s, mqttMessage.toString());
+
                 }
 
                 @Override
                 public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-                    //No messages is delivered - should never be called
+                    //TODO: Use for critical device commands
+
 
                 }
             };

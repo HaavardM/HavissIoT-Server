@@ -1,22 +1,21 @@
 package net.haviss.havissIoT.Core;
 
-import net.haviss.havissIoT.Devices.Device;
+import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Type.Room;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
- * Created by havar on 06.03.2016.
+ * Created by haavard on 06.03.2016.
+ * Handles all available devices for the system.
  */
 public class DeviceHandler {
 
-    private CopyOnWriteArrayList<Device> availableSensors = new CopyOnWriteArrayList<>();
+    private CopyOnWriteArrayList<Device> availableDevices = new CopyOnWriteArrayList<>();
 
     public Device getDeviceByName(String name) {
-        for(Device d : availableSensors) {
+        for(Device d : availableDevices) {
             if(d.getName() == name)
                 return d;
         }
@@ -24,7 +23,7 @@ public class DeviceHandler {
     }
 
     public Device getDeviceByTopic(String topic) {
-        for(Device d : availableSensors) {
+        for(Device d : availableDevices) {
             if(d.getTopic() == topic)
                 return d;
         }
@@ -32,11 +31,15 @@ public class DeviceHandler {
     }
 
     public Device[] getDevicesByRoom(Room room) {
-        List<Device> returnList = availableSensors.stream().filter(d -> d.getRoom() == room).collect(Collectors.toList());
+        List<Device> returnList = availableDevices.stream().filter(d -> d.getRoom() == room).collect(Collectors.toList());
         if(returnList.size() > 0)
             return (Device[])returnList.toArray();
         else
             return null;
+    }
+
+    public void deliverMessage(String topic, String message) {
+        getDeviceByTopic(topic).messageArrived(topic, message);
     }
 
 

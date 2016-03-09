@@ -1,6 +1,7 @@
-package net.haviss.havissIoT.Devices;
+package net.haviss.havissIoT.Device.Devices;
 
 import net.haviss.havissIoT.Config;
+import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Type.Room;
@@ -13,7 +14,7 @@ public class ToggleDevice extends Device {
     public ToggleDevice(String name, String topic) {
         super(name, topic);
         try {
-            HavissIoT.client.subscribeToTopic(getTopic() + "/status", Config.qos);
+            HavissIoT.client.subscribeToTopic(getTopic() + "/*", Config.qos);
         } catch (HavissIoTMQTTException e) {
             HavissIoT.printMessage(e.getMessage());
         }
@@ -51,5 +52,15 @@ public class ToggleDevice extends Device {
         } catch (HavissIoTMQTTException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void messageArrived(String topic, String message) {
+
+    }
+
+    @Override
+    public void messageDelivered(String topic) {
+
     }
 }

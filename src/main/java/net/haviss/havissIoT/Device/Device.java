@@ -1,11 +1,11 @@
-package net.haviss.havissIoT.Devices;
+package net.haviss.havissIoT.Device;
 
 import net.haviss.havissIoT.Type.Room;
 
 /**
  * Created by havar on 06.03.2016.
  */
-public class Device {
+public abstract class Device implements DeviceCallback {
 
     private String name, topic = null;
     private Room room = null;

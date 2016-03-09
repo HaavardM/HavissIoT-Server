@@ -1,9 +1,13 @@
-package net.haviss.havissIoT.Devices;
+package net.haviss.havissIoT.Device.Devices;
 
 import net.haviss.havissIoT.Config;
+import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Type.Room;
+
+import java.text.ParseException;
+import java.util.IntSummaryStatistics;
 
 /**
  * Created by havar on 06.03.2016.
@@ -45,4 +49,19 @@ public class DimmerDevice extends Device {
     }
 
 
+    @Override
+    public void messageArrived(String topic, String message) {
+        if(topic == getTopic() + "/status") {
+            try {
+                status = Integer.parseInt(message);
+            } catch (NumberFormatException e) {
+                HavissIoT.printMessage(getName() + ": " + e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void messageDelivered(String topic) {
+        //TODO Handle not delivered if neccesary for device
+    }
 }
