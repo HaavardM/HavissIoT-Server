@@ -16,9 +16,12 @@ public class DeviceHandler {
 
     private CopyOnWriteArrayList<Device> availableDevices = new CopyOnWriteArrayList<>();
 
+    public DeviceHandler() {
+    }
+
     public Device getDeviceByName(String name) {
         for(Device d : availableDevices) {
-            if(d.getName() == name)
+            if(d.getName().compareTo(name) == 0)
                 return d;
         }
         return null;
@@ -26,7 +29,7 @@ public class DeviceHandler {
 
     public Device getDeviceByTopic(String topic) {
         for(Device d : availableDevices) {
-            if(d.getTopic() == topic)
+            if(d.getTopic().compareTo(topic) == 0)
                 return d;
         }
         return null;
