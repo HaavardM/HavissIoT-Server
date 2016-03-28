@@ -2,12 +2,10 @@ package net.haviss.havissIoT.Device.Devices;
 
 import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Device.Device;
+import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
 import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
 import net.haviss.havissIoT.HavissIoT;
 import net.haviss.havissIoT.Type.Room;
-
-import java.text.ParseException;
-import java.util.IntSummaryStatistics;
 
 /**
  * Created by havar on 06.03.2016.
@@ -50,14 +48,25 @@ public class DimmerDevice extends Device {
 
 
     @Override
-    public void messageArrived(String topic, String message) {
-        if(topic == getTopic() + "/status") {
-            try {
-                status = Integer.parseInt(message);
-            } catch (NumberFormatException e) {
-                HavissIoT.printMessage(getName() + ": " + e.getMessage());
+    public void messageArrived(String topic, String message) throws HavissIoTDeviceException {
+            String subTopic;
+            if((subTopic = getSubTopic(topic)) != null) {
+                switch (subTopic) {
+                    case "/status":
+                        //<editor-fold desc="Parse status">
+                        try {
+                            status = Integer.parseInt(message);
+                        } catch (NumberFormatException e) {
+                            throw new HavissIoTDeviceException(this, "Parse error on " + topic);
+                        }
+                        if (status > 255 || status < 0)
+                            this.status = status;
+                        else
+                            throw new HavissIoTDeviceException(this, "Status value not within interval on " + topic);
+                        //</editor-fold>
+                        break;
+                }
             }
-        }
     }
 
     @Override

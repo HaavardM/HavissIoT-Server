@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,32 +38,57 @@ public class HavissIoT {
     public static CopyOnWriteArrayList<Thread> allThreads;
     private static CopyOnWriteArrayList<String> toPrint;
 
-
     //Main method
     public static void main(String args[]) {
 
-        //Load logger and config
-
         System.out.println("\nhavissIoT server\n");
+        //Read arguments from args array
+        //<editor-fold desc="Program parameters">
+        HashMap<String, String> arguments = new HashMap<>();
+        for(int i = 0; i < args.length; i++) {
+            if(args[i].startsWith("-")) {
+                if((i+1) < args.length && !args[i+1].startsWith("-")) {
+                    arguments.put(args[i], args[i+1]);
+                } else {
+                    arguments.put(args[i], null);
+                }
+            }
+        }
+        for(String s : arguments.keySet()) {
+            switch (s) {
+                case "-c":
+                    //<editor-fold desc="Alternate config file">
+                    String filePath = arguments.get(s);
+                    if(filePath != null)
+                        try {
+                            Config.loadExtConfigFile(filePath);
+                        } catch (IOException e) {
+                            //TODO: Better error handling
+                            e.printStackTrace();
+                        }
+                    //</editor-fold>
 
-        Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
-        mongoLogger.setLevel(Level.SEVERE);
-        Config.loadConfig("/config.properties");
-
+            }
+        }
+        //</editor-fold>
+        //Load config file if not done already
+        //<editor-fold desc="Load config">
+        try {
+            if(!Config.propIsLoaded())
+                Config.loadConfigFile("/config.properties");
+        } catch (IOException e) {
+            //TODO: Better error handling here
+            e.printStackTrace();
+        }
+        //</editor-fold>
+        //Initialize neccesary objects
+        //<editor-fold desc="Initialize handlers and objects">
         //Set up user handler
         userHandler = new UserHandler();
-
+        //Initalize device handler
         final DeviceHandler deviceHandler = new DeviceHandler();
-
-        //Load config from file
-        System.out.println("Settings:\n");
-
-        //Print device settings to console
-        printSettings();
-
         //Initialize toPrint list.
         toPrint = new CopyOnWriteArrayList<>();
-
         //All threads
         allThreads = new CopyOnWriteArrayList<>();
 
@@ -71,8 +97,9 @@ public class HavissIoT {
         } catch (HavissIoTHttpException e) {
             HavissIoT.printMessage(e.getMessage());
         }
-
+        //</editor-fold>
         //Initialize IoT client
+        //<editor-fold desc="IoTClient">
         if (Config.offlineMode) {
             printMessage("OFFLINE MODE! - No network connections");
             printMessage("Application is ready");
@@ -119,7 +146,9 @@ public class HavissIoT {
                 System.exit(1);
             }
         }
-
+        //</editor-fold>
+        //Initalize log file if needed
+        //<editor-fold desc="Logging">
         FileOutputStream fileWriter = null;
         if(Config.enableLogging) {
             File logFile = new File("log.txt");
@@ -131,7 +160,12 @@ public class HavissIoT {
                 fileWriter = null;
             }
         }
+        //</editor-fold>
 
+        //Load config from file
+        System.out.println("Settings:\n");
+        //Print device settings to console
+        printSettings();
         //Application must run forever
         while(!Thread.currentThread().isInterrupted()) {
             //If there is something to print
@@ -175,7 +209,8 @@ public class HavissIoT {
         System.out.println("\nServer settings:");
         System.out.println("Server port:\t" + Integer.toString(Config.serverPort));
         System.out.println("Number of clients:\t" + Integer.toString(Config.numbOfClients));
-        System.out.println("Public IP address\t" + PublicIP.getPublicIP());
+        if(!Config.offlineMode)
+            System.out.println("Public IP address\t" + PublicIP.getPublicIP());
         try {
             System.out.println("Local IP address:\t" + InetAddress.getLocalHost());
         } catch (UnknownHostException e) {
@@ -183,7 +218,6 @@ public class HavissIoT {
         }
         System.out.print("\n");
     }
-
     //Add new message and notify thread
     public static synchronized void printMessage(String message) {
         toPrint.add(message);
@@ -191,7 +225,6 @@ public class HavissIoT {
             threadLock.notify();
         }
     }
-
     //Shutdown all threads and disconnects from all servers
     //TODO: Not working properly
     public static synchronized void exit(int status) {

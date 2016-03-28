@@ -1,10 +1,21 @@
 package net.haviss.havissIoT.Exceptions;
 
+import net.haviss.havissIoT.Device.Device;
+
 /**
- * Created by Håvard on 7/13/2015.
+ * Created by Hï¿½vard on 7/13/2015.
  */
 public class HavissIoTDeviceException extends Exception {
-    public HavissIoTDeviceException(String message) {
+
+    private Device device;
+
+    public HavissIoTDeviceException(Device device, String message) {
         super(message);
+        this.device = device;
     }
+
+    public Device getDevice() {
+        return this.device;
+    }
+
 }

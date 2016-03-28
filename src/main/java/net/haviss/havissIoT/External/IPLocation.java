@@ -7,7 +7,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import net.haviss.havissIoT.HavissIoT;
 
 /**
- * Created by Håvard on 6/7/2015.
+ * Created by Hï¿½vard on 6/7/2015.
  * Gets the location of a public IP address
  */
 public class IPLocation {

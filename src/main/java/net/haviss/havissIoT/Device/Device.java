@@ -33,4 +33,12 @@ public abstract class Device implements DeviceCallback {
     public Room getRoom() {
         return room;
     }
+
+    public String getSubTopic(String topic) {
+        if(topic.contains(this.topic)) {
+            return topic.replace(getTopic(), "");
+        }
+        else
+            return null;
+    }
 }

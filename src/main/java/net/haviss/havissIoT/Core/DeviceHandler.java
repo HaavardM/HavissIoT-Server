@@ -1,12 +1,12 @@
 package net.haviss.havissIoT.Core;
 
 import net.haviss.havissIoT.Device.Device;
+import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
 import net.haviss.havissIoT.Type.Room;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
 /**
  * Created by haavard on 06.03.2016.
@@ -44,7 +44,7 @@ public class DeviceHandler {
             return null;
     }
 
-    public void deliverMessage(String topic, String message) {
+    public void deliverMessage(String topic, String message) throws HavissIoTDeviceException {
         getDeviceByTopic(topic).messageArrived(topic, message);
     }
 
