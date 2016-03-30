@@ -19,6 +19,7 @@ public class DeviceRespond implements APIRespond {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         String method = httpExchange.getRequestMethod();
+        /*Halla*/
 
         URI path = httpExchange.getRequestURI();
         String query = path.getQuery();
