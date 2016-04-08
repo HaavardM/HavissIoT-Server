@@ -23,7 +23,7 @@ public class APIServer {
 
     public APIServer() throws HavissIoTHttpException {
         try {
-            server = HttpServer.create(new InetSocketAddress(port), 0);
+            server = HttpServer.create(new InetSocketAddress(port),0);
             DeviceRespond d = new DeviceRespond();
             server.createContext(d.getAPIPath(), d);
             server.setExecutor(null);

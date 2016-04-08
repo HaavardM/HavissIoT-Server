@@ -32,7 +32,7 @@ public class DeviceRespond implements APIRespond {
                 param.put(p[0], null);
         }
         Set<String> keySet = param.keySet();
-        if(keySet.contains("name"))
+
     }
 
     @Override
