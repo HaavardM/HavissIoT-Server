@@ -82,10 +82,10 @@ public class Config {
                 sensorsCollection = getProperty("sensors_collection");
                 isLoaded = true;
             } catch (NumberFormatException e) {
-                HavissIoT.printMessage(e.getMessage());
+                Main.printMessage(e.getMessage());
             }
         } else {
-            HavissIoT.printMessage("Properties couldt be loaded");
+            Main.printMessage("Properties couldt be loaded");
         }
 
     }
@@ -95,7 +95,7 @@ public class Config {
     }
     //Get property value
     public static String getProperty(String prop) {
-        String property = getProperty(prop);
+        String property = properties.getProperty(prop);
         if(property == null)
             return "";
         return property;

@@ -3,7 +3,8 @@ package net.haviss.havissIoT.Communication;
 import com.google.gson.*;
 import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Core.CommandHandler;
-import net.haviss.havissIoT.HavissIoT;
+import net.haviss.havissIoT.Main;
+import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
 
@@ -52,7 +53,7 @@ public class SocketClient implements Runnable {
             this.socket.setSoTimeout(Config.readTimeout);
         } catch (IOException e) {
             //Exception is unexpected
-            HavissIoT.printMessage(e.getMessage());
+            Main.printMessage(e.getMessage());
             input = null;
             output = null;
             connectionClosed = true;
@@ -60,13 +61,13 @@ public class SocketClient implements Runnable {
         //Starting thread
         if(clientThread == null) {
              clientThread = new Thread(this, threadName);
-            HavissIoT.allThreads.add(clientThread);
+            Main.allThreads.add(clientThread);
             clientThread.start();
         }
     }
     @Override
     public void run() {
-        HavissIoT.printMessage("New client thread started");
+        Main.printMessage("New client thread started");
         //Load new commandhandler and load I/O-streams
         CommandHandler commandHandler = new CommandHandler();
 
@@ -87,7 +88,7 @@ public class SocketClient implements Runnable {
                 public void actionPerformed(ActionEvent e) {
                     if (System.currentTimeMillis() - lastActivity > Config.keepAlive) {
                         connectionClosed = true;
-                        HavissIoT.printMessage("Client " + Integer.toString(clientNum) + " timed out!");
+                        Main.printMessage("Client " + Integer.toString(clientNum) + " timed out!");
                     }
                 }
             });
@@ -107,36 +108,40 @@ public class SocketClient implements Runnable {
                 if(input.ready()) {
                     commandString = input.readLine();
                     if(Config.debugMode) {
-                        HavissIoT.printMessage("commandstring: " + commandString);
+                        Main.printMessage("commandstring: " + commandString);
                     }
                     lastActivity = System.currentTimeMillis();
                     if(commandString == null) {
                         connectionClosed = true;
+                    } else if(commandString.toLowerCase().compareTo("ping") == 0) {
+                        if(Config.debugMode)
+                            Main.printMessage("Client " + Integer.toString(clientNum) + " pinged");
+
                     } else if(commandString.compareTo("close") == 0) {
                         connectionClosed = true;
                     } else if(isValidJson(commandString) && parser.parse(commandString).isJsonObject())  {
                         //Print to console
-                        HavissIoT.printMessage(this.threadName + ": " + commandString);
+                        Main.printMessage(this.threadName + ": " + commandString);
                         JsonObject object = parser.parse(commandString).getAsJsonObject();
 
                         if ( object != null && object.has("user")) {
                             if (object.has("password")) {
-                                this.user = HavissIoT.userHandler.getUser(object.get("user").getAsString(), object.get("password").getAsString().toCharArray());
+                                this.user = Main.userHandler.getUser(object.get("user").getAsString(), object.get("password").getAsString().toCharArray());
                             } else {
-                                this.user = HavissIoT.userHandler.getUser(object.get("user").getAsString());
+                                this.user = Main.userHandler.getUser(object.get("user").getAsString());
                             }
                         }
 
                         if (object != null && object.has("cmd")) {
-                            command = object.get("cmd").getAsString().toUpperCase();
+                            command = object.get("cmd").getAsString().toLowerCase();
                             if(Config.debugMode) {
-                                HavissIoT.printMessage("cmd: " + command);
+                                Main.printMessage("cmd: " + command);
                             }
                             if(object.has("args") && object.get("args").isJsonObject()) {
                                 arguments = object.get("args").getAsJsonObject();
                                 result = commandHandler.processCommand(command, arguments, this.user, this);
                                 if(Config.debugMode) {
-                                    HavissIoT.printMessage("args: " + arguments.toString());
+                                    Main.printMessage("args: " + arguments.toString());
                                 }
                             } else {
                                 result = commandHandler.processCommand(command, this.user, this);
@@ -150,18 +155,21 @@ public class SocketClient implements Runnable {
                         //Process response and build json object
                         response = processResult(result, command, arguments);
                         if(Config.debugMode) {
-                            HavissIoT.printMessage("Replying: " + response.toString());
+                            Main.printMessage("Replying: " + response.toString());
                         }
                         //Send data back to client and flush output buffer
-                        output.write(response.toString());
-                        output.write("\n");
+                        String toSend = response.toString();
+                        int length = toSend.length();
+                        output.write(Integer.toString(length) + "\n");
+                        output.flush();
+                        output.write(toSend);
                         output.flush();
                     } else {
-                        HavissIoT.printMessage(commandString);
+                        Main.printMessage(commandString);
                     }
                 }
             } catch (SocketTimeoutException e) {
-                HavissIoT.printMessage(e.getMessage());
+                Main.printMessage(e.getMessage());
             } catch (JsonParseException e) {
               //TODO: Mabye do something here?
             } catch (IOException e) {
@@ -174,18 +182,18 @@ public class SocketClient implements Runnable {
         try {
             input.close();
             output.close();
-            HavissIoT.printMessage("Client" + Integer.toString(clientNum) + " disconnected");
+            Main.printMessage("Client" + Integer.toString(clientNum) + " disconnected");
             socket.close(); //Close socket
             socketCommunication.removeOneClient(clientNum); //Remove one connected client
             if(timeOutTimer != null) {
                 timeOutTimer.stop();
             }
         } catch (IOException e) {
-            HavissIoT.printMessage(e.getMessage());
+            Main.printMessage(e.getMessage());
         }
 
         //Remove thread when it shutdown
-        HavissIoT.allThreads.remove(clientThread);
+        Main.allThreads.remove(clientThread);
     }
 
     //Send message to client
@@ -194,7 +202,7 @@ public class SocketClient implements Runnable {
             try {
                 output.write(s + "\n");
             } catch (IOException e) {
-                HavissIoT.printMessage(e.getMessage());
+                Main.printMessage(e.getMessage());
             }
         }
     }

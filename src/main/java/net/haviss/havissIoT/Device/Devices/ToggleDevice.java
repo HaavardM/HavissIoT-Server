@@ -3,7 +3,9 @@ package net.haviss.havissIoT.Device.Devices;
 import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
-import net.haviss.havissIoT.HavissIoT;
+import net.haviss.havissIoT.Main;
+import net.haviss.havissIoT.Type.DeviceType;
+import net.haviss.havissIoT.Type.IoTDataType;
 import net.haviss.havissIoT.Type.Room;
 
 /**
@@ -12,28 +14,28 @@ import net.haviss.havissIoT.Type.Room;
 public class ToggleDevice extends Device {
     private boolean state = false;
     public ToggleDevice(String name, String topic) {
-        super(name, topic);
+        super(name, topic, DeviceType.Toggle, IoTDataType.Boolean);
         try {
-            HavissIoT.client.subscribeToTopic(getTopic() + "/*", Config.qos);
+            Main.client.subscribeToTopic(getTopic() + "/*", Config.qos);
         } catch (HavissIoTMQTTException e) {
-            HavissIoT.printMessage(e.getMessage());
+            Main.printMessage(e.getMessage());
         }
     }
 
     public ToggleDevice(String name, String topic, Room room) {
-        super(name, topic, room);
+        super(name, topic, DeviceType.Toggle, IoTDataType.Boolean, room);
         try {
-            HavissIoT.client.subscribeToTopic(getTopic() + "/status", Config.qos);
+            Main.client.subscribeToTopic(getTopic() + "/status", Config.qos);
         } catch (HavissIoTMQTTException e) {
-            HavissIoT.printMessage(e.getMessage());
+            Main.printMessage(e.getMessage());
         }
     }
 
     public void toggle() {
         try {
-            HavissIoT.client.publishMessage(getTopic(), Boolean.toString(!state));
+            Main.client.publishMessage(getTopic(), Boolean.toString(!state));
         } catch (HavissIoTMQTTException e) {
-            HavissIoT.printMessage(e.getMessage());
+            Main.printMessage(e.getMessage());
         }
     }
 
@@ -43,12 +45,12 @@ public class ToggleDevice extends Device {
         else if(value.toLowerCase() == "true")
             state = true;
         else
-            HavissIoT.printMessage("Incorrect message on " + getName());
+            Main.printMessage("Incorrect message on " + getName());
     }
 
     public void setState(boolean state) {
         try {
-            HavissIoT.client.publishMessage(getTopic() + "/set",Boolean.toString(state));
+            Main.client.publishMessage(getTopic() + "/set",Boolean.toString(state));
         } catch (HavissIoTMQTTException e) {
             e.printStackTrace();
         }

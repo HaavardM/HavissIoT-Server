@@ -2,7 +2,11 @@ package net.haviss.havissIoT.Sensors;
 
 
 
+import net.haviss.havissIoT.Exceptions.HavissIoTSensorException;
+import net.haviss.havissIoT.Type.IoTDataType;
 import net.haviss.havissIoT.Type.Room;
+import net.haviss.havissIoT.Type.SensorType;
+import net.haviss.havissIoT.Type.SensorUnit;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -11,14 +15,18 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TemperatureSensor extends IoTSensor {
 
-
-
-    public TemperatureSensor(@NotNull String name, @NotNull String topic, @NotNull String type) {
-        super(name, topic, type);
+    public TemperatureSensor(@NotNull String name, @NotNull String topic, SensorUnit unit) throws HavissIoTSensorException {
+        super(name, topic, SensorType.Temperature, IoTDataType.Double, unit);
+        if(unit == SensorUnit.Celsius || unit == SensorUnit.Fahrenheit || unit == SensorUnit.Kelvin) {
+            throw new HavissIoTSensorException("incorrect data type");
+        }
     }
 
-    public TemperatureSensor(@NotNull String name, @NotNull String topic, @NotNull String type, Room room) {
-        super(name, topic, type, room);
+    public TemperatureSensor(@NotNull String name, @NotNull String topic, @NotNull String type, SensorUnit unit, Room room) throws HavissIoTSensorException {
+        super(name, topic, SensorType.Temperature, IoTDataType.Double, unit, room);
+        if(unit == SensorUnit.Celsius || unit == SensorUnit.Fahrenheit || unit == SensorUnit.Kelvin) {
+            throw new HavissIoTSensorException("incorrect data type");
+        }
     }
 
     public double getTempC() throws NumberFormatException {

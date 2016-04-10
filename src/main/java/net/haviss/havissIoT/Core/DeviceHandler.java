@@ -47,8 +47,23 @@ public class DeviceHandler {
             return null;
     }
 
+    public  Device[] getAllDevices() {
+        Device[] devices = new Device[availableDevices.size()];
+        availableDevices.toArray(devices);
+        return  devices;
+    }
+
     public void deliverMessage(String topic, String message) throws HavissIoTDeviceException {
         getDeviceByTopic(topic).messageArrived(topic, message);
+    }
+
+    public void addDevice(Device device) {
+        for (Device d : availableDevices) {
+            if(device.getName().compareTo(d.getName()) + device.getTopic().compareTo(d.getTopic()) == 0) {
+                return;
+            }
+        }
+        availableDevices.add(device);
     }
 
 

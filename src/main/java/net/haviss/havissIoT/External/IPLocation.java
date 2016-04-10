@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import net.haviss.havissIoT.HavissIoT;
+import net.haviss.havissIoT.Main;
 
 /**
  * Created by H�vard on 6/7/2015.
@@ -20,7 +20,7 @@ public class IPLocation {
                             .getBody())
                     .getAsJsonObject();
         } catch (UnirestException e) {
-            HavissIoT.printMessage(e.getMessage());
+            Main.printMessage(e.getMessage());
             //Return null if request error
             return null;
         }

@@ -17,11 +17,11 @@ public class CommandConfig implements CommandCallback {
         String intent;
         try {
             if (parameters.has("intent")) {
-                intent = parameters.get("intent").getAsString().toUpperCase();
+                intent = parameters.get("intent").getAsString().toLowerCase();
             } else {
                 return Integer.toString(HttpStatus.SC_BAD_REQUEST);
             }
-            if(intent.compareTo("GET") == 0) {
+            if(intent.compareTo("get") == 0) {
                 return getConfig();
             }
             return Integer.toString(HttpStatus.SC_NOT_FOUND);
@@ -55,7 +55,7 @@ public class CommandConfig implements CommandCallback {
 
     @Override
     public String getName() {
-        return "CONFIG";
+        return "config";
     }
 
     @Override

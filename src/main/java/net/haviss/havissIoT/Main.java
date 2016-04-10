@@ -4,15 +4,16 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoException;
 import com.mongodb.async.client.MongoClient;
 import com.mongodb.async.client.MongoClients;
-import net.haviss.havissIoT.Communication.APIServer;
 import net.haviss.havissIoT.Communication.MQTTClient;
+import net.haviss.havissIoT.Communication.SocketServer;
 import net.haviss.havissIoT.Core.DeviceHandler;
 import net.haviss.havissIoT.Core.UserHandler;
-import net.haviss.havissIoT.Exceptions.HavissIoTHttpException;
+import net.haviss.havissIoT.Device.Devices.TestDataLogger;
 import net.haviss.havissIoT.External.PublicIP;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,19 +22,21 @@ import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 /**
  * Created by HaavardM on 5/3/2015.
  * Main class
  */
-public class HavissIoT {
+public class Main {
+
 
     /*Objects*/
     public static MQTTClient client;
     public static MongoClient mongoClient;
     public static UserHandler userHandler;
+    public static SocketServer socketServer;
+    public static DeviceHandler deviceHandler = new DeviceHandler();
     public static final Object threadLock = new Object();
     public static CopyOnWriteArrayList<Thread> allThreads;
     private static CopyOnWriteArrayList<String> toPrint;
@@ -85,18 +88,15 @@ public class HavissIoT {
         //<editor-fold desc="Initialize handlers and objects">
         //Set up user handler
         userHandler = new UserHandler();
-        //Initalize device handler
-        final DeviceHandler deviceHandler = new DeviceHandler();
         //Initialize toPrint list.
         toPrint = new CopyOnWriteArrayList<>();
         //All threads
         allThreads = new CopyOnWriteArrayList<>();
 
-        try {
-            APIServer apiServer = new APIServer();
-        } catch (HavissIoTHttpException e) {
-            HavissIoT.printMessage(e.getMessage());
-        }
+        deviceHandler.addDevice(new TestDataLogger("dataLogger", "haviss/house/datalogger"));
+        deviceHandler.addDevice(new TestDataLogger("dataLogger1", "haviss/house/datalogger1"));
+        deviceHandler.addDevice(new TestDataLogger("dataLogger2", "haviss/house/datalogger2"));
+
         //</editor-fold>
         //Initialize IoT client
         //<editor-fold desc="IoTClient">
@@ -106,12 +106,13 @@ public class HavissIoT {
         } else {
             client = new MQTTClient(Config.clientID);
             client.connect(Config.brokerAddress, Config.brokerPort);
+            socketServer = new SocketServer(Config.serverPort, Config.numbOfClients);
 
             //Setting up new callback for client
             MqttCallback callback = new MqttCallback() {
                 @Override
                 public void connectionLost(Throwable throwable) {
-                    HavissIoT.printMessage("MQTT broker connection lost: " + throwable.getMessage());
+                     Main.printMessage("MQTT broker connection lost: " + throwable.getMessage());
                     client.disconnect();
                     client = new MQTTClient(Config.clientID);
                     client.connect(Config.brokerAddress, Config.brokerPort);
@@ -132,12 +133,6 @@ public class HavissIoT {
                 }
             };
             client.setCallback(callback);
-
-            try {
-                mongoClient = MongoClients.create(new ConnectionString("mongodb://" + Config.databaseAddress));
-            } catch (MongoException e) {
-                printMessage(e.getMessage());
-            }
             //Everything is started
             if(client.isConnected()) {
                 printMessage("Application is ready");
