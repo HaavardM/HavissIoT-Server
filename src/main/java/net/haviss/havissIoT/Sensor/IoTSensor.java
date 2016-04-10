@@ -1,9 +1,5 @@
 package net.haviss.havissIoT.Sensor;
 
-import com.mongodb.async.client.MongoCollection;
-import net.haviss.havissIoT.HavissIoT;
-import org.bson.Document;
-
 /**
  * Created by H�vard on 5/16/2015.
  */

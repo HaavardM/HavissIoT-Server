@@ -70,7 +70,7 @@ public class Config {
             debugMode = Boolean.parseBoolean(getProperty("debug_mode"));
             enableLogging = Boolean.parseBoolean(getProperty("enable_logging"));
         } catch (IOException | NumberFormatException e) {
-            HavissIoT.printMessage(e.getMessage());
+            Main.printMessage(e.getMessage());
         }
 
     }

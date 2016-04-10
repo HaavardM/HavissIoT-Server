@@ -2,12 +2,12 @@ package net.haviss.havissIoT.Device;
 
 import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
-import net.haviss.havissIoT.HavissIoT;
+import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Tools.Topic;
 import org.apache.http.HttpStatus;
 
 /**
- * Created by Håvard on 7/13/2015.
+ * Created by Hï¿½vard on 7/13/2015.
  */
 public class PhotonLight implements DeviceCallback<Boolean> {
 
@@ -24,9 +24,9 @@ public class PhotonLight implements DeviceCallback<Boolean> {
         String toSend;
         toSend = parameters ? "on" : "off";
         try {
-            HavissIoT.client.publishMessage(getDeviceTopic(), toSend);
+            Main.client.publishMessage(getDeviceTopic(), toSend);
         } catch (HavissIoTMQTTException e) {
-            HavissIoT.printMessage(e.getMessage());
+            Main.printMessage(e.getMessage());
         }
         return Integer.toString(HttpStatus.SC_OK);
     }

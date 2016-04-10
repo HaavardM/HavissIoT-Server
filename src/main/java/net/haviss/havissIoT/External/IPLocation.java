@@ -2,13 +2,12 @@ package net.haviss.havissIoT.External;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import net.haviss.havissIoT.HavissIoT;
+import net.haviss.havissIoT.Main;
 
 /**
- * Created by Håvard on 6/7/2015.
+ * Created by Hï¿½vard on 6/7/2015.
  * Gets the location of a public IP address
  */
 public class IPLocation {
@@ -21,7 +20,7 @@ public class IPLocation {
                             .getBody())
                     .getAsJsonObject();
         } catch (UnirestException e) {
-            HavissIoT.printMessage(e.getMessage());
+            Main.printMessage(e.getMessage());
             //Return null if request error
             return null;
         }

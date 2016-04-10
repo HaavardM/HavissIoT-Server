@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  * Created by HaavardM on 5/3/2015.
  * Main class
  */
-public class HavissIoT {
+public class Main {
 
     /*Objects*/
     public static IoTClient client;
@@ -34,6 +34,7 @@ public class HavissIoT {
     public static UserHandler userHandler;
     public static final SensorHandler sensorHandler = new SensorHandler();
     public static final Object threadLock = new Object();
+    public static SocketServer socketServer;
     public static CopyOnWriteArrayList<Thread> allThreads;
     private static CopyOnWriteArrayList<String> toPrint;
 
@@ -72,7 +73,7 @@ public class HavissIoT {
             MqttCallback callback = new MqttCallback() {
                 @Override
                 public void connectionLost(Throwable throwable) {
-                    HavissIoT.printMessage("MQTT broker connection lost: " + throwable.getMessage());
+                    Main.printMessage("MQTT broker connection lost: " + throwable.getMessage());
                     client.disconnect();
                     client = new IoTClient(Config.clientID);
                     client.connect(Config.brokerAddress, Config.brokerPort);
@@ -83,7 +84,7 @@ public class HavissIoT {
                     IoTSensor sensor = sensorHandler.getSensorByTopic(s);
                     if (sensor != null) {
                         if (sensor.getStorage()) {
-                            HavissIoT.storage.storeSensorValue(sensor, mqttMessage.toString());
+                            Main.storage.storeSensorValue(sensor, mqttMessage.toString());
                         }
                         sensor.updateValue(mqttMessage.toString());
                     }

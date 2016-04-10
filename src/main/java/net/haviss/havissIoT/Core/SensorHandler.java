@@ -7,7 +7,7 @@ import com.google.gson.JsonParser;
 import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
 import net.haviss.havissIoT.Exceptions.HavissIoTSensorException;
-import net.haviss.havissIoT.HavissIoT;
+import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Sensor.IoTSensor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,9 +45,9 @@ public class SensorHandler {
             availableSensors.add(new IoTSensor(name, topic, type, toStore, timeout ));
             sensorNames.add(name);
             try {
-                HavissIoT.client.subscribeToTopic(topic, Config.qos);
+                Main.client.subscribeToTopic(topic, Config.qos);
             } catch (HavissIoTMQTTException e) {
-                HavissIoT.printMessage(e.getMessage());
+                Main.printMessage(e.getMessage());
             }
             this.writeToFile();
         }
@@ -61,10 +61,10 @@ public class SensorHandler {
                 availableSensors.remove(s);
                 sensorNames.remove(s.getName());
                 try {
-                    HavissIoT.client.unsubscribeToTopic(s.getTopic());
+                    Main.client.unsubscribeToTopic(s.getTopic());
                     sensorRemoved = true;
                 } catch (HavissIoTMQTTException e) {
-                    HavissIoT.printMessage(e.getMessage());
+                    Main.printMessage(e.getMessage());
                 }
                 break;
             }
@@ -82,9 +82,9 @@ public class SensorHandler {
                 availableSensors.remove(s);
                 sensorNames.remove(s.getName());
                 try {
-                    HavissIoT.client.unsubscribeToTopic(s.getTopic());
+                    Main.client.unsubscribeToTopic(s.getTopic());
                 } catch (HavissIoTMQTTException e) {
-                    HavissIoT.printMessage(e.getMessage());
+                    Main.printMessage(e.getMessage());
                 }
             }
         }
@@ -150,7 +150,7 @@ public class SensorHandler {
                     availableSensors.add(new IoTSensor(name, topic, type, toStore, timeout));
                 }
             } catch (JsonParseException e) {
-                HavissIoT.printMessage("Json parse error: " + e.getMessage());
+                Main.printMessage("Json parse error: " + e.getMessage());
             }
         }
     }

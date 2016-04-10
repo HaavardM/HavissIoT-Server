@@ -3,7 +3,7 @@ package net.haviss.havissIoT.Storage;
 import com.mongodb.*;
 import com.mongodb.async.SingleResultCallback;
 import com.mongodb.async.client.*;
-import net.haviss.havissIoT.HavissIoT;
+import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Sensor.IoTSensor;
 import org.bson.Document;
 import java.util.*;
@@ -64,7 +64,7 @@ public class IoTStorage  {
             //Insert document to database
             db.getCollection(sensor.getName()).insertOne(document, finishedCallBack);
         } catch (MongoException e) {
-            HavissIoT.printMessage("MONGO WRITE ERROR: " + e.getMessage());
+            Main.printMessage("MONGO WRITE ERROR: " + e.getMessage());
         }
     }
 

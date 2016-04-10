@@ -2,7 +2,7 @@ package net.haviss.havissIoT.Command;
 
 import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Communication.SocketClient;
-import net.haviss.havissIoT.HavissIoT;
+import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
 
@@ -13,7 +13,7 @@ public class CommandExit implements CommandCallback {
     @Override
     public String run(JsonObject parameters, User user, SocketClient client) {
         if(user != null && user.isOP()) {
-            HavissIoT.exit(0);
+            Main.exit(0);
         }
         return Integer.toString(HttpStatus.SC_UNAUTHORIZED);
     }

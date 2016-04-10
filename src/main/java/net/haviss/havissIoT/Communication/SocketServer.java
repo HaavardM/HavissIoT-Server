@@ -1,10 +1,9 @@
 package net.haviss.havissIoT.Communication;
 
 import net.haviss.havissIoT.Config;
-import net.haviss.havissIoT.HavissIoT;
+import net.haviss.havissIoT.Main;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
@@ -31,7 +30,7 @@ public class SocketServer implements Runnable  {
         Arrays.fill(this.clientNames, false);
         if(serverThread == null) {
             serverThread = new Thread(this, this.threadName);
-            HavissIoT.allThreads.add(serverThread);
+            Main.allThreads.add(serverThread);
             serverThread.start();
         }
     }
@@ -43,7 +42,7 @@ public class SocketServer implements Runnable  {
             //Socket connection between server and client
             Socket socket = null;
             ServerSocket serverSocket = new ServerSocket(serverPort); //Serversocket
-
+            Main.printMessage("Socket server is listening on port " + Integer.toString(serverPort));
             //Run as long thread isn't interrupted
             while (!Thread.interrupted()) {
 
@@ -55,8 +54,8 @@ public class SocketServer implements Runnable  {
                             //Start new thread for new client
                             new SocketClient(socket, this, i);
                             connectedClients.incrementAndGet();
-                            HavissIoT.printMessage("Client " + Integer.toString(i) + " connected");
-                            HavissIoT.printMessage("Number of clients: " + Integer.toString(connectedClients.get()));
+                            Main.printMessage("Client " + Integer.toString(i) + " connected");
+                            Main.printMessage("Number of clients: " + Integer.toString(connectedClients.get()));
                             break;
                         }
                     }
@@ -71,7 +70,7 @@ public class SocketServer implements Runnable  {
             e.printStackTrace();
         }
         //Remove thread from list on finish
-        HavissIoT.allThreads.remove(serverThread);
+        Main.allThreads.remove(serverThread);
     }
 
     //Method for decrementing number of clients - if client disconnects

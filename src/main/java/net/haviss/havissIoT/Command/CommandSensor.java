@@ -1,12 +1,11 @@
 package net.haviss.havissIoT.Command;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Communication.SocketClient;
 import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Exceptions.HavissIoTSensorException;
-import net.haviss.havissIoT.HavissIoT;
+import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Sensor.IoTSensor;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
@@ -22,16 +21,16 @@ public class CommandSensor implements CommandCallback {
         String intent;
         boolean isOP = user != null && user.isOP();
         if(!parameters.isJsonObject() && Config.debugMode) {
-            HavissIoT.printMessage("Error with args");
+            Main.printMessage("Error with args");
         }
         if (parameters.has("intent")) {
             intent = parameters.get("intent").getAsString().toUpperCase();
             if(Config.debugMode) {
-                HavissIoT.printMessage(intent);
+                Main.printMessage(intent);
             }
         } else {
             if(Config.debugMode) {
-                HavissIoT.printMessage("No intent");
+                Main.printMessage("No intent");
             }
             //Return bad request if there is no intent key in JSON
             return Integer.toString(HttpStatus.SC_BAD_REQUEST);
@@ -51,11 +50,11 @@ public class CommandSensor implements CommandCallback {
             }
             return Integer.toString(HttpStatus.SC_SERVICE_UNAVAILABLE);
         } else if (intent.compareTo("LIST") == 0) {
-            HavissIoT.printMessage("Listing all sensors");
+            Main.printMessage("Listing all sensors");
             return list();
         } else if (intent.compareTo("SAVE") == 0) {
             if(isOP) {
-                HavissIoT.sensorHandler.writeToFile();
+                Main.sensorHandler.writeToFile();
                 return Integer.toString(HttpStatus.SC_OK);
             }
             return Integer.toString(HttpStatus.SC_SERVICE_UNAVAILABLE);
@@ -95,7 +94,7 @@ public class CommandSensor implements CommandCallback {
                     timeout = parameters.get("timeout").getAsLong();
                 }
             } catch (ClassCastException e) {
-                HavissIoT.printMessage(e.getMessage());
+                Main.printMessage(e.getMessage());
                 return Integer.toString(HttpStatus.SC_BAD_REQUEST);
             }
         } else {
@@ -103,18 +102,18 @@ public class CommandSensor implements CommandCallback {
         }
         //Create new sensor
         try {
-            HavissIoT.sensorHandler.addSensor(sensorName, sensorTopic, sensorType, toStore, timeout);
+            Main.sensorHandler.addSensor(sensorName, sensorTopic, sensorType, toStore, timeout);
         } catch (HavissIoTSensorException e) {
-            HavissIoT.printMessage(e.getMessage());
+            Main.printMessage(e.getMessage());
         }
-        HavissIoT.printMessage("Adding sensor " + sensorName);
+        Main.printMessage("Adding sensor " + sensorName);
         return Integer.toString(HttpStatus.SC_OK);
     }
 
     //List all sensor in jsonArray
     private String list() {
         JsonArray jsonArray = new JsonArray();
-        for(IoTSensor s : HavissIoT.sensorHandler.getSensorsList()) {
+        for(IoTSensor s : Main.sensorHandler.getSensorsList()) {
             JsonObject object = new JsonObject();
             object.addProperty("name", s.getName());
             object.addProperty("topic", s.getTopic());
@@ -130,16 +129,16 @@ public class CommandSensor implements CommandCallback {
     private String remove(JsonObject parameters) {
         if (parameters.has("name")) {
             try {
-                HavissIoT.sensorHandler.removeSensorByName(parameters.get("name").getAsString());
+                Main.sensorHandler.removeSensorByName(parameters.get("name").getAsString());
             } catch (HavissIoTSensorException e) {
-                HavissIoT.printMessage(e.getMessage());
+                Main.printMessage(e.getMessage());
             }
-            HavissIoT.printMessage("Removing sensor with name " + parameters.get("topic"));
+            Main.printMessage("Removing sensor with name " + parameters.get("topic"));
             return Integer.toString(HttpStatus.SC_OK);
         }
         if (parameters.has("topic")) {
-            HavissIoT.sensorHandler.removeSensorByTopic(parameters.get("topic").getAsString());
-            HavissIoT.printMessage("Removing sensor on topic " + parameters.get("topic"));
+            Main.sensorHandler.removeSensorByTopic(parameters.get("topic").getAsString());
+            Main.printMessage("Removing sensor on topic " + parameters.get("topic"));
             return Integer.toString(HttpStatus.SC_OK);
         }
         return Integer.toString(HttpStatus.SC_BAD_REQUEST);
@@ -150,10 +149,10 @@ public class CommandSensor implements CommandCallback {
         IoTSensor sensor;
         if(parameters.has("name")) {
             String name = parameters.get("name").getAsString();
-            sensor = HavissIoT.sensorHandler.getSensorByName(name);
+            sensor = Main.sensorHandler.getSensorByName(name);
         } else if(parameters.has("topic")) {
             String topic = parameters.get("topic").getAsString();
-            sensor = HavissIoT.sensorHandler.getSensorByTopic(topic);
+            sensor = Main.sensorHandler.getSensorByTopic(topic);
         } else {
             return Integer.toString(HttpStatus.SC_BAD_REQUEST);
         }

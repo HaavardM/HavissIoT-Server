@@ -3,7 +3,7 @@ package net.haviss.havissIoT.Command;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Communication.SocketClient;
-import net.haviss.havissIoT.HavissIoT;
+import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
 
@@ -67,7 +67,7 @@ public class CommandUser implements CommandCallback {
                     newUser = new User(name);
                 }
                 newUser.setProtected(isProtected);
-                if(HavissIoT.userHandler.addUser(newUser)) {
+                if(Main.userHandler.addUser(newUser)) {
                     return Integer.toString(HttpStatus.SC_OK);
                 } else {
                     return Integer.toString(HttpStatus.SC_CONFLICT);
@@ -85,7 +85,7 @@ public class CommandUser implements CommandCallback {
         if(isOP) {
             if (parameters.has("name")) {
                 String name = parameters.get("name").getAsString();
-                if (HavissIoT.userHandler.removeUser(name)) {
+                if (Main.userHandler.removeUser(name)) {
                     return Integer.toString(HttpStatus.SC_OK);
                 } else {
                     return Integer.toString(HttpStatus.SC_NOT_FOUND);
@@ -100,7 +100,7 @@ public class CommandUser implements CommandCallback {
 
     private String listUsers(JsonObject parameters) {
         JsonArray users = new JsonArray();
-        for(User u : HavissIoT.userHandler.getUsers()) {
+        for(User u : Main.userHandler.getUsers()) {
             JsonObject user = new JsonObject();
             user.addProperty("name", u.getName());
             user.addProperty("isOP", u.isOP());

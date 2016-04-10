@@ -1,13 +1,10 @@
 package net.haviss.havissIoT.Communication;
 
 import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
-import net.haviss.havissIoT.HavissIoT;
+import net.haviss.havissIoT.Main;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -48,7 +45,7 @@ public class IoTClient {
             mclient.connect(connOpts); //Connecting to broker
             connected = true;
         } catch (MqttException me) {
-            HavissIoT.printMessage("MQTT connection error: " + me.getMessage() );
+            Main.printMessage("MQTT connection error: " + me.getMessage() );
         }
     }
 
@@ -64,7 +61,7 @@ public class IoTClient {
             connected = false;
         } catch (MqttException me) {
             //TODO: Handle exception
-            HavissIoT.printMessage(me.getMessage());
+            Main.printMessage(me.getMessage());
         }
     }
 

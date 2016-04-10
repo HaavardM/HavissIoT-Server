@@ -3,7 +3,7 @@ package net.haviss.havissIoT.External;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import net.haviss.havissIoT.HavissIoT;
+import net.haviss.havissIoT.Main;
 
 /**
  * Created by HaavardM on 6/7/2015.
@@ -17,7 +17,7 @@ public class PublicIP {
             response = Unirest.get("https://api.ipify.org").asString();
             return response.getBody();
         } catch (UnirestException e) {
-            HavissIoT.printMessage(e.getMessage());
+            Main.printMessage(e.getMessage());
             return "";
         }
     }
