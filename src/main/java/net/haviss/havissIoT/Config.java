@@ -37,7 +37,7 @@ public class Config {
     public static volatile boolean offlineMode;
     public static volatile boolean debugMode;
     public static volatile boolean enableLogging;
-    public static volatile boolean enableBackground;
+    public static volatile boolean enableVerbose;
 
 
 
@@ -78,7 +78,7 @@ public class Config {
                 offlineMode = Boolean.parseBoolean(getProperty("offline_mode"));
                 debugMode = Boolean.parseBoolean(getProperty("debug_mode"));
                 enableLogging = Boolean.parseBoolean(getProperty("enable_logging"));
-                enableBackground = Boolean.parseBoolean(getProperty("enable_background"));
+                enableVerbose = Boolean.parseBoolean(getProperty("enable_verbose"));
                 sensorsCollection = getProperty("sensors_collection");
                 isLoaded = true;
             } catch (NumberFormatException e) {

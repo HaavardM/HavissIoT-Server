@@ -4,7 +4,6 @@ import com.google.gson.*;
 import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Core.CommandHandler;
 import net.haviss.havissIoT.Main;
-import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
 
@@ -33,7 +32,7 @@ public class SocketClient implements Runnable {
     private volatile long lastActivity;
     private User user;
     private boolean connectionClosed = false;
-    private BufferedWriter output;
+    private OutputStreamWriter output;
     private BufferedReader input;
     private JsonParser parser;
     private Timer timeOutTimer = null;
@@ -49,7 +48,7 @@ public class SocketClient implements Runnable {
         //Set input and output stream read/writer
         try {
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            output = new OutputStreamWriter(socket.getOutputStream());
             this.socket.setSoTimeout(Config.readTimeout);
         } catch (IOException e) {
             //Exception is unexpected

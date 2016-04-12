@@ -1,9 +1,6 @@
 package net.haviss.havissIoT;
 
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoException;
 import com.mongodb.async.client.MongoClient;
-import com.mongodb.async.client.MongoClients;
 import net.haviss.havissIoT.Communication.MQTTClient;
 import net.haviss.havissIoT.Communication.SocketServer;
 import net.haviss.havissIoT.Core.DeviceHandler;
@@ -33,7 +30,6 @@ public class Main {
 
     /*Objects*/
     public static MQTTClient client;
-    public static MongoClient mongoClient;
     public static UserHandler userHandler;
     public static SocketServer socketServer;
     public static DeviceHandler deviceHandler = new DeviceHandler();
@@ -168,7 +164,7 @@ public class Main {
                 int indexReached = 0;
                 for(String s : toPrint) {
                     String toWrite = (new Date().toString() + " " + s);
-                    if(!Config.enableBackground)
+                    if(Config.enableVerbose)
                         System.out.println(toWrite); //Printing to console with
                     if(fileWriter != null && Config.enableLogging) {
                         try {
