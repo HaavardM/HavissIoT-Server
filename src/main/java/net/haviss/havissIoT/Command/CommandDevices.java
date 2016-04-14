@@ -17,29 +17,9 @@ public class CommandDevices implements CommandCallback {
     @Override
     public String run(JsonObject parameters, User user, SocketClient client) {
         JsonObject response = new JsonObject();
-        JsonArray devices = new JsonArray();
 
-        for(Device d : Main.deviceHandler.getAllDevices()) {
-            JsonObject device = new JsonObject();
-            device.addProperty("name", d.getName());
-            device.addProperty("topic", d.getTopic());
-            device.addProperty("type", d.getDeviceType().toString());
-            device.addProperty("datatype", d.getDataType().toString());
-            JsonArray sensors = new JsonArray();
-            for (IoTSensor s : d.getSensors()) {
-                JsonObject sensor = new JsonObject();
-                sensor.addProperty("name", s.getName());
-                sensor.addProperty("topic", s.getTopic());
-                sensor.addProperty("type", s.getSensorType().toString());
-                sensor.addProperty("datatype", s.getDataType().toString());
-                sensor.addProperty("unit", s.getUnit().toString());
-                sensors.add(sensor);
-            }
-            device.add("sensors", sensors);
-            devices.add(device);
-        }
 
-        response.add("devices", devices);
+
         return response.toString();
     }
 

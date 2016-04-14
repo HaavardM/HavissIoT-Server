@@ -1,9 +1,16 @@
 package net.haviss.havissIoT.Core;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
+import net.haviss.havissIoT.Main;
+import net.haviss.havissIoT.Sensors.IoTSensor;
 import net.haviss.havissIoT.Type.Room;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -64,7 +71,47 @@ public class DeviceHandler {
             }
         }
         availableDevices.add(device);
+        saveDevicesToFile();
+    }
+
+    public void saveDevicesToFile() {
+        File targetFile = new File("/devices.json");
+        try {
+            FileWriter writer = new FileWriter(targetFile);
+            if(!targetFile.exists()) {
+                if (!targetFile.createNewFile()) {
+                    return;
+                }
+            }
+            JsonArray devices = new JsonArray();
+            for(Device d : Main.deviceHandler.getAllDevices()) {
+                JsonObject device = new JsonObject();
+                device.addProperty("name", d.getName());
+                device.addProperty("topic", d.getTopic());
+                device.addProperty("type", d.getDeviceType().toString());
+                device.addProperty("datatype", d.getDataType().toString());
+                JsonArray sensors = new JsonArray();
+                for (IoTSensor s : d.getSensors()) {
+                    JsonObject sensor = new JsonObject();
+                    sensor.addProperty("name", s.getName());
+                    sensor.addProperty("topic", s.getTopic());
+                    sensor.addProperty("type", s.getSensorType().toString());
+                    sensor.addProperty("datatype", s.getDataType().toString());
+                    sensor.addProperty("unit", s.getUnit().toString());
+                    sensors.add(sensor);
+                }
+                device.add("sensors", sensors);
+                devices.add(device);
+            }
+            writer.write(devices.toString());
+
+        } catch (IOException e) {
+            Main.printMessage(e.getMessage());
+            return;
+        }
+
+
     }
 
 
-}
+    }

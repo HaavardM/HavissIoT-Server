@@ -32,7 +32,7 @@ public class SocketClient implements Runnable {
     private volatile long lastActivity;
     private User user;
     private boolean connectionClosed = false;
-    private OutputStreamWriter output;
+    private PrintWriter output;
     private BufferedReader input;
     private JsonParser parser;
     private Timer timeOutTimer = null;
@@ -48,7 +48,7 @@ public class SocketClient implements Runnable {
         //Set input and output stream read/writer
         try {
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            output = new OutputStreamWriter(socket.getOutputStream());
+            output = new PrintWriter(socket.getOutputStream());
             this.socket.setSoTimeout(Config.readTimeout);
         } catch (IOException e) {
             //Exception is unexpected
@@ -159,9 +159,9 @@ public class SocketClient implements Runnable {
                         //Send data back to client and flush output buffer
                         String toSend = response.toString();
                         int length = toSend.length();
-                        output.write(Integer.toString(length) + "\n");
+                        output.print(Integer.toString(length) + "\n");
                         output.flush();
-                        output.write(toSend);
+                        output.print(toSend);
                         output.flush();
                     } else {
                         Main.printMessage(commandString);
@@ -198,11 +198,7 @@ public class SocketClient implements Runnable {
     //Send message to client
     public synchronized void writeToSocket(String s) {
         if(output != null) {
-            try {
-                output.write(s + "\n");
-            } catch (IOException e) {
-                Main.printMessage(e.getMessage());
-            }
+            output.write(s + "\n");
         }
     }
 

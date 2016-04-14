@@ -42,7 +42,7 @@ public class SocketServer implements Runnable  {
             //Socket connection between server and client
             Socket socket = null;
             ServerSocket serverSocket = new ServerSocket(serverPort); //Serversocket
-
+            Main.printMessage("Listening for socket clients on port " + Config.serverPort);
             //Run as long thread isn't interrupted
             while (!Thread.interrupted()) {
 
