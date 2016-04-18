@@ -28,7 +28,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Main {
 
 
-    /*Objects*/
+
+    //<editor-fold desc="OBJECTS">
     public static MQTTClient client;
     public static UserHandler userHandler;
     public static SocketServer socketServer;
@@ -36,6 +37,7 @@ public class Main {
     public static final Object threadLock = new Object();
     public static CopyOnWriteArrayList<Thread> allThreads;
     private static CopyOnWriteArrayList<String> toPrint;
+    //</editor-fold>
 
     //Main method
     public static void main(String args[]) {
@@ -92,6 +94,11 @@ public class Main {
         deviceHandler.addDevice(new TestDataLogger("dataLogger", "haviss/house/datalogger"));
         deviceHandler.addDevice(new TestDataLogger("dataLogger1", "haviss/house/datalogger1"));
         deviceHandler.addDevice(new TestDataLogger("dataLogger2", "haviss/house/datalogger2"));
+        deviceHandler.addDevice(new TestDataLogger("dataLogger3", "haviss/house/datalogger3"));
+        deviceHandler.addDevice(new TestDataLogger("dataLogger4", "haviss/house/datalogger4"));
+        deviceHandler.addDevice(new TestDataLogger("dataLogger5", "haviss/house/datalogger5"));
+        deviceHandler.addDevice(new TestDataLogger("dataLogger6", "haviss/house/datalogger6"));
+        deviceHandler.addDevice(new TestDataLogger("dataLogger7", "haviss/house/datalogger7"));
 
         //</editor-fold>
         //Initialize IoT client
@@ -152,16 +159,14 @@ public class Main {
             }
         }
         //</editor-fold>
-
-        //Load config from file
-        System.out.println("Settings:\n");
         //Print device settings to console
         printSettings();
         //Application must run forever
+
+        //<editor-fold desc="LOGGER">
         while(!Thread.currentThread().isInterrupted()) {
             //If there is something to print
             if(toPrint.size() > 0) {
-                int indexReached = 0;
                 for(String s : toPrint) {
                     String toWrite = (new Date().toString() + " " + s);
                     if(Config.enableVerbose)
@@ -185,9 +190,11 @@ public class Main {
                 }
             }
         }
+        //</editor-fold>
     }
     //print all current configurations
     public static void printSettings() {
+        System.out.println("Settings:\n");
         System.out.println("MQTT broker settings:");
         System.out.println("Broker address:\t " + Config.brokerAddress);
         System.out.println("Broker port:\t" + Integer.toString(Config.brokerPort));

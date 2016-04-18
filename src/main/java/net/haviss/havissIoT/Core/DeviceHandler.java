@@ -84,7 +84,7 @@ public class DeviceHandler {
                 }
             }
             JsonArray devices = new JsonArray();
-            for(Device d : Main.deviceHandler.getAllDevices()) {
+            for(Device d : availableDevices) {
                 JsonObject device = new JsonObject();
                 device.addProperty("name", d.getName());
                 device.addProperty("topic", d.getTopic());

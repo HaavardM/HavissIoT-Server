@@ -47,8 +47,7 @@ public class SocketClient implements Runnable {
         user = null;
         //Set input and output stream read/writer
         try {
-            input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            output = new PrintWriter(socket.getOutputStream());
+            this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.socket.setSoTimeout(Config.readTimeout);
         } catch (IOException e) {
             //Exception is unexpected
@@ -102,6 +101,9 @@ public class SocketClient implements Runnable {
                 if (connectionClosed) {
                     Thread.currentThread().interrupt(); //Interrupt thread
                     break; //Break out of while loop (and thread will stop)
+                }
+                if(input == null) {
+                    input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 }
                 //Read until line-end - \n
                 if(input.ready()) {
@@ -159,10 +161,14 @@ public class SocketClient implements Runnable {
                         //Send data back to client and flush output buffer
                         String toSend = response.toString();
                         int length = toSend.length();
+                        output = new PrintWriter(socket.getOutputStream());
                         output.print(Integer.toString(length) + "\n");
-                        output.flush();
                         output.print(toSend);
                         output.flush();
+                        output.close();
+                        input.close();
+                        socket.close();
+                        connectionClosed = true;
                     } else {
                         Main.printMessage(commandString);
                     }
@@ -180,7 +186,9 @@ public class SocketClient implements Runnable {
         //Close I/O streams
         try {
             input.close();
-            output.close();
+            if(output != null) {
+                output.close();
+            }
             Main.printMessage("Client" + Integer.toString(clientNum) + " disconnected");
             socket.close(); //Close socket
             socketCommunication.removeOneClient(clientNum); //Remove one connected client
