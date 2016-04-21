@@ -44,21 +44,22 @@ public class Config {
     public static void loadConfigFile(String configName) throws IOException {
         File file = new File("config.properties");
         if(!file.exists()) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(Config.class.getClass().getResourceAsStream(configName)));
-            FileWriter writer = new FileWriter("config.properties");
-            int c;
-            if(reader.ready()) {
-                while ((c = reader.read()) != -1) {
-                    writer.write(c);
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(Config.class.getClass().getResourceAsStream(configName)));
+                FileWriter writer = new FileWriter("config.properties");
+                int c;
+                if (reader.ready()) {
+                    while ((c = reader.read()) != -1) {
+                        writer.write(c);
+                    }
                 }
+                writer.close();
+                reader.close();
+            } catch (IOException e) {
+                Main.printMessage(e.getMessage());
             }
-            writer.close();
-            properties.load(reader);
-
         }
-        else {
-            properties.load(new FileReader(file));
-        }
+        properties.load(new FileReader(file));
         loadConfig();
     }
     public static void loadExtConfigFile(String filePath) throws IOException {
