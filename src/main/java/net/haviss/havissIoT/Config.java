@@ -54,7 +54,7 @@ public class Config {
             }
             writer.close();
             properties.load(reader);
-            reader.close();
+
         }
         else {
             properties.load(new FileReader(file));
