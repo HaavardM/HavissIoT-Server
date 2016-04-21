@@ -75,7 +75,7 @@ public class DeviceHandler {
     }
 
     public void saveDevicesToFile() {
-        File targetFile = new File("/devices.json");
+        File targetFile = new File("devices.json");
         try {
             FileWriter writer = new FileWriter(targetFile);
             if(!targetFile.exists()) {

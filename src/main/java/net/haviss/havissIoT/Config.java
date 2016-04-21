@@ -56,7 +56,7 @@ public class Config {
                 writer.close();
                 reader.close();
             } catch (IOException e) {
-                Main.printMessage(e.getMessage());
+                Main.printMessage(e.getMessage()              );
             }
         }
         properties.load(new FileReader(file));
@@ -99,7 +99,7 @@ public class Config {
                 Main.printMessage(e.getMessage());
             }
         } else {
-            Main.printMessage("Properties couldt be loaded");
+            Main.printMessage("Properties couldn't be loaded");
         }
 
     }
