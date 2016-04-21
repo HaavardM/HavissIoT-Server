@@ -7,7 +7,7 @@
 
     <groupId>net.haviss.havissiot</groupId>
     <artifactId>HavissIoT-Server</artifactId>
-    <description>havissIoT-Server</description>
+    <description>HavissIoT-Server</description>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
