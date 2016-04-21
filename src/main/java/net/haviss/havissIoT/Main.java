@@ -26,9 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Main class
  */
 public class Main {
-
-
-
+    
     //<editor-fold desc="OBJECTS">
     public static MQTTClient client;
     public static UserHandler userHandler;
