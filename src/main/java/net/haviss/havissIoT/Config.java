@@ -1,10 +1,7 @@
 package net.haviss.havissIoT;
 
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.Properties;
 
 /**
@@ -45,7 +42,23 @@ public class Config {
     private static Properties properties = new Properties();
 
     public static void loadConfigFile(String configName) throws IOException {
-        properties.load(new BufferedReader(new InputStreamReader(Config.class.getClass().getResourceAsStream(configName))));
+        File file = new File("config.properties");
+        if(!file.exists()) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(Config.class.getClass().getResourceAsStream(configName)));
+            FileWriter writer = new FileWriter("config.properties");
+            int c;
+            if(reader.ready()) {
+                while ((c = reader.read()) != -1) {
+                    writer.write(c);
+                }
+            }
+            writer.close();
+            properties.load(reader);
+            reader.close();
+        }
+        else {
+            properties.load(new FileReader(file));
+        }
         loadConfig();
     }
     public static void loadExtConfigFile(String filePath) throws IOException {
