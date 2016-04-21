@@ -100,6 +100,7 @@ public class DeviceHandler {
                     sensor.addProperty("unit", s.getUnit().toString());
                     sensors.add(sensor);
                 }
+
                 device.add("sensors", sensors);
                 devices.add(device);
             }
