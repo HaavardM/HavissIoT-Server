@@ -13,7 +13,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Created by HaavardM on 4/3/2015.
  * This class connects to a mongodb database and handles all storage.
  */
-@Deprecated
 public class IoTLogger {
 
     /*Variables*/

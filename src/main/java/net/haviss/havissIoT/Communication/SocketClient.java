@@ -32,7 +32,7 @@ public class SocketClient implements Runnable {
     private volatile long lastActivity;
     private User user;
     private boolean connectionClosed = false;
-    private PrintWriter output;
+    private BufferedWriter output;
     private BufferedReader input;
     private JsonParser parser;
     private Timer timeOutTimer = null;
@@ -161,9 +161,9 @@ public class SocketClient implements Runnable {
                         //Send data back to client and flush output buffer
                         String toSend = response.toString();
                         int length = toSend.length();
-                        output = new PrintWriter(socket.getOutputStream());
-                        output.print(Integer.toString(length) + "\n");
-                        output.print(toSend);
+                        output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                        output.write(Integer.toString(length) + "\n");
+                        output.write(toSend);
                         output.flush();
                         output.close();
                         input.close();
@@ -204,7 +204,7 @@ public class SocketClient implements Runnable {
     }
 
     //Send message to client
-    public synchronized void writeToSocket(String s) {
+    public synchronized void writeToSocket(String s) throws IOException {
         if(output != null) {
             output.write(s + "\n");
         }
