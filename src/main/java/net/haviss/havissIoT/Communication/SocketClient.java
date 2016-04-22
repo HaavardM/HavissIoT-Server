@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 
@@ -40,6 +41,11 @@ public class SocketClient implements Runnable {
     //Constructor - loading objects and values
     public SocketClient(Socket socket, SocketServer socketCommunication, int clientNum) {
         this.socket = socket;
+        try {
+            this.socket.setTcpNoDelay(true);
+        } catch (SocketException e) {
+            Main.printMessage(e.getMessage());
+        }
         this.socketCommunication = socketCommunication;
         threadName += Integer.toString(clientNum); //Giving the thread an unique name
         this.clientNum = clientNum;
