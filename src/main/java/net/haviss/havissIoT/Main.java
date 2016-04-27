@@ -1,16 +1,21 @@
 package net.haviss.havissIoT;
 
-import com.mongodb.async.client.MongoClient;
 import net.haviss.havissIoT.Communication.MQTTClient;
 import net.haviss.havissIoT.Communication.SocketServer;
 import net.haviss.havissIoT.Core.DeviceHandler;
 import net.haviss.havissIoT.Core.UserHandler;
+import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Device.Devices.TestDataLogger;
+import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
 import net.haviss.havissIoT.External.PublicIP;
+import net.haviss.havissIoT.Sensors.Sensor;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,6 +23,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
@@ -35,6 +41,7 @@ public class Main {
     public static final Object threadLock = new Object();
     public static CopyOnWriteArrayList<Thread> allThreads;
     private static CopyOnWriteArrayList<String> toPrint;
+    private static Random rnd = new Random();
     //</editor-fold>
 
     //Main method
@@ -89,14 +96,10 @@ public class Main {
         //All threads
         allThreads = new CopyOnWriteArrayList<>();
 
-        deviceHandler.addDevice(new TestDataLogger("dataLogger", "haviss/house/datalogger"));
-        deviceHandler.addDevice(new TestDataLogger("dataLogger1", "haviss/house/datalogger1"));
-        deviceHandler.addDevice(new TestDataLogger("dataLogger2", "haviss/house/datalogger2"));
-        deviceHandler.addDevice(new TestDataLogger("dataLogger3", "haviss/house/datalogger3"));
-        deviceHandler.addDevice(new TestDataLogger("dataLogger4", "haviss/house/datalogger4"));
-        deviceHandler.addDevice(new TestDataLogger("dataLogger5", "haviss/house/datalogger5"));
-        deviceHandler.addDevice(new TestDataLogger("dataLogger6", "haviss/house/datalogger6"));
-        deviceHandler.addDevice(new TestDataLogger("dataLogger7", "haviss/house/datalogger7"));
+        for(int i = 0; i < 10; i++) {
+            deviceHandler.addDevice(new TestDataLogger("testLogger" + Integer.toString(i), "haviss/test" + Integer.toString(i)));
+        }
+
 
         //</editor-fold>
         //Initialize IoT client
@@ -145,6 +148,7 @@ public class Main {
         //</editor-fold>
         //Initalize log file if needed
         //<editor-fold desc="Logging">
+
         FileOutputStream fileWriter = null;
         if(Config.enableLogging) {
             File logFile = new File("log.txt");
@@ -159,6 +163,26 @@ public class Main {
         //</editor-fold>
         //Print device settings to console
         printSettings();
+
+        //<editor-fold desc="TEST">
+        Timer t = new Timer(2000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(client.isConnected()) {
+                    try {
+                        for(Device d : deviceHandler.getAllDevices()) {
+                            for(Sensor s : d.getSensors()) {
+                                client.publishMessage(s.getTopic(), Integer.toString(rnd.nextInt(100)));
+                            }
+                        }
+                    } catch (HavissIoTMQTTException e1) {
+                        Main.printMessage(e1.getMessage());
+                    }
+                }
+            }
+        });
+        t.start();
+        //</editor-fold>
         //Application must run forever
 
         //<editor-fold desc="LOGGER">

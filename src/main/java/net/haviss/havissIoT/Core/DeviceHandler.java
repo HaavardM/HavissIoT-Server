@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
 import net.haviss.havissIoT.Main;
-import net.haviss.havissIoT.Sensors.IoTSensor;
+import net.haviss.havissIoT.Sensors.Sensor;
 import net.haviss.havissIoT.Type.Room;
 
 import java.io.File;
@@ -91,7 +91,7 @@ public class DeviceHandler {
                 device.addProperty("type", d.getDeviceType().toString());
                 device.addProperty("datatype", d.getDataType().toString());
                 JsonArray sensors = new JsonArray();
-                for (IoTSensor s : d.getSensors()) {
+                for (Sensor s : d.getSensors()) {
                     JsonObject sensor = new JsonObject();
                     sensor.addProperty("name", s.getName());
                     sensor.addProperty("topic", s.getTopic());

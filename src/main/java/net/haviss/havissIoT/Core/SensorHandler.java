@@ -1,7 +1,7 @@
 package net.haviss.havissIoT.Core;
 
 import org.jetbrains.annotations.NotNull;
-import net.haviss.havissIoT.Sensors.IoTSensor;
+import net.haviss.havissIoT.Sensors.Sensor;
 import net.haviss.havissIoT.Type.Room;
 
 import java.util.ArrayList;
@@ -13,11 +13,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class SensorHandler {
 
-    private CopyOnWriteArrayList<IoTSensor> availableSensors = new CopyOnWriteArrayList<>();
+    private CopyOnWriteArrayList<Sensor> availableSensors = new CopyOnWriteArrayList<>();
 
     //Get sensor by knowing the name
-    public IoTSensor getSensorByName(String name) {
-        for(IoTSensor s : availableSensors) {
+    public Sensor getSensorByName(String name) {
+        for(Sensor s : availableSensors) {
             if(s.getName().compareTo(name) == 0) {
                 return s;
             }
@@ -26,8 +26,8 @@ public class SensorHandler {
     }
 
     //Get a sensor by knowing the topic
-    public IoTSensor getSensorByTopic(String topic) {
-        for(IoTSensor s : availableSensors) {
+    public Sensor getSensorByTopic(String topic) {
+        for(Sensor s : availableSensors) {
             if(s.getTopic().compareTo(topic) == 0) {
                 return s;
             }
@@ -37,15 +37,15 @@ public class SensorHandler {
 
     //Get an array of sensors in a room
 
-    public IoTSensor[] getSensorsByRoom(@NotNull Room room) {
-        List<IoTSensor> sensors = new ArrayList<>();
-        for(IoTSensor s : availableSensors) {
+    public Sensor[] getSensorsByRoom(@NotNull Room room) {
+        List<Sensor> sensors = new ArrayList<>();
+        for(Sensor s : availableSensors) {
             if(s.getRoom() == room) {
                 sensors.add(s);
             }
         }
         if(sensors.size() > 0) {
-            return (IoTSensor[])sensors.toArray();
+            return (Sensor[])sensors.toArray();
         } else {
             return null;
         }

@@ -5,7 +5,7 @@ import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
 import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Type.DeviceType;
-import net.haviss.havissIoT.Type.IoTDataType;
+import net.haviss.havissIoT.Type.DataType;
 import net.haviss.havissIoT.Type.Room;
 
 /**
@@ -14,7 +14,7 @@ import net.haviss.havissIoT.Type.Room;
 public class ToggleDevice extends Device {
     private boolean state = false;
     public ToggleDevice(String name, String topic) {
-        super(name, topic, DeviceType.Toggle, IoTDataType.Boolean);
+        super(name, topic, DeviceType.Toggle, DataType.Boolean);
         try {
             Main.client.subscribeToTopic(getTopic() + "/*", Config.qos);
         } catch (HavissIoTMQTTException e) {
@@ -23,7 +23,7 @@ public class ToggleDevice extends Device {
     }
 
     public ToggleDevice(String name, String topic, Room room) {
-        super(name, topic, DeviceType.Toggle, IoTDataType.Boolean, room);
+        super(name, topic, DeviceType.Toggle, DataType.Boolean, room);
         try {
             Main.client.subscribeToTopic(getTopic() + "/status", Config.qos);
         } catch (HavissIoTMQTTException e) {

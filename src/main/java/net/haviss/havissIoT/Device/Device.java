@@ -1,8 +1,8 @@
 package net.haviss.havissIoT.Device;
 
-import net.haviss.havissIoT.Sensors.IoTSensor;
+import net.haviss.havissIoT.Sensors.Sensor;
 import net.haviss.havissIoT.Type.DeviceType;
-import net.haviss.havissIoT.Type.IoTDataType;
+import net.haviss.havissIoT.Type.DataType;
 import net.haviss.havissIoT.Type.Room;
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -12,13 +12,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class Device implements DeviceCallback {
 
-    protected CopyOnWriteArrayList<IoTSensor> availableSensors = new CopyOnWriteArrayList<>();
+    protected CopyOnWriteArrayList<Sensor> availableSensors = new CopyOnWriteArrayList<>();
     private String name, topic = null;
     private Room room = null;
     private DeviceType deviceType = DeviceType.None;
-    private IoTDataType dataType = IoTDataType.String;
+    private DataType dataType = DataType.String;
 
-    public Device(String name, String topic, DeviceType deviceType, IoTDataType dataType) {
+    //<editor-fold desc="Constructors">
+    public Device(String name, String topic, DeviceType deviceType, DataType dataType) {
         this.name = name;
         this.topic = topic;
         this.room = null;
@@ -26,17 +27,36 @@ public abstract class Device implements DeviceCallback {
         this.deviceType = deviceType;
     }
 
-
-
-
-    public Device(String name, String topic, DeviceType deviceType, IoTDataType dataType, Room room) {
+    public Device(String name, String topic, DeviceType deviceType, DataType dataType, Room room) {
         this.name = name;
         this.topic = topic;
         this.room = room;
         this.dataType = dataType;
         this.deviceType = deviceType;
     }
+    //</editor-fold>
+    // Get the subtopic
+    public String getSubTopic(String topic) {
+        if(topic.contains(this.topic)) {
+            return topic.replace(getTopic(), "");
+        }
+        else
+            return null;
+    }
 
+    //Add sensor to device
+    public void addSensor(Sensor sensor) {
+        if(sensor != null)
+            availableSensors.add(sensor);
+    }
+    //Remove sensor from device
+    public void removeSensor(Sensor sensor) {
+        if(sensor != null) {
+            availableSensors.remove(sensor);
+        }
+    }
+
+    //<editor-fold desc="GETTERS">
     public String getTopic() {
         return topic;
     }
@@ -53,21 +73,38 @@ public abstract class Device implements DeviceCallback {
         return deviceType;
     }
 
-    public IoTDataType getDataType() {
+    public DataType getDataType() {
         return dataType;
     }
 
-    public IoTSensor[] getSensors() {
-        IoTSensor[] sensors = new IoTSensor[availableSensors.size()];
+    public Sensor[] getSensors() {
+        Sensor[] sensors = new Sensor[availableSensors.size()];
         availableSensors.toArray(sensors);
         return  sensors;
     }
+    //</editor-fold>
 
-    public String getSubTopic(String topic) {
-        if(topic.contains(this.topic)) {
-            return topic.replace(getTopic(), "");
-        }
-        else
-            return null;
+    //<editor-fold desc="SETTERS">
+    public void setName(String name) {
+        this.name = name;
     }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
+    public void setDeviceType(DeviceType type) {
+        this.deviceType = type;
+    }
+
+    public void setDataType(DataType type) {
+        this.dataType = type;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+    //</editor-fold>
+
+
 }

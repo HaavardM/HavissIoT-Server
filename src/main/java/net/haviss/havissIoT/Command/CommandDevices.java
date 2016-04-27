@@ -4,9 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Communication.SocketClient;
 import net.haviss.havissIoT.Device.Device;
-import net.haviss.havissIoT.Device.DeviceCallback;
 import net.haviss.havissIoT.Main;
-import net.haviss.havissIoT.Sensors.IoTSensor;
+import net.haviss.havissIoT.Sensors.Sensor;
 import net.haviss.havissIoT.Type.User;
 
 /**
@@ -16,6 +15,33 @@ public class CommandDevices implements CommandCallback {
 
     @Override
     public String run(JsonObject parameters, User user, SocketClient client) {
+        if(parameters.has("intent")) {
+            String intent = parameters.get("intent").getAsString();
+            switch (intent) {
+                case "getall": {
+                    return getAllDevices();
+                }
+                case "modify":
+                    //TODO Fix
+                    return null;
+
+            }
+        }
+        //TODO: Fix
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        return "devices";
+    }
+
+    @Override
+    public boolean requireArgs() {
+        return false;
+    }
+
+    private String getAllDevices() {
         JsonObject response = new JsonObject();
         JsonArray devices = new JsonArray();
         for(Device d : Main.deviceHandler.getAllDevices()) {
@@ -25,7 +51,7 @@ public class CommandDevices implements CommandCallback {
             device.addProperty("type", d.getDeviceType().toString());
             device.addProperty("datatype", d.getDataType().toString());
             JsonArray sensors = new JsonArray();
-            for (IoTSensor s : d.getSensors()) {
+            for (Sensor s : d.getSensors()) {
                 JsonObject sensor = new JsonObject();
                 sensor.addProperty("name", s.getName());
                 sensor.addProperty("topic", s.getTopic());
@@ -43,13 +69,14 @@ public class CommandDevices implements CommandCallback {
         return response.toString();
     }
 
-    @Override
-    public String getName() {
-        return "devices";
-    }
+    private String modifyDevice(JsonObject parameters) {
+        if(parameters.has("name")) {
+            Device d = Main.deviceHandler.getDeviceByName(parameters.get("name").getAsString());
+            if(d != null) {
 
-    @Override
-    public boolean requireArgs() {
-        return false;
+            }
+        }
+        //TODO: Return
+        return null;
     }
 }

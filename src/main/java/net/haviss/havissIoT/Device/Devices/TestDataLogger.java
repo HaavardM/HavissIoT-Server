@@ -2,9 +2,9 @@ package net.haviss.havissIoT.Device.Devices;
 
 import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
-import net.haviss.havissIoT.Sensors.IoTSensor;
+import net.haviss.havissIoT.Sensors.Sensor;
 import net.haviss.havissIoT.Type.DeviceType;
-import net.haviss.havissIoT.Type.IoTDataType;
+import net.haviss.havissIoT.Type.DataType;
 import net.haviss.havissIoT.Type.SensorType;
 import net.haviss.havissIoT.Type.SensorUnit;
 
@@ -16,14 +16,14 @@ public class TestDataLogger extends Device {
 
 
     public TestDataLogger(String name, String topic) {
-        super(name, topic, DeviceType.DataCollector, IoTDataType.String);
-        availableSensors.add(new IoTSensor(name + "_temperature", getTopic() + "/temperature", SensorType.Temperature, IoTDataType.Double, SensorUnit.Celsius));
-        availableSensors.add(new IoTSensor(name + "_force", getTopic() + "/force", SensorType.Force, IoTDataType.Double, SensorUnit.Newton));
+        super(name, topic, DeviceType.DataCollector, DataType.String);
+        availableSensors.add(new Sensor(name + "_temperature", getTopic() + "/temperature", SensorType.Temperature, DataType.Double, SensorUnit.Celsius));
+        availableSensors.add(new Sensor(name + "_force", getTopic() + "/force", SensorType.Force, DataType.Double, SensorUnit.Newton));
     }
 
     @Override
     public void messageArrived(String topic, String message) throws HavissIoTDeviceException {
-        for(IoTSensor s : availableSensors) {
+        for(Sensor s : availableSensors) {
             if(s.getTopic().compareTo(topic) == 0) {
                 s.updateValue(message);
                 return;
