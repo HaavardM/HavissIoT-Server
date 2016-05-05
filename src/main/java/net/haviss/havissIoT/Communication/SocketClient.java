@@ -106,6 +106,9 @@ public class SocketClient implements Runnable {
             try {
                 if (connectionClosed) {
                     Thread.currentThread().interrupt(); //Interrupt thread
+                    if(timeOutTimer != null) {
+                        timeOutTimer.stop();
+                    }
                     break; //Break out of while loop (and thread will stop)
                 }
                 if(input == null) {
@@ -207,6 +210,9 @@ public class SocketClient implements Runnable {
 
         //Remove thread when it shutdown
         Main.allThreads.remove(clientThread);
+        if(Config.debugMode) {
+            Main.printMessage(clientThread.getName() + " is stopping");
+        }
     }
 
     //Send message to client

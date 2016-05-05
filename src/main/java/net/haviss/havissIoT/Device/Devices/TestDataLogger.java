@@ -16,7 +16,7 @@ public class TestDataLogger extends Device {
 
 
     public TestDataLogger(String name, String topic) {
-        super(name, topic, DeviceType.DataCollector, DataType.String);
+        super(name, topic, DeviceType.SensorGrid, DataType.String);
         availableSensors.add(new Sensor(name + "_temperature", getTopic() + "/temperature", SensorType.Temperature, DataType.Double, SensorUnit.Celsius));
         availableSensors.add(new Sensor(name + "_force", getTopic() + "/force", SensorType.Force, DataType.Double, SensorUnit.Newton));
     }
