@@ -3,7 +3,7 @@ package net.haviss.havissIoT.Device;
 import net.haviss.havissIoT.Sensors.Sensor;
 import net.haviss.havissIoT.Type.DeviceType;
 import net.haviss.havissIoT.Type.DataType;
-import net.haviss.havissIoT.Type.Room;
+import net.haviss.havissIoT.Type.Location;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -14,7 +14,7 @@ public abstract class Device implements DeviceCallback {
 
     protected CopyOnWriteArrayList<Sensor> availableSensors = new CopyOnWriteArrayList<>();
     private String name, topic = null;
-    private Room room = null;
+    private Location room = null;
     private DeviceType deviceType = DeviceType.None;
     private DataType dataType = DataType.String;
 
@@ -27,7 +27,7 @@ public abstract class Device implements DeviceCallback {
         this.deviceType = deviceType;
     }
 
-    public Device(String name, String topic, DeviceType deviceType, DataType dataType, Room room) {
+    public Device(String name, String topic, DeviceType deviceType, DataType dataType, Location room) {
         this.name = name;
         this.topic = topic;
         this.room = room;
@@ -65,7 +65,7 @@ public abstract class Device implements DeviceCallback {
         return name;
     }
 
-    public Room getRoom() {
+    public Location getRoom() {
         return room;
     }
 
@@ -101,7 +101,7 @@ public abstract class Device implements DeviceCallback {
         this.dataType = type;
     }
 
-    public void setRoom(Room room) {
+    public void setRoom(Location room) {
         this.room = room;
     }
     //</editor-fold>

@@ -2,15 +2,14 @@ package net.haviss.havissIoT.Core;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
 import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Sensors.Sensor;
-import net.haviss.havissIoT.Type.Room;
+import net.haviss.havissIoT.Type.Location;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -42,7 +41,7 @@ public class DeviceHandler {
         return null;
     }
 
-    public Device[] getDevicesByRoom(Room room) {
+    public Device[] getDevicesByRoom(Location room) {
         List<Device> returnList = new ArrayList<>();
         for(Device d : availableDevices) {
             if(d.getRoom() == room)
@@ -112,6 +111,16 @@ public class DeviceHandler {
         }
 
 
+    }
+
+    public void loadDevicesFromFile() throws IOException {
+
+        File targetFile = new File("devices.json");
+        if(!targetFile.exists())
+            return;
+        FileReader fileReader = new FileReader(targetFile);
+        BufferedReader reader = new BufferedReader(fileReader);
+        JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonObject();
     }
 
 

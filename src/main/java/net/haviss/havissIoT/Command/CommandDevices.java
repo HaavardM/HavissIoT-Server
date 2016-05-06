@@ -50,7 +50,7 @@ public class CommandDevices implements CommandCallback {
             device.addProperty("topic", d.getTopic());
             device.addProperty("type", d.getDeviceType().toString());
             device.addProperty("datatype", d.getDataType().toString());
-            device.addProperty("room", d.getRoom().getName());
+            device.addProperty("location", d.getRoom().getName());
             JsonArray sensors = new JsonArray();
             for (Sensor s : d.getSensors()) {
                 JsonObject sensor = new JsonObject();

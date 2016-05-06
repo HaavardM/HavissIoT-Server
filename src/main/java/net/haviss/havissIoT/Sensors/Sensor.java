@@ -2,10 +2,11 @@ package net.haviss.havissIoT.Sensors;
 
 
 import net.haviss.havissIoT.Type.DataType;
+import net.haviss.havissIoT.Type.Location;
 import net.haviss.havissIoT.Type.SensorType;
 import net.haviss.havissIoT.Type.SensorUnit;
 import org.jetbrains.annotations.NotNull;
-import net.haviss.havissIoT.Type.Room;
+import net.haviss.havissIoT.Type.Location;
 
 /**
  * Created by havar on 06.03.2016.
@@ -14,7 +15,7 @@ public class Sensor {
     private String name;
     private String topic;
     private String lastValue = null;
-    private Room room = null;
+    private Location location = null;
     private SensorType sensorType;
     private DataType dataType;
     private SensorUnit unit;
@@ -27,10 +28,10 @@ public class Sensor {
         this.unit = unit;
     }
 
-    public Sensor(@NotNull String name, @NotNull String topic, SensorType type, DataType dataType, SensorUnit unit, Room room) {
+    public Sensor(@NotNull String name, @NotNull String topic, SensorType type, DataType dataType, SensorUnit unit, Location location) {
         this.name = name;
         this.topic = topic;
-        this.room = room;
+        this.location = location;
         this.sensorType = type;
         this.dataType = dataType;
         this.unit = unit;
@@ -48,8 +49,8 @@ public class Sensor {
         return lastValue;
     }
 
-    public Room getRoom() {
-        return this.room;
+    public Location getLocation() {
+        return this.location;
     }
 
     public void updateValue(String value) {

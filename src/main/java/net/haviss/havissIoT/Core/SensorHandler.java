@@ -2,7 +2,7 @@ package net.haviss.havissIoT.Core;
 
 import org.jetbrains.annotations.NotNull;
 import net.haviss.havissIoT.Sensors.Sensor;
-import net.haviss.havissIoT.Type.Room;
+import net.haviss.havissIoT.Type.Location;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +35,12 @@ public class SensorHandler {
         return null;
     }
 
-    //Get an array of sensors in a room
+    //Get an array of sensors in a location
 
-    public Sensor[] getSensorsByRoom(@NotNull Room room) {
+    public Sensor[] getSensorsByLocation(@NotNull Location location) {
         List<Sensor> sensors = new ArrayList<>();
         for(Sensor s : availableSensors) {
-            if(s.getRoom() == room) {
+            if(s.getLocation() == location) {
                 sensors.add(s);
             }
         }

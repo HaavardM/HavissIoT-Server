@@ -7,10 +7,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Created by havar on 21.02.2016.
  */
-public class Room {
+public class Location {
     private String name;
 
-    public Room(String name) {
+    public Location(String name) {
         this.name = name;
     }
 

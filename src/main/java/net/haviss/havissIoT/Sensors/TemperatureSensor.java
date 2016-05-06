@@ -4,7 +4,7 @@ package net.haviss.havissIoT.Sensors;
 
 import net.haviss.havissIoT.Exceptions.HavissIoTSensorException;
 import net.haviss.havissIoT.Type.DataType;
-import net.haviss.havissIoT.Type.Room;
+import net.haviss.havissIoT.Type.Location;
 import net.haviss.havissIoT.Type.SensorType;
 import net.haviss.havissIoT.Type.SensorUnit;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +22,7 @@ public class TemperatureSensor extends Sensor {
         }
     }
 
-    public TemperatureSensor(@NotNull String name, @NotNull String topic, @NotNull String type, SensorUnit unit, Room room) throws HavissIoTSensorException {
+    public TemperatureSensor(@NotNull String name, @NotNull String topic, @NotNull String type, SensorUnit unit, Location room) throws HavissIoTSensorException {
         super(name, topic, SensorType.Temperature, DataType.Double, unit, room);
         if(unit == SensorUnit.Celsius || unit == SensorUnit.Fahrenheit || unit == SensorUnit.Kelvin) {
             throw new HavissIoTSensorException("incorrect data type");

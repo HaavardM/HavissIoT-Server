@@ -4,9 +4,9 @@ import net.haviss.havissIoT.Config;
 import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
 import net.haviss.havissIoT.Main;
-import net.haviss.havissIoT.Type.DeviceType;
 import net.haviss.havissIoT.Type.DataType;
-import net.haviss.havissIoT.Type.Room;
+import net.haviss.havissIoT.Type.DeviceType;
+import net.haviss.havissIoT.Type.Location;
 
 /**
  * Created by havar on 06.03.2016.
@@ -22,8 +22,8 @@ public class ToggleDevice extends Device {
         }
     }
 
-    public ToggleDevice(String name, String topic, Room room) {
-        super(name, topic, DeviceType.Toggle, DataType.Boolean, room);
+    public ToggleDevice(String name, String topic, Location location) {
+        super(name, topic, DeviceType.Toggle, DataType.Boolean, location);
         try {
             Main.client.subscribeToTopic(getTopic() + "/status", Config.qos);
         } catch (HavissIoTMQTTException e) {
