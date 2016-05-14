@@ -1,9 +1,8 @@
-package net.haviss.havissIoT.Core;
+package net.haviss.havissIoT.Communication.ServerCommunication;
 
 import com.google.gson.JsonObject;
-import net.haviss.havissIoT.Command.CommandCallback;
-import net.haviss.havissIoT.Communication.SocketClient;
-import net.haviss.havissIoT.Config;
+import net.haviss.havissIoT.ServerCommands.CommandCallback;
+import net.haviss.havissIoT.Tools.Config;
 import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
@@ -15,11 +14,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Created by HaavardM on 5/7/2015.
  * Handles commands
  */
-public class CommandHandler {
+public class ServerCommandHandler {
     private CopyOnWriteArrayList<CommandCallback> availableCommands = new CopyOnWriteArrayList<>();
 
     //Constructor - adds all available commands to string
-    public CommandHandler() {
+    public ServerCommandHandler() {
         Reflections r = new Reflections("");
         Set<Class<? extends CommandCallback>> classes = r.getSubTypesOf(CommandCallback.class);
         for(Class<? extends CommandCallback> c : classes) {

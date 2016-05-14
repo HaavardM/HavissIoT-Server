@@ -16,9 +16,9 @@ public class Sensor {
     private String topic;
     private String lastValue = null;
     private Location location = null;
-    private SensorType sensorType;
-    private DataType dataType;
-    private SensorUnit unit;
+    protected SensorType sensorType;
+    protected DataType dataType;
+    protected SensorUnit unit;
 
     public Sensor(@NotNull String name, @NotNull String topic, SensorType type, DataType dataType, SensorUnit unit) {
         this.name = name;

@@ -1,14 +1,16 @@
 package net.haviss.havissIoT;
 
+import net.haviss.havissIoT.ApplicationCommands.ApplicationCommandHandler;
 import net.haviss.havissIoT.Communication.MQTTClient;
-import net.haviss.havissIoT.Communication.SocketServer;
-import net.haviss.havissIoT.Core.DeviceHandler;
-import net.haviss.havissIoT.Core.UserHandler;
+import net.haviss.havissIoT.Communication.ServerCommunication.SocketServer;
+import net.haviss.havissIoT.Handlers.DeviceHandler;
+import net.haviss.havissIoT.Handlers.UserHandler;
 import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Device.Devices.TestDataLogger;
 import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
 import net.haviss.havissIoT.External.PublicIP;
 import net.haviss.havissIoT.Sensors.Sensor;
+import net.haviss.havissIoT.Tools.Config;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -24,6 +26,7 @@ import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
@@ -185,10 +188,33 @@ public class Main {
         //</editor-fold>
         //Application must run forever
 
-        //<editor-fold desc="LOGGER">
+        Scanner reader = new Scanner(System.in);
+        ApplicationCommandHandler cmdHandler = new ApplicationCommandHandler();
+        if(!Config.enableVerbose) {
+            System.out.println("Enter command: ");
+        } else {
+            System.out.println("Verbose mode enabled - application will write application events. \n" +
+                    "commandinput might be messy - be warned! To input commands, just write them + Enter");
+        }
+        //<editor-fold desc="LOOP">
         while(!Thread.currentThread().isInterrupted()) {
+            try {
+                if(System.in.available() > 0) {
+                    String cmd = reader.nextLine();
+                    String[] cmds = cmd.split("\\s+");
+                    String[] parameters = new String[cmds.length - 1];
+                    System.arraycopy(cmds, 1, parameters, 0, cmds.length - 1);
+                    System.out.println(cmdHandler.processCommand(cmds[0], parameters));
+                    System.out.print("Enter command: ");
+                }
+            } catch (IOException e) {
+                printMessage(e.getMessage());
+            }
             //If there is something to print
             if(toPrint.size() > 0) {
+                for(int i = 0; i < "Enter command: ".length(); i++) {
+                    System.out.print("\b");
+                }
                 for(String s : toPrint) {
                     String toWrite = (new Date().toString() + " " + s);
                     if(Config.enableVerbose)
@@ -202,17 +228,33 @@ public class Main {
                     }
                     toPrint.remove(s);
                 }
-            } else {
-                try {
-                    synchronized (threadLock) {
-                        threadLock.wait(); //no need to steal cycles
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if(Config.enableVerbose) {
+                    System.out.println("Enter command: ");
                 }
             }
         }
         //</editor-fold>
+    }
+
+    public static void reloadCommunicationObjects() {
+        if(client.isConnected()) {
+            client.disconnect();
+        }
+
+        if(!Config.offlineMode) {
+            client = new MQTTClient(Config.clientID);
+            client.connect(Config.brokerAddress, Config.brokerPort);
+            try {
+                socketServer.stopThread();
+                socketServer = new SocketServer(Config.serverPort, Config.numbOfClients);
+            } catch (IOException e) {
+                printMessage(e.getMessage());
+            }
+        } else {
+            printMessage("OFFLINE MODE! - No network connections");
+        }
+
+
     }
     //print all current configurations
     public static void printSettings() {

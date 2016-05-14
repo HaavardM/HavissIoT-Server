@@ -1,5 +1,6 @@
 package net.haviss.havissIoT.Device;
 
+import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
 import net.haviss.havissIoT.Sensors.Sensor;
 import net.haviss.havissIoT.Type.DeviceType;
 import net.haviss.havissIoT.Type.DataType;
@@ -12,6 +13,20 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class Device implements DeviceCallback {
 
+    public static Device createDevice(String name, String topic, DeviceType type, DataType dataType) {
+        Device d = new Device(name, topic, type, dataType) {
+            @Override
+            public void messageArrived(String topic, String message) throws HavissIoTDeviceException {
+                //Do nothing
+            }
+
+            @Override
+            public void messageDelivered(String topic) {
+                //Do nothing
+            }
+        };
+        return d;
+    }
     protected CopyOnWriteArrayList<Sensor> availableSensors = new CopyOnWriteArrayList<>();
     private String name, topic = null;
     private Location room = null;

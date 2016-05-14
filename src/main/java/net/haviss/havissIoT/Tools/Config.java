@@ -1,5 +1,7 @@
-package net.haviss.havissIoT;
+package net.haviss.havissIoT.Tools;
 
+
+import net.haviss.havissIoT.Main;
 
 import java.io.*;
 import java.util.Properties;
@@ -40,9 +42,8 @@ public class Config {
 
     //Properties object to load from file
     private static Properties properties = new Properties();
-
+    private static File file = new File("config.properties");
     public static void loadConfigFile(String configName) throws IOException {
-        File file = new File("config.properties");
         if(!file.exists()) {
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(Config.class.getClass().getResourceAsStream(configName)));
@@ -116,7 +117,16 @@ public class Config {
     }
 
     //Set new property
-    public static void setProperty(String prop, String value) {
-        properties.setProperty(prop, value);
+    public static boolean setProperty(String prop, String value) throws IOException {
+        if(properties.setProperty(prop, value) != null) {
+            Config.loadConfig();
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            properties.store(fileOutputStream, "Configuration file for HavissIoT");
+            fileOutputStream.close();
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }

@@ -1,8 +1,7 @@
-package net.haviss.havissIoT.Communication;
+package net.haviss.havissIoT.Communication.ServerCommunication;
 
 import com.google.gson.*;
-import net.haviss.havissIoT.Config;
-import net.haviss.havissIoT.Core.CommandHandler;
+import net.haviss.havissIoT.Tools.Config;
 import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
@@ -73,7 +72,7 @@ public class SocketClient implements Runnable {
     public void run() {
         Main.printMessage("New client thread started");
         //Load new commandhandler and load I/O-streams
-        CommandHandler commandHandler = new CommandHandler();
+        ServerCommandHandler serverCommandHandler = new ServerCommandHandler();
 
         //Strings to store command and result from commandhandler
         String commandString;
@@ -149,12 +148,12 @@ public class SocketClient implements Runnable {
                             }
                             if(object.has("args") && object.get("args").isJsonObject()) {
                                 arguments = object.get("args").getAsJsonObject();
-                                result = commandHandler.processCommand(command, arguments, this.user, this);
+                                result = serverCommandHandler.processCommand(command, arguments, this.user, this);
                                 if(Config.debugMode) {
                                     Main.printMessage("args: " + arguments.toString());
                                 }
                             } else {
-                                result = commandHandler.processCommand(command, this.user, this);
+                                result = serverCommandHandler.processCommand(command, this.user, this);
                                 arguments = null;
                             }
                         } else {

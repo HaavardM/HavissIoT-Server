@@ -1,13 +1,17 @@
-package net.haviss.havissIoT.Core;
+package net.haviss.havissIoT.Handlers;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
 import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Sensors.Sensor;
+import net.haviss.havissIoT.Type.DataType;
+import net.haviss.havissIoT.Type.DeviceType;
 import net.haviss.havissIoT.Type.Location;
+import net.haviss.havissIoT.Type.SensorType;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -120,7 +124,28 @@ public class DeviceHandler {
             return;
         FileReader fileReader = new FileReader(targetFile);
         BufferedReader reader = new BufferedReader(fileReader);
-        JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonObject();
+        JsonArray jsonArray = new JsonParser().parse(reader).getAsJsonArray();
+        for(JsonElement j : jsonArray) {
+            JsonObject device = j.getAsJsonObject();
+            String name, topic;
+            DeviceType type;
+            DataType dataType;
+            name = device.get("name").getAsString();
+            topic = device.get("topic").getAsString();
+            type = DeviceType.valueOf(device.get("type").getAsString());
+            dataType = DataType.valueOf(device.get("datatype").getAsString());
+            Device d = Device.createDevice(name, topic, type, dataType);
+            JsonArray sensors = device.get("sensors").getAsJsonArray();
+            for(JsonElement s : sensors) {
+                JsonObject sensor = s.getAsJsonObject();
+                String sensorName, sensorTopic;
+                SensorType sensorType;
+                DataType sensorDataType;
+            }
+
+        }
+
+
     }
 
 

@@ -1,4 +1,4 @@
-package net.haviss.havissIoT.Core;
+package net.haviss.havissIoT.Handlers;
 
 import org.jetbrains.annotations.NotNull;
 import net.haviss.havissIoT.Sensors.Sensor;

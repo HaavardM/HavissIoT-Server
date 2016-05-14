@@ -1,8 +1,8 @@
-package net.haviss.havissIoT.Command;
+package net.haviss.havissIoT.ServerCommands;
 
 import com.google.gson.JsonObject;
-import net.haviss.havissIoT.Communication.SocketClient;
-import net.haviss.havissIoT.Config;
+import net.haviss.havissIoT.Communication.ServerCommunication.SocketClient;
+import net.haviss.havissIoT.Tools.Config;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
 

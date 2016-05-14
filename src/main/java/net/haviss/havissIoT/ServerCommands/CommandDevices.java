@@ -1,8 +1,8 @@
-package net.haviss.havissIoT.Command;
+package net.haviss.havissIoT.ServerCommands;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.haviss.havissIoT.Communication.SocketClient;
+import net.haviss.havissIoT.Communication.ServerCommunication.SocketClient;
 import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Sensors.Sensor;

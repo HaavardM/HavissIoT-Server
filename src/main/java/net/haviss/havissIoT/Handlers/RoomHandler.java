@@ -1,4 +1,4 @@
-package net.haviss.havissIoT.Core;
+package net.haviss.havissIoT.Handlers;
 
 import net.haviss.havissIoT.Type.Location;
 

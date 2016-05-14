@@ -1,6 +1,6 @@
-package net.haviss.havissIoT.Core;
+package net.haviss.havissIoT.Handlers;
 
-import net.haviss.havissIoT.Config;
+import net.haviss.havissIoT.Tools.Config;
 import net.haviss.havissIoT.Type.User;
 import java.util.concurrent.CopyOnWriteArrayList;
 
