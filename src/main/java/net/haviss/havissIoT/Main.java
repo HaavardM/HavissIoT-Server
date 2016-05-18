@@ -45,6 +45,7 @@ public class Main {
     public static CopyOnWriteArrayList<Thread> allThreads;
     private static CopyOnWriteArrayList<String> toPrint;
     private static Random rnd = new Random();
+    private static String enterCommandString = "Enter command: ";
     //</editor-fold>
 
     //Main method
@@ -98,11 +99,6 @@ public class Main {
         toPrint = new CopyOnWriteArrayList<>();
         //All threads
         allThreads = new CopyOnWriteArrayList<>();
-
-        for(int i = 0; i < 10; i++) {
-            deviceHandler.addDevice(new TestDataLogger("testLogger" + Integer.toString(i), "haviss/test" + Integer.toString(i)));
-        }
-
 
         //</editor-fold>
         //Initialize IoT client
@@ -168,6 +164,9 @@ public class Main {
         printSettings();
 
         //<editor-fold desc="TEST">
+        for(int i = 0; i < 10; i++) {
+            deviceHandler.addDevice(new TestDataLogger("SensorGridTest " + Integer.toString(i), "rud/a314" + Integer.toString(i)));
+        }
         Timer t = new Timer(2000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -205,16 +204,13 @@ public class Main {
                     String[] parameters = new String[cmds.length - 1];
                     System.arraycopy(cmds, 1, parameters, 0, cmds.length - 1);
                     System.out.println(cmdHandler.processCommand(cmds[0], parameters));
-                    System.out.print("Enter command: ");
+                    System.out.print(enterCommandString);
                 }
             } catch (IOException e) {
                 printMessage(e.getMessage());
             }
             //If there is something to print
             if(toPrint.size() > 0) {
-                for(int i = 0; i < "Enter command: ".length(); i++) {
-                    System.out.print("\b");
-                }
                 for(String s : toPrint) {
                     String toWrite = (new Date().toString() + " " + s);
                     if(Config.enableVerbose)
@@ -228,7 +224,7 @@ public class Main {
                     }
                     toPrint.remove(s);
                 }
-                if(Config.enableVerbose) {
+                if(!Config.enableVerbose) {
                     System.out.println("Enter command: ");
                 }
             }

@@ -17,10 +17,10 @@ public class ConfigCommand implements CommandCallback {
     @Override
     public String run(String[] parameters) {
         if(parameters == null) {
-            return "command need running parameters in format: \"config name\" \"new property\"";
+            return "command need running parameters in format: \"config name\" \"new value\"";
         }
         if(parameters.length != 2) {
-            return "command need running parameters in format: \"config name\" \"new property\"";
+            return "command need running parameters in format: \"config name\" \"new value\"";
         }
         try {
             if(Config.setProperty(parameters[0], parameters[1])) {

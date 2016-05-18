@@ -6,7 +6,10 @@ import net.haviss.havissIoT.Communication.ServerCommunication.SocketClient;
 import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Sensors.Sensor;
+import net.haviss.havissIoT.Type.DataType;
+import net.haviss.havissIoT.Type.DeviceType;
 import net.haviss.havissIoT.Type.User;
+import org.apache.http.HttpStatus;
 
 /**
  * Created by Håvard on 08.04.2016.
@@ -50,7 +53,6 @@ public class CommandDevices implements CommandCallback {
             device.addProperty("topic", d.getTopic());
             device.addProperty("type", d.getDeviceType().toString());
             device.addProperty("datatype", d.getDataType().toString());
-            device.addProperty("location", d.getRoom().getName());
             JsonArray sensors = new JsonArray();
             for (Sensor s : d.getSensors()) {
                 JsonObject sensor = new JsonObject();
@@ -71,13 +73,59 @@ public class CommandDevices implements CommandCallback {
     }
 
     private String modifyDevice(JsonObject parameters) {
+        Device d = null;
         if(parameters.has("name")) {
-            Device d = Main.deviceHandler.getDeviceByName(parameters.get("name").getAsString());
-            if(d != null) {
-
-            }
+            d = Main.deviceHandler.getDeviceByName(parameters.get("name").getAsString());
+        } else if(parameters.has("topic")) {
+            d = Main.deviceHandler.getDeviceByTopic(parameters.get("topic").getAsString());
+        } else {
+            return Integer.toString(HttpStatus.SC_BAD_REQUEST);
         }
-        //TODO: Return
-        return null;
+        if(d != null) {
+            //prank
+            if (parameters.has("newname")) {
+                String name = parameters.get("newname").getAsString();
+                if (name == null) {
+                    return Integer.toString(HttpStatus.SC_BAD_REQUEST);
+                }
+                d.setName(name);
+            }
+            if (parameters.has("newtopic")) {
+                String topic = parameters.get("newtopic").getAsString();
+                if (topic == null) {
+                    return Integer.toString(HttpStatus.SC_BAD_REQUEST);
+                }
+                d.setTopic(topic);
+            }
+            if (parameters.has("newdatatype")) {
+                String type = parameters.get("newdatatype").getAsString();
+                if (type == null) {
+                    return Integer.toString(HttpStatus.SC_BAD_REQUEST);
+                }
+                DataType dataType;
+                try {
+                    dataType = DataType.valueOf(type);
+                } catch (IllegalArgumentException e) {
+                    return Integer.toString(HttpStatus.SC_BAD_REQUEST);
+                }
+                d.setDataType(dataType);
+            }
+            if (parameters.has("newdevicetype")) {
+                String type = parameters.get("newdevicetype").getAsString();
+                if (type == null) {
+                    return Integer.toString(HttpStatus.SC_BAD_REQUEST);
+                }
+                DeviceType deviceType;
+                try {
+                    deviceType = DeviceType.valueOf(type);
+                } catch (IllegalArgumentException e) {
+                    return Integer.toString(HttpStatus.SC_BAD_REQUEST);
+                }
+                d.setDeviceType(deviceType);
+            }
+        } else {
+            return Integer.toString(HttpStatus.SC_BAD_REQUEST);
+        }
+        return Integer.toString(HttpStatus.SC_OK);
     }
 }
