@@ -225,7 +225,7 @@ public class Main {
                     toPrint.remove(s);
                 }
                 if(!Config.enableVerbose) {
-                    System.out.println("Enter command: ");
+                    System.out.print("Enter command: ");
                 }
             }
         }

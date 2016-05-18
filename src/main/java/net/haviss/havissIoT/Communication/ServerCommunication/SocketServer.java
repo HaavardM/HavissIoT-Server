@@ -95,6 +95,8 @@ public class SocketServer implements Runnable  {
     public void stopThread() throws IOException {
         keepRunning = false;
         notifyThread();
-        serverSocket.close();
+        if(serverSocket != null) {
+            serverSocket.close();
+        }
     }
 }

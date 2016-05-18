@@ -18,7 +18,6 @@ public class MQTTClient {
     private int brokerPort = 1883; //Default port is used if not else specified in connect
     private String clientID = "";
     private int qos = 2;
-    private boolean connected = false;
 
     //Objects
     private MqttClient mclient;
@@ -36,13 +35,15 @@ public class MQTTClient {
     //Overloaded function for connect - use with other ports than default
     public void connect(String address, int port) {
         brokerPort = port;
+        brokerAddress = "tcp://";
         brokerAddress += (address + ":" + Integer.toString(brokerPort));
         try {
             mclient = new MqttClient(brokerAddress, clientID, persistence); //Setting up MQTT client and connect to broker
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
             mclient.connect(connOpts); //Connecting to broker
-            connected = true;
+            if(isConnected())
+                Main.printMessage("MQTT client connected to broker");
         } catch (MqttException me) {
             Main.printMessage("MQTT connection error: " + me.getMessage() );
         }
@@ -57,7 +58,6 @@ public class MQTTClient {
     public void disconnect() {
         try {
             mclient.disconnect();
-            connected = false;
         } catch (MqttException me) {
             //TODO: Handle exception
             Main.printMessage(me.getMessage());
@@ -115,7 +115,7 @@ public class MQTTClient {
 
     //Check if connected
     public synchronized boolean isConnected() {
-        return this.connected;
+        return mclient.isConnected();
     }
 
 
