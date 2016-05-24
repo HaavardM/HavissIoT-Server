@@ -11,7 +11,7 @@ import net.haviss.havissIoT.Type.Location;
 /**
  * Created by havar on 06.03.2016.
  */
-public class Sensor {
+public class IoTSensor {
     private String name;
     private String topic;
     private String lastValue = null;
@@ -20,7 +20,7 @@ public class Sensor {
     protected DataType dataType;
     protected SensorUnit unit;
 
-    public Sensor(@NotNull String name, @NotNull String topic, SensorType type, DataType dataType, SensorUnit unit) {
+    public IoTSensor(@NotNull String name, @NotNull String topic, SensorType type, DataType dataType, SensorUnit unit) {
         this.name = name;
         this.topic = topic;
         this.sensorType = type;
@@ -28,7 +28,7 @@ public class Sensor {
         this.unit = unit;
     }
 
-    public Sensor(@NotNull String name, @NotNull String topic, SensorType type, DataType dataType, SensorUnit unit, Location location) {
+    public IoTSensor(@NotNull String name, @NotNull String topic, SensorType type, DataType dataType, SensorUnit unit, Location location) {
         this.name = name;
         this.topic = topic;
         this.location = location;

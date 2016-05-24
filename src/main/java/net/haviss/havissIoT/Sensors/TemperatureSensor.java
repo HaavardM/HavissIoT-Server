@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by havar on 06.03.2016.
  */
-public class TemperatureSensor extends Sensor {
+public class TemperatureSensor extends IoTSensor {
 
     public TemperatureSensor(@NotNull String name, @NotNull String topic, SensorUnit unit) throws HavissIoTSensorException {
         super(name, topic, SensorType.Temperature, DataType.Double, unit);

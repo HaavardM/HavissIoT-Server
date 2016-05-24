@@ -1,7 +1,7 @@
 package net.haviss.havissIoT.Device.Devices;
 
 import net.haviss.havissIoT.Tools.Config;
-import net.haviss.havissIoT.Device.Device;
+import net.haviss.havissIoT.Device.IoTDevice;
 import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
 import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
 import net.haviss.havissIoT.Main;
@@ -12,7 +12,7 @@ import net.haviss.havissIoT.Type.Location;
 /**
  * Created by havar on 06.03.2016.
  */
-public class DimmerDevice extends Device {
+public class DimmerDevice extends IoTDevice {
 
     private int status = 0;
 

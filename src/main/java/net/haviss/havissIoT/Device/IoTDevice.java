@@ -1,7 +1,7 @@
 package net.haviss.havissIoT.Device;
 
 import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
-import net.haviss.havissIoT.Sensors.Sensor;
+import net.haviss.havissIoT.Sensors.IoTSensor;
 import net.haviss.havissIoT.Type.DeviceType;
 import net.haviss.havissIoT.Type.DataType;
 import net.haviss.havissIoT.Type.Location;
@@ -11,10 +11,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Created by havar on 06.03.2016.
  */
-public abstract class Device implements DeviceCallback {
+public abstract class IoTDevice implements DeviceCallback {
 
-    public static Device createDevice(String name, String topic, DeviceType type, DataType dataType) {
-        Device d = new Device(name, topic, type, dataType) {
+    public static IoTDevice createDevice(String name, String topic, DeviceType type, DataType dataType) {
+        IoTDevice d = new IoTDevice(name, topic, type, dataType) {
             @Override
             public void messageArrived(String topic, String message) throws HavissIoTDeviceException {
                 //Do nothing
@@ -27,14 +27,14 @@ public abstract class Device implements DeviceCallback {
         };
         return d;
     }
-    protected CopyOnWriteArrayList<Sensor> availableSensors = new CopyOnWriteArrayList<>();
+    protected CopyOnWriteArrayList<IoTSensor> availableSensors = new CopyOnWriteArrayList<>();
     private String name, topic = null;
     private Location room = null;
     private DeviceType deviceType = DeviceType.None;
     private DataType dataType = DataType.String;
 
     //<editor-fold desc="Constructors">
-    public Device(String name, String topic, DeviceType deviceType, DataType dataType) {
+    public IoTDevice(String name, String topic, DeviceType deviceType, DataType dataType) {
         this.name = name;
         this.topic = topic;
         this.room = null;
@@ -42,7 +42,7 @@ public abstract class Device implements DeviceCallback {
         this.deviceType = deviceType;
     }
 
-    public Device(String name, String topic, DeviceType deviceType, DataType dataType, Location room) {
+    public IoTDevice(String name, String topic, DeviceType deviceType, DataType dataType, Location room) {
         this.name = name;
         this.topic = topic;
         this.room = room;
@@ -60,12 +60,12 @@ public abstract class Device implements DeviceCallback {
     }
 
     //Add sensor to device
-    public void addSensor(Sensor sensor) {
+    public void addSensor(IoTSensor sensor) {
         if(sensor != null)
             availableSensors.add(sensor);
     }
     //Remove sensor from device
-    public void removeSensor(Sensor sensor) {
+    public void removeSensor(IoTSensor sensor) {
         if(sensor != null) {
             availableSensors.remove(sensor);
         }
@@ -92,8 +92,8 @@ public abstract class Device implements DeviceCallback {
         return dataType;
     }
 
-    public Sensor[] getSensors() {
-        Sensor[] sensors = new Sensor[availableSensors.size()];
+    public IoTSensor[] getSensors() {
+        IoTSensor[] sensors = new IoTSensor[availableSensors.size()];
         availableSensors.toArray(sensors);
         return  sensors;
     }

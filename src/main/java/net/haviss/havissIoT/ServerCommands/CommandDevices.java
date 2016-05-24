@@ -3,13 +3,15 @@ package net.haviss.havissIoT.ServerCommands;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.haviss.havissIoT.Communication.ServerCommunication.SocketClient;
-import net.haviss.havissIoT.Device.Device;
+import net.haviss.havissIoT.Device.IoTDevice;
 import net.haviss.havissIoT.Main;
-import net.haviss.havissIoT.Sensors.Sensor;
+import net.haviss.havissIoT.Sensors.IoTSensor;
 import net.haviss.havissIoT.Type.DataType;
 import net.haviss.havissIoT.Type.DeviceType;
 import net.haviss.havissIoT.Type.User;
 import org.apache.http.HttpStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by Håvard on 08.04.2016.
@@ -21,12 +23,17 @@ public class CommandDevices implements CommandCallback {
         if(parameters.has("intent")) {
             String intent = parameters.get("intent").getAsString();
             switch (intent) {
-                case "getall": {
+                case "getall":
                     return getAllDevices();
-                }
                 case "modify":
                     //TODO Fix
                     return null;
+                case "getone":
+                    String topic = parameters.get("topic").getAsString();
+                    if(topic == null) {
+                        return Integer.toString(HttpStatus.SC_BAD_REQUEST);
+                    }
+                    return getSpecificDevice(topic);
 
             }
         }
@@ -47,14 +54,14 @@ public class CommandDevices implements CommandCallback {
     private String getAllDevices() {
         JsonObject response = new JsonObject();
         JsonArray devices = new JsonArray();
-        for(Device d : Main.deviceHandler.getAllDevices()) {
+        for(IoTDevice d : Main.deviceHandler.getAllDevices()) {
             JsonObject device = new JsonObject();
             device.addProperty("name", d.getName());
             device.addProperty("topic", d.getTopic());
             device.addProperty("type", d.getDeviceType().toString());
             device.addProperty("datatype", d.getDataType().toString());
             JsonArray sensors = new JsonArray();
-            for (Sensor s : d.getSensors()) {
+            for (IoTSensor s : d.getSensors()) {
                 JsonObject sensor = new JsonObject();
                 sensor.addProperty("name", s.getName());
                 sensor.addProperty("topic", s.getTopic());
@@ -72,8 +79,37 @@ public class CommandDevices implements CommandCallback {
         return response.toString();
     }
 
+    @Nullable
+    private String getSpecificDevice(String topic) {
+        IoTDevice device = Main.deviceHandler.getDeviceByTopic(topic);
+        JsonObject response = new JsonObject();
+        JsonObject jsonDevice = new JsonObject();
+        if(device == null) {
+            response.add("device", null);
+            return response.toString();
+        }
+        jsonDevice.addProperty("name", device.getName());
+        jsonDevice.addProperty("topic", device.getTopic());
+        jsonDevice.addProperty("datatype", device.getDataType().toString());
+        jsonDevice.addProperty("type", device.getDeviceType().toString());
+        JsonArray sensors = new JsonArray();
+        for(IoTSensor s : device.getSensors()) {
+            JsonObject sensor = new JsonObject();
+            sensor.addProperty("name", s.getName());
+            sensor.addProperty("topic", s.getTopic());
+            sensor.addProperty("datatype", s.getDataType().toString());
+            sensor.addProperty("type", s.getSensorType().toString());
+            sensor.addProperty("unit", s.getUnit().toString());
+            sensors.add(sensor);
+        }
+        jsonDevice.add("sensors", sensors);
+        response.add("device", jsonDevice);
+        return response.toString();
+    }
+
+    @NotNull
     private String modifyDevice(JsonObject parameters) {
-        Device d = null;
+        IoTDevice d = null;
         if(parameters.has("name")) {
             d = Main.deviceHandler.getDeviceByName(parameters.get("name").getAsString());
         } else if(parameters.has("topic")) {

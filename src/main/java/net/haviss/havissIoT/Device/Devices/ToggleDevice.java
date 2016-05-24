@@ -1,7 +1,7 @@
 package net.haviss.havissIoT.Device.Devices;
 
+import net.haviss.havissIoT.Device.IoTDevice;
 import net.haviss.havissIoT.Tools.Config;
-import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
 import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Type.DataType;
@@ -11,7 +11,7 @@ import net.haviss.havissIoT.Type.Location;
 /**
  * Created by havar on 06.03.2016.
  */
-public class ToggleDevice extends Device {
+public class ToggleDevice extends IoTDevice {
     private boolean state = false;
     public ToggleDevice(String name, String topic) {
         super(name, topic, DeviceType.Toggle, DataType.Boolean);

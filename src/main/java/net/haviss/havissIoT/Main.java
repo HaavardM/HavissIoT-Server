@@ -3,13 +3,14 @@ package net.haviss.havissIoT;
 import net.haviss.havissIoT.ApplicationCommands.ApplicationCommandHandler;
 import net.haviss.havissIoT.Communication.MQTTClient;
 import net.haviss.havissIoT.Communication.ServerCommunication.SocketServer;
+import net.haviss.havissIoT.Device.IoTDevice;
+import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
 import net.haviss.havissIoT.Handlers.DeviceHandler;
 import net.haviss.havissIoT.Handlers.UserHandler;
-import net.haviss.havissIoT.Device.Device;
 import net.haviss.havissIoT.Device.Devices.TestDataLogger;
 import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
 import net.haviss.havissIoT.External.PublicIP;
-import net.haviss.havissIoT.Sensors.Sensor;
+import net.haviss.havissIoT.Sensors.IoTSensor;
 import net.haviss.havissIoT.Tools.Config;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -172,8 +173,8 @@ public class Main {
             public void actionPerformed(ActionEvent e) {
                 if(client.isConnected()) {
                     try {
-                        for(Device d : deviceHandler.getAllDevices()) {
-                            for(Sensor s : d.getSensors()) {
+                        for(IoTDevice d : deviceHandler.getAllDevices()) {
+                            for(IoTSensor s : d.getSensors()) {
                                 client.publishMessage(s.getTopic(), Integer.toString(rnd.nextInt(100)));
                             }
                         }
