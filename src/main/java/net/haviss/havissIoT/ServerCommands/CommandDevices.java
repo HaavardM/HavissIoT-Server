@@ -6,6 +6,7 @@ import net.haviss.havissIoT.Communication.ServerCommunication.SocketClient;
 import net.haviss.havissIoT.Device.IoTDevice;
 import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Sensors.IoTSensor;
+import net.haviss.havissIoT.Tools.JsonGenerator;
 import net.haviss.havissIoT.Type.DataType;
 import net.haviss.havissIoT.Type.DeviceType;
 import net.haviss.havissIoT.Type.User;
@@ -53,29 +54,8 @@ public class CommandDevices implements CommandCallback {
 
     private String getAllDevices() {
         JsonObject response = new JsonObject();
-        JsonArray devices = new JsonArray();
-        for(IoTDevice d : Main.deviceHandler.getAllDevices()) {
-            JsonObject device = new JsonObject();
-            device.addProperty("name", d.getName());
-            device.addProperty("topic", d.getTopic());
-            device.addProperty("type", d.getDeviceType().toString());
-            device.addProperty("datatype", d.getDataType().toString());
-            JsonArray sensors = new JsonArray();
-            for (IoTSensor s : d.getSensors()) {
-                JsonObject sensor = new JsonObject();
-                sensor.addProperty("name", s.getName());
-                sensor.addProperty("topic", s.getTopic());
-                sensor.addProperty("type", s.getSensorType().toString());
-                sensor.addProperty("datatype", s.getDataType().toString());
-                sensor.addProperty("unit", s.getUnit().toString());
-                sensors.add(sensor);
-            }
-            device.add("sensors", sensors);
-            devices.add(device);
-        }
+        JsonArray devices = JsonGenerator.getAllDevices();
         response.add("devices", devices);
-
-
         return response.toString();
     }
 
@@ -83,26 +63,7 @@ public class CommandDevices implements CommandCallback {
     private String getSpecificDevice(String topic) {
         IoTDevice device = Main.deviceHandler.getDeviceByTopic(topic);
         JsonObject response = new JsonObject();
-        JsonObject jsonDevice = new JsonObject();
-        if(device == null) {
-            response.add("device", null);
-            return response.toString();
-        }
-        jsonDevice.addProperty("name", device.getName());
-        jsonDevice.addProperty("topic", device.getTopic());
-        jsonDevice.addProperty("datatype", device.getDataType().toString());
-        jsonDevice.addProperty("type", device.getDeviceType().toString());
-        JsonArray sensors = new JsonArray();
-        for(IoTSensor s : device.getSensors()) {
-            JsonObject sensor = new JsonObject();
-            sensor.addProperty("name", s.getName());
-            sensor.addProperty("topic", s.getTopic());
-            sensor.addProperty("datatype", s.getDataType().toString());
-            sensor.addProperty("type", s.getSensorType().toString());
-            sensor.addProperty("unit", s.getUnit().toString());
-            sensors.add(sensor);
-        }
-        jsonDevice.add("sensors", sensors);
+        JsonObject jsonDevice = JsonGenerator.createJsonDevice(device);
         response.add("device", jsonDevice);
         return response.toString();
     }

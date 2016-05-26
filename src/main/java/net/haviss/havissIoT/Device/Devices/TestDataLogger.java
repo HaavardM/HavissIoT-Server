@@ -19,6 +19,7 @@ public class TestDataLogger extends IoTDevice {
         super(name, topic, DeviceType.SensorGrid, DataType.String);
         availableSensors.add(new IoTSensor(name + "_temperature", getTopic() + "/temperature", SensorType.Temperature, DataType.Double, SensorUnit.Celsius));
         availableSensors.add(new IoTSensor(name + "_force", getTopic() + "/force", SensorType.Force, DataType.Double, SensorUnit.Newton));
+        availableSensors.add(new IoTSensor(name + "_light", getTopic() + "/light", SensorType.Light, DataType.Double, SensorUnit.None));
     }
 
     @Override

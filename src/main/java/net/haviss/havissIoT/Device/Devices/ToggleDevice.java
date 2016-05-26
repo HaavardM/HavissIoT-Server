@@ -1,5 +1,6 @@
 package net.haviss.havissIoT.Device.Devices;
 
+import net.haviss.havissIoT.Communication.MQTTQOS;
 import net.haviss.havissIoT.Device.IoTDevice;
 import net.haviss.havissIoT.Tools.Config;
 import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
@@ -22,8 +23,8 @@ public class ToggleDevice extends IoTDevice {
         }
     }
 
-    public ToggleDevice(String name, String topic, Location location) {
-        super(name, topic, DeviceType.Toggle, DataType.Boolean, location);
+    public ToggleDevice(String name, String topic, Location location, MQTTQOS qos) {
+        super(name, topic, DeviceType.Toggle, DataType.Boolean, location, qos);
         try {
             Main.client.subscribeToTopic(getTopic() + "/status", Config.qos);
         } catch (HavissIoTMQTTException e) {

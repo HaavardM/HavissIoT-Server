@@ -1,6 +1,8 @@
 package net.haviss.havissIoT.Device;
 
+import net.haviss.havissIoT.Communication.MQTTQOS;
 import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
+import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Sensors.IoTSensor;
 import net.haviss.havissIoT.Type.DeviceType;
 import net.haviss.havissIoT.Type.DataType;
@@ -13,18 +15,19 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class IoTDevice implements DeviceCallback {
 
-    public static IoTDevice createDevice(String name, String topic, DeviceType type, DataType dataType) {
-        IoTDevice d = new IoTDevice(name, topic, type, dataType) {
-            @Override
-            public void messageArrived(String topic, String message) throws HavissIoTDeviceException {
-                //Do nothing
-            }
+    public static IoTDevice createDevice(String name, String topic, DeviceType type, DataType dataType, MQTTQOS qos) {
+        IoTDevice d = null;
+        d = new IoTDevice(name, topic, type, dataType, qos) {
+                @Override
+                public void messageArrived(String topic, String message) throws HavissIoTDeviceException {
+                    //Do nothing
+                }
 
-            @Override
-            public void messageDelivered(String topic) {
-                //Do nothing
-            }
-        };
+                @Override
+                public void messageDelivered(String topic) {
+                    //Do nothing
+                }
+            };
         return d;
     }
     protected CopyOnWriteArrayList<IoTSensor> availableSensors = new CopyOnWriteArrayList<>();
@@ -32,6 +35,7 @@ public abstract class IoTDevice implements DeviceCallback {
     private Location room = null;
     private DeviceType deviceType = DeviceType.None;
     private DataType dataType = DataType.String;
+    private MQTTQOS qos = MQTTQOS.ATMOSTONCE;
 
     //<editor-fold desc="Constructors">
     public IoTDevice(String name, String topic, DeviceType deviceType, DataType dataType) {
@@ -42,12 +46,22 @@ public abstract class IoTDevice implements DeviceCallback {
         this.deviceType = deviceType;
     }
 
-    public IoTDevice(String name, String topic, DeviceType deviceType, DataType dataType, Location room) {
+    public IoTDevice(String name, String topic, DeviceType deviceType, DataType dataType, MQTTQOS qos) {
+        this.name = name;
+        this.topic = topic;
+        this.room = null;
+        this.dataType = dataType;
+        this.deviceType = deviceType;
+        this.qos = qos;
+    }
+
+    public IoTDevice(String name, String topic, DeviceType deviceType, DataType dataType, Location room, MQTTQOS qos) {
         this.name = name;
         this.topic = topic;
         this.room = room;
         this.dataType = dataType;
         this.deviceType = deviceType;
+        this.qos = qos;
     }
     //</editor-fold>
     // Get the subtopic
@@ -97,9 +111,17 @@ public abstract class IoTDevice implements DeviceCallback {
         availableSensors.toArray(sensors);
         return  sensors;
     }
+
+    public MQTTQOS getQos() {
+        return qos;
+    }
     //</editor-fold>
 
     //<editor-fold desc="SETTERS">
+    public void setQos(MQTTQOS qos) {
+        this.qos = qos;
+    }
+
     public void setName(String name) {
         this.name = name;
     }

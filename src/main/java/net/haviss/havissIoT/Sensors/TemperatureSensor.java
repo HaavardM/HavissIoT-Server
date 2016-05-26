@@ -2,6 +2,7 @@ package net.haviss.havissIoT.Sensors;
 
 
 
+import net.haviss.havissIoT.Communication.MQTTQOS;
 import net.haviss.havissIoT.Exceptions.HavissIoTSensorException;
 import net.haviss.havissIoT.Type.DataType;
 import net.haviss.havissIoT.Type.Location;
@@ -22,8 +23,8 @@ public class TemperatureSensor extends IoTSensor {
         }
     }
 
-    public TemperatureSensor(@NotNull String name, @NotNull String topic, @NotNull String type, SensorUnit unit, Location room) throws HavissIoTSensorException {
-        super(name, topic, SensorType.Temperature, DataType.Double, unit, room);
+    public TemperatureSensor(@NotNull String name, @NotNull String topic, @NotNull String type, SensorUnit unit, Location location, MQTTQOS mqttqos) throws HavissIoTSensorException {
+        super(name, topic, SensorType.Temperature, DataType.Double, unit, location, mqttqos);
         if(unit == SensorUnit.Celsius || unit == SensorUnit.Fahrenheit || unit == SensorUnit.Kelvin) {
             throw new HavissIoTSensorException("incorrect data type");
         }

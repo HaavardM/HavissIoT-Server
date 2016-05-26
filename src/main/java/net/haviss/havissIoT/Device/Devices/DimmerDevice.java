@@ -1,5 +1,6 @@
 package net.haviss.havissIoT.Device.Devices;
 
+import net.haviss.havissIoT.Communication.MQTTQOS;
 import net.haviss.havissIoT.Tools.Config;
 import net.haviss.havissIoT.Device.IoTDevice;
 import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
@@ -16,8 +17,8 @@ public class DimmerDevice extends IoTDevice {
 
     private int status = 0;
 
-    public DimmerDevice(String name, String topic, Location location) {
-        super(name, topic, DeviceType.Analog, DataType.Integer, location);
+    public DimmerDevice(String name, String topic, Location location, MQTTQOS qos) {
+        super(name, topic, DeviceType.Analog, DataType.Integer, location, qos);
         try {
             Main.client.subscribeToTopic(getTopic() + "/status", Config.qos);
         } catch (HavissIoTMQTTException e) {

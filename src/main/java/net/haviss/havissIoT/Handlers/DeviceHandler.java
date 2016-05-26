@@ -4,10 +4,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.haviss.havissIoT.Communication.MQTTQOS;
 import net.haviss.havissIoT.Device.IoTDevice;
 import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
 import net.haviss.havissIoT.Main;
 import net.haviss.havissIoT.Sensors.IoTSensor;
+import net.haviss.havissIoT.Tools.JsonGenerator;
 import net.haviss.havissIoT.Type.DataType;
 import net.haviss.havissIoT.Type.DeviceType;
 import net.haviss.havissIoT.Type.Location;
@@ -86,27 +88,7 @@ public class DeviceHandler {
                     return;
                 }
             }
-            JsonArray devices = new JsonArray();
-            for(IoTDevice d : availableDevices) {
-                JsonObject device = new JsonObject();
-                device.addProperty("name", d.getName());
-                device.addProperty("topic", d.getTopic());
-                device.addProperty("type", d.getDeviceType().toString());
-                device.addProperty("datatype", d.getDataType().toString());
-                JsonArray sensors = new JsonArray();
-                for (IoTSensor s : d.getSensors()) {
-                    JsonObject sensor = new JsonObject();
-                    sensor.addProperty("name", s.getName());
-                    sensor.addProperty("topic", s.getTopic());
-                    sensor.addProperty("type", s.getSensorType().toString());
-                    sensor.addProperty("datatype", s.getDataType().toString());
-                    sensor.addProperty("unit", s.getUnit().toString());
-                    sensors.add(sensor);
-                }
-
-                device.add("sensors", sensors);
-                devices.add(device);
-            }
+            JsonArray devices = JsonGenerator.getAllDevices();
             writer.write(devices.toString());
 
         } catch (IOException e) {
@@ -130,17 +112,25 @@ public class DeviceHandler {
             String name, topic;
             DeviceType type;
             DataType dataType;
+            MQTTQOS deviceQos;
             name = device.get("name").getAsString();
             topic = device.get("topic").getAsString();
             type = DeviceType.valueOf(device.get("type").getAsString());
             dataType = DataType.valueOf(device.get("datatype").getAsString());
-            IoTDevice d = IoTDevice.createDevice(name, topic, type, dataType);
+            deviceQos = MQTTQOS.fromValue(device.get("qos").getAsByte());
+            IoTDevice d = IoTDevice.createDevice(name, topic, type, dataType, deviceQos);
             JsonArray sensors = device.get("sensors").getAsJsonArray();
             for(JsonElement s : sensors) {
                 JsonObject sensor = s.getAsJsonObject();
                 String sensorName, sensorTopic;
                 SensorType sensorType;
                 DataType sensorDataType;
+                MQTTQOS sensorQos;
+                sensorName = sensor.get("name").getAsString();
+                sensorTopic = sensor.get("topic").getAsString();
+                sensorType = SensorType.valueOf(sensor.get("type").getAsString());
+                sensorDataType = DataType.valueOf(sensor.get("datatype").getAsString());
+                sensorQos = MQTTQOS.fromValue(sensor.get("qos").getAsByte());
             }
 
         }

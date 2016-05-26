@@ -1,6 +1,7 @@
 package net.haviss.havissIoT.Sensors;
 
 
+import net.haviss.havissIoT.Communication.MQTTQOS;
 import net.haviss.havissIoT.Type.DataType;
 import net.haviss.havissIoT.Type.Location;
 import net.haviss.havissIoT.Type.SensorType;
@@ -16,9 +17,11 @@ public class IoTSensor {
     private String topic;
     private String lastValue = null;
     private Location location = null;
+    private MQTTQOS qos = MQTTQOS.ATMOSTONCE;
     protected SensorType sensorType;
     protected DataType dataType;
     protected SensorUnit unit;
+
 
     public IoTSensor(@NotNull String name, @NotNull String topic, SensorType type, DataType dataType, SensorUnit unit) {
         this.name = name;
@@ -28,13 +31,14 @@ public class IoTSensor {
         this.unit = unit;
     }
 
-    public IoTSensor(@NotNull String name, @NotNull String topic, SensorType type, DataType dataType, SensorUnit unit, Location location) {
+    public IoTSensor(@NotNull String name, @NotNull String topic, SensorType type, DataType dataType, SensorUnit unit, Location location, MQTTQOS qos) {
         this.name = name;
         this.topic = topic;
         this.location = location;
         this.sensorType = type;
         this.dataType = dataType;
         this.unit = unit;
+        this.qos = qos;
     }
 
     public String getName() {
@@ -67,6 +71,10 @@ public class IoTSensor {
 
     public DataType getDataType() {
         return dataType;
+    }
+
+    public MQTTQOS getQos() {
+        return qos;
     }
 }
 
