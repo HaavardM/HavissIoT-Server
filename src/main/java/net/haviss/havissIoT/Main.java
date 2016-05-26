@@ -141,8 +141,7 @@ public class Main {
             if(client.isConnected()) {
                 printMessage("Application is ready");
             } else {
-                System.out.println("Application not ready for use - Stopping");
-                System.exit(1);
+                System.out.println("ERROR: MQTT not connected");
             }
         }
         //</editor-fold>
@@ -177,6 +176,7 @@ public class Main {
                             for(IoTSensor s : d.getSensors()) {
                                 client.publishMessage(s.getTopic(), Integer.toString(rnd.nextInt(100)));
                             }
+                            client.publishMessage(d.getTopic() + "/testcommand", Integer.toString(rnd.nextInt(100)));
                         }
                     } catch (HavissIoTMQTTException e1) {
                         Main.printMessage(e1.getMessage());
@@ -205,7 +205,6 @@ public class Main {
                     String[] parameters = new String[cmds.length - 1];
                     System.arraycopy(cmds, 1, parameters, 0, cmds.length - 1);
                     System.out.println(cmdHandler.processCommand(cmds[0], parameters));
-                    System.out.print(enterCommandString);
                 }
             } catch (IOException e) {
                 printMessage(e.getMessage());

@@ -1,5 +1,6 @@
 package net.haviss.havissIoT.Device.Devices;
 
+import net.haviss.havissIoT.Communication.MQTTQOS;
 import net.haviss.havissIoT.Device.IoTDevice;
 import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
 import net.haviss.havissIoT.Sensors.IoTSensor;
@@ -17,7 +18,7 @@ public class TestDataLogger extends IoTDevice {
 
     public TestDataLogger(String name, String topic) {
         super(name, topic, DeviceType.SensorGrid, DataType.String);
-        availableSensors.add(new IoTSensor(name + "_temperature", getTopic() + "/temperature", SensorType.Temperature, DataType.Double, SensorUnit.Celsius));
+        availableSensors.add(new IoTSensor(name + "_temperature", getTopic() + "/temperature", SensorType.Temperature, DataType.Double, SensorUnit.Celsius, null, MQTTQOS.EXACTLYONCE));
         availableSensors.add(new IoTSensor(name + "_force", getTopic() + "/force", SensorType.Force, DataType.Double, SensorUnit.Newton));
         availableSensors.add(new IoTSensor(name + "_light", getTopic() + "/light", SensorType.Light, DataType.Double, SensorUnit.None));
     }
