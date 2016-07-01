@@ -15,28 +15,28 @@ public class Config {
     private static boolean isLoaded = false;
     /*Config values*/
 
-    public static volatile String systemName;
-    public static volatile String houseName;
-    public static volatile String brokerAddress;
-    public static volatile String clientID;
-    public static volatile String cmdTopic;
-    public static volatile String statusTopic;
-    public static volatile String databaseAddress;
-    public static volatile String database;
-    public static volatile String sensorInfoCollection;
-    public static volatile String sensorsCollection;
+    public static volatile String systemName = "";
+    public static volatile String houseName = "";
+    public static volatile String brokerAddress = "localhost";
+    public static volatile String clientID = "";
+    public static volatile String cmdTopic = "";
+    public static volatile String statusTopic = "";
+    public static volatile String databaseAddress = "localhost";
+    public static volatile String database = "";
+    public static volatile String sensorInfoCollection = "";
+    public static volatile String sensorsCollection = "";
     public static volatile int brokerPort = 1883;
-    public static volatile int qos;
-    public static volatile int databasePort;
-    public static volatile int serverPort;
-    public static volatile int numbOfClients;
-    public static volatile int keepAlive;
-    public static volatile int readTimeout;
-    public static volatile int refreshSensorTime;
-    public static volatile boolean offlineMode;
-    public static volatile boolean debugMode;
-    public static volatile boolean enableLogging;
-    public static volatile boolean enableVerbose;
+    public static volatile int qos = 0;
+    public static volatile int databasePort = 0;
+    public static volatile int serverPort = 23456;
+    public static volatile int numbOfClients  = 10;
+    public static volatile int keepAlive = 0;
+    public static volatile int readTimeout = 0;
+    public static volatile int refreshSensorTime  = 0;
+    public static volatile boolean offlineMode = false;
+    public static volatile boolean debugMode = false;
+    public static volatile boolean enableLogging = false;
+    public static volatile boolean enableVerbose = false;
 
 
 

@@ -57,7 +57,8 @@ public class Main implements Daemon {
     //Main method
     public static void main(String args[]) {
 
-        System.out.println("\nhavissIoT server\n");
+        if(Config.enableVerbose && !isRunningDaemon)
+            System.out.println("\nhavissIoT server\n");
         //Read arguments from args array
         //<editor-fold desc="Program parameters">
         HashMap<String, String> arguments = new HashMap<>();
@@ -166,7 +167,8 @@ public class Main implements Daemon {
         }
         //</editor-fold>
         //Print device settings to console
-        printSettings();
+        if(Config.enableVerbose && !isRunningDaemon)
+            printSettings();
 
         //<editor-fold desc="TEST">
         for(int i = 0; i < 10; i++) {
@@ -310,6 +312,7 @@ public class Main implements Daemon {
     @Override
     public void start() throws Exception {
         isRunningDaemon = true;
+        main(null);
         System.out.println("HavissIoT is starting");
     }
 
