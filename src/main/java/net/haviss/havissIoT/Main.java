@@ -12,6 +12,9 @@ import net.haviss.havissIoT.Exceptions.HavissIoTMQTTException;
 import net.haviss.havissIoT.External.PublicIP;
 import net.haviss.havissIoT.Sensors.IoTSensor;
 import net.haviss.havissIoT.Tools.Config;
+import org.apache.commons.daemon.Daemon;
+import org.apache.commons.daemon.DaemonContext;
+import org.apache.commons.daemon.DaemonInitException;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -35,7 +38,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Created by HaavardM on 5/3/2015.
  * Main class
  */
-public class Main {
+public class Main implements Daemon {
     
     //<editor-fold desc="OBJECTS">
     public static MQTTClient client;
@@ -47,6 +50,8 @@ public class Main {
     private static CopyOnWriteArrayList<String> toPrint;
     private static Random rnd = new Random();
     private static String enterCommandString = "Enter command: ";
+    private static boolean isRunningDaemon = false;
+    private static boolean isRunning = true;
     //</editor-fold>
 
     //Main method
@@ -197,9 +202,9 @@ public class Main {
                     "commandinput might be messy - be warned! To input commands, just write them + Enter");
         }
         //<editor-fold desc="LOOP">
-        while(!Thread.currentThread().isInterrupted()) {
+        while(!Thread.currentThread().isInterrupted() && isRunning) {
             try {
-                if(System.in.available() > 0) {
+                if(System.in.available() > 0 && !isRunningDaemon) {
                     String cmd = reader.nextLine();
                     String[] cmds = cmd.split("\\s+");
                     String[] parameters = new String[cmds.length - 1];
@@ -213,7 +218,7 @@ public class Main {
             if(toPrint.size() > 0) {
                 for(String s : toPrint) {
                     String toWrite = (new Date().toString() + " " + s);
-                    if(Config.enableVerbose)
+                    if(Config.enableVerbose && !isRunningDaemon)
                         System.out.println(toWrite); //Printing to console with
                     if(fileWriter != null && Config.enableLogging) {
                         try {
@@ -223,9 +228,6 @@ public class Main {
                         }
                     }
                     toPrint.remove(s);
-                }
-                if(!Config.enableVerbose) {
-                    System.out.print("Enter command: ");
                 }
             }
         }
@@ -300,5 +302,25 @@ public class Main {
     }
 
 
+    @Override
+    public void init(DaemonContext daemonContext) throws DaemonInitException, Exception {
 
+    }
+
+    @Override
+    public void start() throws Exception {
+        isRunningDaemon = true;
+        System.out.println("HavissIoT is starting");
+    }
+
+    @Override
+    public void stop() throws Exception {
+        isRunning = false;
+        System.exit(0);
+    }
+
+    @Override
+    public void destroy() {
+        System.exit(1);
+    }
 }
