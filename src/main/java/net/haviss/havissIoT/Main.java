@@ -47,8 +47,8 @@ public class Main implements Daemon {
     public static SocketServer socketServer;
     public static DeviceHandler deviceHandler = new DeviceHandler();
     public static final Object threadLock = new Object();
-    public static CopyOnWriteArrayList<Thread> allThreads;
-    private static CopyOnWriteArrayList<String> toPrint;
+    public static CopyOnWriteArrayList<Thread> allThreads = new CopyOnWriteArrayList<>();
+    private static CopyOnWriteArrayList<String> toPrint = new CopyOnWriteArrayList<>();
     private static Random rnd = new Random();
     private static String enterCommandString = "Enter command: ";
     private static boolean isRunningDaemon = false;
@@ -105,11 +105,6 @@ public class Main implements Daemon {
         //<editor-fold desc="Initialize handlers and objects">
         //Set up user handler
         userHandler = new UserHandler();
-        //Initialize toPrint list.
-        toPrint = new CopyOnWriteArrayList<>();
-        //All threads
-        allThreads = new CopyOnWriteArrayList<>();
-
         //</editor-fold>
         //Initialize IoT client
         //<editor-fold desc="IoTClient">
