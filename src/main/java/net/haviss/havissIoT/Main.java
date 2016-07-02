@@ -21,6 +21,7 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -28,10 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
@@ -203,6 +201,7 @@ public class Main implements Daemon {
             }
             //If there is something to print
             if(toPrint.size() > 0) {
+                ArrayList<String> toRemove = new ArrayList<>();
                 for(String s : toPrint) {
                     String toWrite = (new Date().toString() + " " + s);
                     if(Config.enableVerbose && !isRunningDaemon)
@@ -214,6 +213,9 @@ public class Main implements Daemon {
                             e.printStackTrace();
                         }
                     }
+                    toRemove.add(s);
+                }
+                for(String s : toRemove) {
                     toPrint.remove(s);
                 }
             }
@@ -268,9 +270,6 @@ public class Main implements Daemon {
     //Add new message and notify thread
     public static synchronized void printMessage(String message) {
         toPrint.add(message);
-        synchronized (threadLock) {
-            threadLock.notify();
-        }
     }
     //Shutdown all threads and disconnects from all servers
     //TODO: Not working properly
