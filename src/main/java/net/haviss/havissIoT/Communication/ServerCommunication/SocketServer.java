@@ -69,8 +69,6 @@ public class SocketServer implements Runnable  {
                     serverLock.wait();
                 }
             }
-        }catch (SocketException se) {
-            //Do nothing
         } catch (IOException | InterruptedException e) {
             Main.printMessage(e.getMessage());
         }
