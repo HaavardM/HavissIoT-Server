@@ -46,6 +46,7 @@ public class Config {
     public static void loadConfigFile(String configName) throws IOException {
         if(!file.exists()) {
             try {
+                file.createNewFile();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(Config.class.getClass().getResourceAsStream(configName)));
                 FileWriter writer = new FileWriter("config.properties");
                 int c;
