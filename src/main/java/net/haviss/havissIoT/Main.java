@@ -58,34 +58,36 @@ public class Main implements Daemon {
     //Main method
     public static void main(String args[]) {
 
-        if(Config.enableVerbose && !isRunningDaemon)
+        if(Config.enableVerbose)
             System.out.println("\nhavissIoT server\n");
         //Read arguments from args array
         //<editor-fold desc="Program parameters">
         HashMap<String, String> arguments = new HashMap<>();
-        for(int i = 0; i < args.length; i++) {
-            if(args[i].startsWith("-")) {
-                if((i+1) < args.length && !args[i+1].startsWith("-")) {
-                    arguments.put(args[i], args[i+1]);
-                } else {
-                    arguments.put(args[i], null);
+        if(args != null) {
+            for (int i = 0; i < args.length; i++) {
+                if (args[i].startsWith("-")) {
+                    if ((i + 1) < args.length && !args[i + 1].startsWith("-")) {
+                        arguments.put(args[i], args[i + 1]);
+                    } else {
+                        arguments.put(args[i], null);
+                    }
                 }
             }
-        }
-        for(String s : arguments.keySet()) {
-            switch (s) {
-                case "-c":
-                    //<editor-fold desc="Alternate config file">
-                    String filePath = arguments.get(s);
-                    if(filePath != null)
-                        try {
-                            Config.loadExtConfigFile(filePath);
-                        } catch (IOException e) {
-                            //TODO: Better error handling
-                            e.printStackTrace();
-                        }
-                    //</editor-fold>
+            for (String s : arguments.keySet()) {
+                switch (s) {
+                    case "-c":
+                        //<editor-fold desc="Alternate config file">
+                        String filePath = arguments.get(s);
+                        if (filePath != null)
+                            try {
+                                Config.loadExtConfigFile(filePath);
+                            } catch (IOException e) {
+                                //TODO: Better error handling
+                                e.printStackTrace();
+                            }
+                        //</editor-fold>
 
+                }
             }
         }
         //</editor-fold>
@@ -191,12 +193,6 @@ public class Main implements Daemon {
 
         Scanner reader = new Scanner(System.in);
         ApplicationCommandHandler cmdHandler = new ApplicationCommandHandler();
-        if(!Config.enableVerbose) {
-            System.out.println("Enter command: ");
-        } else {
-            System.out.println("Verbose mode enabled - application will write application events. \n" +
-                    "commandinput might be messy - be warned! To input commands, just write them + Enter");
-        }
         //<editor-fold desc="LOOP">
         while(!Thread.currentThread().isInterrupted() && isRunning) {
             try {
