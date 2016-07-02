@@ -28,7 +28,7 @@ public class JsonGenerator {
         }
         jsonDevice.addProperty("name", device.getName());
         jsonDevice.addProperty("topic", device.getTopic());
-        jsonDevice.addProperty("datatype", device.getDataType().toString());
+        jsonDevice.addProperty("datatype", device.getDataType().getValue());
         jsonDevice.addProperty("type", device.getDeviceType().toString());
         jsonDevice.addProperty("qos", device.getQos().getValue());
         JsonArray sensors = new JsonArray();
@@ -36,7 +36,7 @@ public class JsonGenerator {
             JsonObject sensor = new JsonObject();
             sensor.addProperty("name", s.getName());
             sensor.addProperty("topic", s.getTopic());
-            sensor.addProperty("datatype", s.getDataType().toString());
+            sensor.addProperty("datatype", s.getDataType().getValue());
             sensor.addProperty("type", s.getSensorType().toString());
             sensor.addProperty("unit", s.getUnit().toString());
             sensor.addProperty("qos", s.getQos().getValue());
