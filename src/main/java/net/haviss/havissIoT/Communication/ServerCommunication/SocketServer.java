@@ -44,35 +44,45 @@ public class SocketServer implements Runnable  {
             //Socket connection between server and client
             Socket socket = null;
             serverSocket = new ServerSocket(serverPort); //Serversocket
-            if(serverSocket != null) {
-                Main.printMessage("Serverserver is running");
-            }
-            Main.printMessage("Listening for socket clients on port " + Config.serverPort);
-            //Run as long thread isn't interrupted
-            while (keepRunning) {
-                //Only accept new connection as long there are available connections
-                while (connectedClients.get() < maxClients && keepRunning) {
-                    socket = serverSocket.accept();
-                    for(int i = 0; i < Config.numbOfClients; i++) {
-                        if(!clientNames[i]) {
-                            //Start new thread for new client
-                            new SocketClient(socket, this, i);
-                            connectedClients.incrementAndGet();
-                            Main.printMessage("Client " + Integer.toString(i) + " connected");
-                            Main.printMessage("Number of clients: " + Integer.toString(connectedClients.get()));
-                            break;
+            if(serverSocket == null) {
+                Main.printMessage("Socket error");
+                keepRunning = false;
+            } else {
+                Main.printMessage("Socketserver is running");
+                Main.printMessage("Listening for socket clients on port " + Config.serverPort);
+                //Run as long thread isn't interrupted
+                while (keepRunning) {
+                    //Only accept new connection as long there are available connections
+                    while (connectedClients.get() < maxClients && keepRunning) {
+                        socket = serverSocket.accept();
+                        for (int i = 0; i < Config.numbOfClients; i++) {
+                            if (!clientNames[i]) {
+                                //Start new thread for new client
+                                new SocketClient(socket, this, i);
+                                connectedClients.incrementAndGet();
+                                Main.printMessage("Client " + Integer.toString(i) + " connected");
+                                Main.printMessage("Number of clients: " + Integer.toString(connectedClients.get()));
+                                break;
+                            }
                         }
                     }
-                }
-                //Wait while all clients are used - saves cycles
-                synchronized (serverLock) {
-                    serverLock.wait();
+                    //Wait while all clients are used - saves cycles
+                    synchronized (serverLock) {
+                        serverLock.wait();
+                    }
                 }
             }
         } catch (IOException | InterruptedException e) {
             Main.printMessage(e.getMessage());
         }
         //Remove thread from list on finish
+        try {
+            if(serverSocket != null) {
+                serverSocket.close();
+            }
+        } catch (IOException e) {
+            Main.printMessage(e.getMessage());
+        }
         Main.allThreads.remove(serverThread);
         Main.printMessage("SocketServer shutting down");
     }
