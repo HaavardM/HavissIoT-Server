@@ -3,6 +3,7 @@ package net.haviss.havissIoT;
 import net.haviss.havissIoT.ApplicationCommands.ApplicationCommandHandler;
 import net.haviss.havissIoT.Communication.MQTTClient;
 import net.haviss.havissIoT.Communication.ServerCommunication.SocketServer;
+import net.haviss.havissIoT.Device.Devices.ToggleDevice;
 import net.haviss.havissIoT.Device.IoTDevice;
 import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
 import net.haviss.havissIoT.Handlers.DeviceHandler;
@@ -164,22 +165,15 @@ public class Main {
         printSettings();
 
         //<editor-fold desc="TEST">
-        for(int i = 0; i < 10; i++) {
-            deviceHandler.addDevice(new TestDataLogger("SensorGridTest " + Integer.toString(i), "rud/a314" + Integer.toString(i)));
-        }
-        Timer t = new Timer(2000, new ActionListener() {
+        deviceHandler.addDevice(new ToggleDevice("Nightstand lamp", "bedroom/nightlamp"));
+        Timer t = new Timer(3000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(client.isConnected()) {
-                    try {
-                        for(IoTDevice d : deviceHandler.getAllDevices()) {
-                            for(IoTSensor s : d.getSensors()) {
-                                client.publishMessage(s.getTopic(), Integer.toString(rnd.nextInt(100)));
-                            }
-                            client.publishMessage(d.getTopic() + "/testcommand", Integer.toString(rnd.nextInt(100)));
+                    for(IoTDevice d : deviceHandler.getAllDevices()) {
+                        if(d instanceof ToggleDevice) {
+                            ((ToggleDevice) d).toggle();
                         }
-                    } catch (HavissIoTMQTTException e1) {
-                        Main.printMessage(e1.getMessage());
                     }
                 }
             }

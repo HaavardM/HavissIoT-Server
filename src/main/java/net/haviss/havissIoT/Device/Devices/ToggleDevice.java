@@ -17,7 +17,7 @@ public class ToggleDevice extends IoTDevice {
     public ToggleDevice(String name, String topic) {
         super(name, topic, DeviceType.Toggle, DataType.Boolean);
         try {
-            Main.client.subscribeToTopic(getTopic() + "/*", Config.qos);
+            Main.client.subscribeToTopic(getTopic() + "/status", Config.qos);
         } catch (HavissIoTMQTTException e) {
             Main.printMessage(e.getMessage());
         }
@@ -34,7 +34,7 @@ public class ToggleDevice extends IoTDevice {
 
     public void toggle() {
         try {
-            Main.client.publishMessage(getTopic(), Boolean.toString(!state));
+            Main.client.publishMessage(getTopic() + "/set", Boolean.toString(!state));
         } catch (HavissIoTMQTTException e) {
             Main.printMessage(e.getMessage());
         }
@@ -59,7 +59,9 @@ public class ToggleDevice extends IoTDevice {
 
     @Override
     public void messageArrived(String topic, String message) {
-
+        if(topic.contains("/status")) {
+            updateState(message);
+        }
     }
 
     @Override
