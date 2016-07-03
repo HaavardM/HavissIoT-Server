@@ -56,6 +56,16 @@ public class Main implements Daemon {
     //Main method
     public static void main(String args[]) {
 
+        //<editor-fold desc="Load config">
+        try {
+            if(!Config.propIsLoaded())
+                Config.loadConfigFile("/config.properties");
+        } catch (IOException e) {
+            //TODO: Better error handling here
+            e.printStackTrace();
+        }
+        //</editor-fold>
+
         if(Config.enableVerbose)
             System.out.println("\nhavissIoT server\n");
         //Read arguments from args array
@@ -90,15 +100,7 @@ public class Main implements Daemon {
         }
         //</editor-fold>
         //Load config file if not done already
-        //<editor-fold desc="Load config">
-        try {
-            if(!Config.propIsLoaded())
-                Config.loadConfigFile("/config.properties");
-        } catch (IOException e) {
-            //TODO: Better error handling here
-            e.printStackTrace();
-        }
-        //</editor-fold>
+
         //Initialize neccesary objects
         //<editor-fold desc="Initialize handlers and objects">
         //Set up user handler
