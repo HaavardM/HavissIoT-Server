@@ -21,6 +21,7 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -28,10 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
@@ -47,8 +45,8 @@ public class Main implements Daemon {
     public static SocketServer socketServer;
     public static DeviceHandler deviceHandler = new DeviceHandler();
     public static final Object threadLock = new Object();
-    public static CopyOnWriteArrayList<Thread> allThreads;
-    private static CopyOnWriteArrayList<String> toPrint;
+    public static CopyOnWriteArrayList<Thread> allThreads = new CopyOnWriteArrayList<>();
+    private static CopyOnWriteArrayList<String> toPrint = new CopyOnWriteArrayList<>();
     private static Random rnd = new Random();
     private static String enterCommandString = "Enter command: ";
     private static boolean isRunningDaemon = false;
@@ -58,38 +56,6 @@ public class Main implements Daemon {
     //Main method
     public static void main(String args[]) {
 
-        if(Config.enableVerbose && !isRunningDaemon)
-            System.out.println("\nhavissIoT server\n");
-        //Read arguments from args array
-        //<editor-fold desc="Program parameters">
-        HashMap<String, String> arguments = new HashMap<>();
-        for(int i = 0; i < args.length; i++) {
-            if(args[i].startsWith("-")) {
-                if((i+1) < args.length && !args[i+1].startsWith("-")) {
-                    arguments.put(args[i], args[i+1]);
-                } else {
-                    arguments.put(args[i], null);
-                }
-            }
-        }
-        for(String s : arguments.keySet()) {
-            switch (s) {
-                case "-c":
-                    //<editor-fold desc="Alternate config file">
-                    String filePath = arguments.get(s);
-                    if(filePath != null)
-                        try {
-                            Config.loadExtConfigFile(filePath);
-                        } catch (IOException e) {
-                            //TODO: Better error handling
-                            e.printStackTrace();
-                        }
-                    //</editor-fold>
-
-            }
-        }
-        //</editor-fold>
-        //Load config file if not done already
         //<editor-fold desc="Load config">
         try {
             if(!Config.propIsLoaded())
@@ -99,15 +65,46 @@ public class Main implements Daemon {
             e.printStackTrace();
         }
         //</editor-fold>
+
+        if(Config.enableVerbose)
+            System.out.println("\nhavissIoT server\n");
+        //Read arguments from args array
+        //<editor-fold desc="Program parameters">
+        HashMap<String, String> arguments = new HashMap<>();
+        if(args != null) {
+            for (int i = 0; i < args.length; i++) {
+                if (args[i].startsWith("-")) {
+                    if ((i + 1) < args.length && !args[i + 1].startsWith("-")) {
+                        arguments.put(args[i], args[i + 1]);
+                    } else {
+                        arguments.put(args[i], null);
+                    }
+                }
+            }
+            for (String s : arguments.keySet()) {
+                switch (s) {
+                    case "-c":
+                        //<editor-fold desc="Alternate config file">
+                        String filePath = arguments.get(s);
+                        if (filePath != null)
+                            try {
+                                Config.loadExtConfigFile(filePath);
+                            } catch (IOException e) {
+                                //TODO: Better error handling
+                                e.printStackTrace();
+                            }
+                        //</editor-fold>
+
+                }
+            }
+        }
+        //</editor-fold>
+        //Load config file if not done already
+
         //Initialize neccesary objects
         //<editor-fold desc="Initialize handlers and objects">
         //Set up user handler
         userHandler = new UserHandler();
-        //Initialize toPrint list.
-        toPrint = new CopyOnWriteArrayList<>();
-        //All threads
-        allThreads = new CopyOnWriteArrayList<>();
-
         //</editor-fold>
         //Initialize IoT client
         //<editor-fold desc="IoTClient">
@@ -191,12 +188,6 @@ public class Main implements Daemon {
 
         Scanner reader = new Scanner(System.in);
         ApplicationCommandHandler cmdHandler = new ApplicationCommandHandler();
-        if(!Config.enableVerbose) {
-            System.out.println("Enter command: ");
-        } else {
-            System.out.println("Verbose mode enabled - application will write application events. \n" +
-                    "commandinput might be messy - be warned! To input commands, just write them + Enter");
-        }
         //<editor-fold desc="LOOP">
         while(!Thread.currentThread().isInterrupted() && isRunning) {
             try {
@@ -212,6 +203,7 @@ public class Main implements Daemon {
             }
             //If there is something to print
             if(toPrint.size() > 0) {
+                ArrayList<String> toRemove = new ArrayList<>();
                 for(String s : toPrint) {
                     String toWrite = (new Date().toString() + " " + s);
                     if(Config.enableVerbose && !isRunningDaemon)
@@ -223,6 +215,9 @@ public class Main implements Daemon {
                             e.printStackTrace();
                         }
                     }
+                    toRemove.add(s);
+                }
+                for(String s : toRemove) {
                     toPrint.remove(s);
                 }
             }
@@ -277,9 +272,6 @@ public class Main implements Daemon {
     //Add new message and notify thread
     public static synchronized void printMessage(String message) {
         toPrint.add(message);
-        synchronized (threadLock) {
-            threadLock.notify();
-        }
     }
     //Shutdown all threads and disconnects from all servers
     //TODO: Not working properly
