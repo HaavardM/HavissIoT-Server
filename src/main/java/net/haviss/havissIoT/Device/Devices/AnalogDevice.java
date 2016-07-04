@@ -13,23 +13,23 @@ import net.haviss.havissIoT.Type.Location;
 /**
  * Created by havar on 06.03.2016.
  */
-public class DimmerDevice extends IoTDevice {
+public class AnalogDevice extends IoTDevice {
 
-    private int status = 0;
+    private int value = 0;
 
-    public DimmerDevice(String name, String topic, Location location, MQTTQOS qos) {
+    public AnalogDevice(String name, String topic, Location location, MQTTQOS qos) {
         super(name, topic, DeviceType.Analog, DataType.Integer, location, qos);
         try {
-            Main.client.subscribeToTopic(getTopic() + "/status", Config.qos);
+            Main.client.subscribeToTopic(getTopic() + "/set", Config.qos);
         } catch (HavissIoTMQTTException e) {
             Main.printMessage(e.getMessage());
         }
     }
 
-    public DimmerDevice(String name, String topic) {
+    public AnalogDevice(String name, String topic) {
         super(name, topic, DeviceType.Analog, DataType.Integer);
         try {
-            Main.client.subscribeToTopic(getTopic() + "/status", Config.qos);
+            Main.client.subscribeToTopic(getTopic() + "/value", Config.qos);
         } catch (HavissIoTMQTTException e) {
             Main.printMessage(e.getMessage());
         }
@@ -46,7 +46,7 @@ public class DimmerDevice extends IoTDevice {
     }
 
     public void updateStatus(int value) {
-        status = value;
+        this.value = value;
     }
 
 
@@ -55,15 +55,15 @@ public class DimmerDevice extends IoTDevice {
             String subTopic;
             if((subTopic = getSubTopic(topic)) != null) {
                 switch (subTopic) {
-                    case "/status":
-                        //<editor-fold desc="Parse status">
+                    case "/value":
+                        //<editor-fold desc="Parse value">
                         try {
-                            status = Integer.parseInt(message);
+                            value = Integer.parseInt(message);
                         } catch (NumberFormatException e) {
                             throw new HavissIoTDeviceException(this, "Parse error on " + topic);
                         }
-                        if (status > 255 || status < 0)
-                            this.status = status;
+                        if (value > 255 || value < 0)
+                            this.value = value;
                         else
                             throw new HavissIoTDeviceException(this, "Status value not within interval on " + topic);
                         //</editor-fold>

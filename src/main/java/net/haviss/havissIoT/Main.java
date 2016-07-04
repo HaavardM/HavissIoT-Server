@@ -3,6 +3,7 @@ package net.haviss.havissIoT;
 import net.haviss.havissIoT.ApplicationCommands.ApplicationCommandHandler;
 import net.haviss.havissIoT.Communication.MQTTClient;
 import net.haviss.havissIoT.Communication.ServerCommunication.SocketServer;
+import net.haviss.havissIoT.Device.Devices.AnalogDevice;
 import net.haviss.havissIoT.Device.Devices.ToggleDevice;
 import net.haviss.havissIoT.Device.IoTDevice;
 import net.haviss.havissIoT.Exceptions.HavissIoTDeviceException;
@@ -177,6 +178,8 @@ public class Main implements Daemon {
                     for(IoTDevice d : deviceHandler.getAllDevices()) {
                         if(d instanceof ToggleDevice) {
                             ((ToggleDevice) d).toggle();
+                        } else if(d instanceof AnalogDevice) {
+                            ((AnalogDevice) d).setState(rnd.nextInt(255));
                         }
                     }
                 }
