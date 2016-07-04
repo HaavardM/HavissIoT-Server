@@ -160,7 +160,7 @@ public class Main implements Daemon {
             File logFile = new File("log.txt");
             try {
                 logFile.createNewFile();
-                fileWriter = new FileOutputStream(logFile, true);
+                fileWriter = new FileOutputStream(logFile, false);
             } catch (IOException e) {
                 e.printStackTrace();
                 fileWriter = null;
