@@ -15,8 +15,8 @@ public enum DeviceType {
         return value;
     }
 
-    public SensorType parseValue(int value) {
-        for (SensorType s : SensorType.values()) {
+    public static DeviceType parseValue(int value) {
+        for (DeviceType s : DeviceType.values()) {
             if(s.getValue() == value)
                 return s;
         }

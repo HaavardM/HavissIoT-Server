@@ -16,8 +16,8 @@ public enum DataType {
         return this.value;
     }
 
-    public SensorType parseValue(int value) {
-        for (SensorType s : SensorType.values()) {
+    public static DataType parseValue(int value) {
+        for (DataType s : DataType.values()) {
             if(s.getValue() == value)
                 return s;
         }
