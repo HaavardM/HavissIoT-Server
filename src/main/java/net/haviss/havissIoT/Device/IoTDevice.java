@@ -15,9 +15,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class IoTDevice implements DeviceCallback {
 
-    public static IoTDevice createDevice(String name, String topic, DeviceType type, DataType dataType, MQTTQOS qos) {
+    public static IoTDevice createDevice(int id, String name, String topic, DeviceType type, DataType dataType, MQTTQOS qos) {
         IoTDevice d = null;
-        d = new IoTDevice(name, topic, type, dataType, qos) {
+        d = new IoTDevice(id, name, topic, type, dataType, qos) {
                 @Override
                 public void messageArrived(String topic, String message) throws HavissIoTDeviceException {
                     //Do nothing
@@ -36,32 +36,36 @@ public abstract class IoTDevice implements DeviceCallback {
     private DeviceType deviceType = DeviceType.None;
     private DataType dataType = DataType.String;
     private MQTTQOS qos = MQTTQOS.ATMOSTONCE;
+    private int deviceID = -1;
 
     //<editor-fold desc="Constructors">
-    public IoTDevice(String name, String topic, DeviceType deviceType, DataType dataType) {
+    public IoTDevice(int id, String name, String topic, DeviceType deviceType, DataType dataType) {
         this.name = name;
         this.topic = topic;
         this.room = null;
         this.dataType = dataType;
         this.deviceType = deviceType;
+        this.deviceID = id;
     }
 
-    public IoTDevice(String name, String topic, DeviceType deviceType, DataType dataType, MQTTQOS qos) {
+    public IoTDevice(int id, String name, String topic, DeviceType deviceType, DataType dataType, MQTTQOS qos) {
         this.name = name;
         this.topic = topic;
         this.room = null;
         this.dataType = dataType;
         this.deviceType = deviceType;
         this.qos = qos;
+        this.deviceID = id;
     }
 
-    public IoTDevice(String name, String topic, DeviceType deviceType, DataType dataType, Location room, MQTTQOS qos) {
+    public IoTDevice(int id, String name, String topic, DeviceType deviceType, DataType dataType, Location room, MQTTQOS qos) {
         this.name = name;
         this.topic = topic;
         this.room = room;
         this.dataType = dataType;
         this.deviceType = deviceType;
         this.qos = qos;
+        this.deviceID = id;
     }
     //</editor-fold>
     // Get the subtopic
@@ -104,6 +108,10 @@ public abstract class IoTDevice implements DeviceCallback {
 
     public DataType getDataType() {
         return dataType;
+    }
+
+    public int getDeviceID() {
+        return deviceID;
     }
 
     public IoTSensor[] getSensors() {

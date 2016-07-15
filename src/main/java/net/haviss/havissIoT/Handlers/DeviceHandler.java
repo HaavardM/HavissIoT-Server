@@ -43,14 +43,11 @@ public class DeviceHandler {
         dataSource.setDatabaseName("havissiot");
     }
 
+
     public IoTDevice getDeviceByName(String name) {
-        try {
-            Connection conn = dataSource.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT name, topic, type, qos, datatype FROM devices WHERE name = \"" + name + "\"");
-            return constructDeviceFromResult(rs);
-        } catch (SQLException e) {
-            Main.printMessage(e.getMessage());
+        for (IoTDevice d : availableDevices) {
+            if(d.getName() == name)
+                return d;
         }
         return null;
     }
@@ -62,72 +59,52 @@ public class DeviceHandler {
                 int deviceType = rs.getInt("type");
                 int deviceQos = rs.getInt("qos");
                 int deviceDataType = rs.getInt("datatype");
+                int deviceId = rs.getInt("id");
                 MQTTQOS qos = MQTTQOS.fromValue((byte) deviceQos);
                 DataType dataType = DataType.parseValue(deviceDataType);
                 DeviceType type = DeviceType.parseValue(deviceType);
-                return new IoTDevice(deviceName, deviceTopic, type, dataType, qos) {
-                    @Override
-                    public void messageArrived(String topic, String message) throws HavissIoTDeviceException {
-                        //TODO Handle this
-                    }
-
-                    @Override
-                    public void messageDelivered(String topic) {
-                        //TODO Handle this
-                    }
-                };
+                return IoTDevice.createDevice(deviceId, deviceName, deviceTopic, type, dataType, qos);
             }
         return null;
     }
 
     public IoTDevice getDeviceByTopic(String topic) {
-        try {
-            Connection conn = dataSource.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT name, topic, type, datatype, qos FROM devices WHERE topic = \"" + topic + "\"");
-            return constructDeviceFromResult(rs);
-        } catch (SQLException e) {
-            Main.printMessage(e.getMessage());
+        for(IoTDevice d : availableDevices) {
+            if(d.getTopic() == topic) {
+                return d;
+            }
         }
         return null;
     }
 
 
-    public  IoTDevice[] getAllDevices() {
-        IoTDevice[] devices = null;
+    private void loadAllDevicesFromDatabase() {
         try {
             Connection conn = dataSource.getConnection();
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT name, topic, type, datatype, qos FROM devices");
-            devices = new IoTDevice[rs.getRow()];
-            for(int i = 0; rs.next(); i++) {
-                devices[i] = constructDeviceFromResult(rs);
+            ResultSet rs = stmt.executeQuery("SELECT id, name, topic, type, datatype, qos FROM devices");
+            if(rs.getRow() > 0) {
+                availableDevices.clear();
+                for (int i = 0; rs.next(); i++) {
+                    availableDevices.add(constructDeviceFromResult(rs));
+                }
             }
         } catch (SQLException e) {
             Main.printMessage(e.getMessage());
-            devices = null;
         }
-        return  devices;
+    }
+
+    public IoTDevice[] getAllDevices() {
+        return (IoTDevice[]) availableDevices.toArray();
     }
 
 
     public void deliverMessage(String topic, String message) throws HavissIoTDeviceException {
-        try {
-            Connection conn = dataSource.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT id FROM devices WHERE topic = \"" + topic + "\"");
-            int id;
-            if(rs.next()) {
-                id = rs.getInt("id");
-            } else {
-                id = -1;
-            }
-            rs = stmt.executeQuery("UPDATE havissiot SET value=\"" + message + "\" WHERE topic = \"" + topic + "\"");
-        } catch (SQLException e) {
-            throw new HavissIoTDeviceException();
-        }
-
-        getDeviceByTopic(topic).messageArrived(topic, message);
+        IoTDevice d = getDeviceByTopic(topic);
+        if(d != null)
+            d.messageArrived(topic, message);
+        else
+            throw new HavissIoTDeviceException(null, "Device not found");
     }
 
     public void addDevice(IoTDevice device) {
